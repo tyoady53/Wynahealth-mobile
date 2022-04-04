@@ -17,9 +17,14 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class UtilsApi {
     //public static String BASE_URL = "http://192.168.1.21:8000/api/patient/";
-    public static String BASE_URL = "http://172.16.9.149:8000/api/patient/";
+    //public static String BASE_URL = "http://172.16.9.149:8000/api/patient/";
+    public static String BASE_URL = "http://172.16.8.114:8000/api/patient/";
 
     public static BaseApiService getAPI(){
         return RetrofitClient.getClient(BASE_URL).create(BaseApiService.class);
+    }
+
+    public static BaseApiService getMethod(){
+        return RetrofitClient.getRetrofit(BASE_URL).create(BaseApiService.class);
     }
 }

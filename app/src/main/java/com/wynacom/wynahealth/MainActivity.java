@@ -30,7 +30,9 @@ import com.wynacom.wynahealth.databinding.ActivityMainBinding;
 import com.wynacom.wynahealth.json_dashboard.Count;
 import com.wynacom.wynahealth.json_dashboard.Post;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     protected Cursor cursor;
     boolean doubleBackToExitPressedOnce = false;
     Local_Data local_data;
-    private BaseApiService mApiService;
+    private BaseApiService mApiService,ApiGetMethod;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
         local_data  = new Local_Data(getApplicationContext());
         mApiService = UtilsApi.getAPI();
+        ApiGetMethod= UtilsApi.getMethod();
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -74,14 +77,17 @@ public class MainActivity extends AppCompatActivity {
         cursor.moveToFirst();
         if (cursor.getCount()>0) {
 
-            Retrofit retrofit = new Retrofit.Builder().baseUrl("http://172.16.9.149:8000/api/patient/")
+            Retrofit retrofit = new Retrofit.Builder().baseUrl("http://172.16.8.114:8000/api/patient/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
             BaseApiService jsonPlaceHolderApi = retrofit.create(BaseApiService.class);
 
-            String token = cursor.getString(10);
+            String token = "Bearer "+cursor.getString(10);
 
-            Call<List<Post>> listCall = jsonPlaceHolderApi.getPosts(token);
+            Map<String, String> header = new HashMap<>();
+            header.put("Authorization", token);
+
+            Call<List<Post>> listCall = ApiGetMethod.getPosts(token);
             listCall.enqueue(new Callback<List<Post>>() {
                 @Override
                 public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
@@ -117,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<List<Post>> call, Throwable t) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("Failur : "+t+"\nToken : "+token);
+                    builder.setMessage("Failur : "+t+"\n"+call+"\nToken : "+token);
                     builder.setTitle("Gagal");
                     builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
                         @Override
