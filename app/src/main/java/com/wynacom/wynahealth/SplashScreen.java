@@ -163,36 +163,6 @@ public class SplashScreen extends AppCompatActivity {
         }
     }
 
-    private void Dashboard(String lasttoken) {
-        mApiService.dashboard(
-            lasttoken)
-            .enqueue(new Callback<Count>() {
-                @Override
-                public void onResponse(Call<Count> call, Response<Count> response) {
-                    if (!response.isSuccessful()) {
-//                        textView.setText("Code " + response.code());
-                        return;
-                    }
-
-                    List<Count> posts = (List<Count>) response.body();
-
-                    for (Count post : posts) {
-                        String content = "";
-                        content += "Pending: " + post.getPending() + "\n";
-                        content += "Success: " + post.getSuccess() + "\n";
-                        content += "Failed : " + post.getFailed() + "\n";
-                        content += "Expired: " + post.getExpired() + "\n\n";
-                        Toast.makeText(getApplicationContext(),content,Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Count> call, Throwable t) {
-                    Log.e("debug", "onFailure: ERROR > " + t.toString());
-                }
-            });
-    }
-
     public void startRepeating() {
         mToastRunnable.run();
     }

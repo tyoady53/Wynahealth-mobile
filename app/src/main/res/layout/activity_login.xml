@@ -78,10 +78,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <Button
+                    android:padding="10dp"
                     android:id="@+id/btn_login"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="@color/lazzy_green"
+                    android:background="@drawable/green_button"
                     android:text="Masuk" />
             </RelativeLayout>
             <RelativeLayout
@@ -89,12 +90,15 @@
                 android:gravity="center"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
                 <Button
-                    android:background="@color/purple_500"
+                    android:padding="10dp"
+                    android:id="@+id/btn_regis"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:background="@drawable/button_blue"
                     android:text="Registrasi"
-                    android:id="@+id/btn_regis"/>
+                    android:textColor="@color/white" />
             </RelativeLayout>
         </LinearLayout>
         </LinearLayout>

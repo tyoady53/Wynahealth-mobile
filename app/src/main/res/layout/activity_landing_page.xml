@@ -42,7 +42,7 @@
 
                 <Button
                     android:layout_marginTop="20dp"
-                    android:background="@color/lazzy_green"
+                    android:background="@drawable/green_button"
                     android:id="@+id/btn_toLogin"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

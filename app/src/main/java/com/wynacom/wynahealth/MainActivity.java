@@ -28,12 +28,15 @@ import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.ActivityMainBinding;
 import com.wynacom.wynahealth.json_dashboard.Count;
+import com.wynacom.wynahealth.json_dashboard.Post;
 
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        //cekDashboard();
+        cekDashboard();
     }
 
     private void cekDashboard() {
@@ -70,42 +73,97 @@ public class MainActivity extends AppCompatActivity {
         cursor = db1.rawQuery("SELECT * FROM TB_User", null);
         cursor.moveToFirst();
         if (cursor.getCount()>0) {
-            getDashboardData(cursor.getString(10));
+
+            Retrofit retrofit = new Retrofit.Builder().baseUrl("http://172.16.9.149:8000/api/patient/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+            BaseApiService jsonPlaceHolderApi = retrofit.create(BaseApiService.class);
+
+            String token = cursor.getString(10);
+
+            Call<List<Post>> listCall = jsonPlaceHolderApi.getPosts(token);
+            listCall.enqueue(new Callback<List<Post>>() {
+                @Override
+                public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                    if (!response.isSuccessful()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("Failed : "+response+"\nHeader : "+token);
+                        builder.setTitle("Gagal");
+                        builder.setCancelable(true);
+                        builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                        //Toast.makeText(MainActivity.this, "Failed : "+response, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    List<Post> posts = response.body();
+//                    for (Post post : posts) {
+//                        String content = "";
+//                        content += "Pending: " + post.getPending() + "\n";
+//                        content += "Success: " + post.getSuccess() + "\n";
+//                        content += "Expired: " + post.getExpired() + "\n";
+//                        content += "Failed: " + post.getFailed() + "\n\n";
+//
+//                        Toast.makeText(MainActivity.this, "Success : "+content, Toast.LENGTH_SHORT).show();
+//
+//                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<Post>> call, Throwable t) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                    builder.setMessage("Failur : "+t+"\nToken : "+token);
+                    builder.setTitle("Gagal");
+                    builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                    //Toast.makeText(MainActivity.this, "Failed : "+response, Toast.LENGTH_SHORT).show();
+                    return;
+//                    Toast.makeText(MainActivity.this, "Failur : "+t, Toast.LENGTH_SHORT).show();
+//                    return;
+                }
+            });
+//            getDashboardData(c);
         }
         else {
             System.exit(0);
         }
     }
 
-    private void getDashboardData(String last_token) {
-        mApiService.dashboard(
-            last_token)
-            .enqueue(new Callback<Count>() {
-                @Override
-                public void onResponse(Call<Count> call, Response<Count> response) {
-                    if (!response.isSuccessful()) {
-//                        textView.setText("Code " + response.code());
-                        return;
-                    }
-
-                    List<Count> posts = (List<Count>) response.body();
-
-                    for (Count post : posts) {
-                        String content = "";
-                        content += "Pending: " + post.getPending() + "\n";
-                        content += "Success: " + post.getSuccess() + "\n";
-                        content += "Failed : " + post.getFailed() + "\n";
-                        content += "Expired: " + post.getExpired() + "\n\n";
-                        Toast.makeText(getApplicationContext(),content,Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<Count> call, Throwable t) {
-                    Log.e("debug", "onFailure: ERROR > " + t.toString());
-                }
-            });
-    }
+//    private void getDashboardData(String last_token) {
+//        mApiService.dashboard(
+//            last_token)
+//            .enqueue(new Callback<List<Count>>() {
+//                @Override
+//                public void onResponse(Call<List<Count>> call, Response<List<Count>> response) {
+//                    List<Count> posts = (List<Count>) response.body();
+//
+//                    for (Count post : posts) {
+//                        String content = "";
+//                        content += "Pending: " + post.getPending() + "\n";
+//                        content += "Success: " + post.getSuccess() + "\n";
+//                        content += "Failed : " + post.getFailed() + "\n";
+//                        content += "Expired: " + post.getExpired() + "\n\n";
+//                        Toast.makeText(getApplicationContext(), content, Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<List<Count>> call, Throwable t) {
+//                        Log.e("debug", "onFailure: ERROR > " + t.toString());
+//                }
+//            });
+//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

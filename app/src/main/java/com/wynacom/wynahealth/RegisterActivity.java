@@ -144,7 +144,7 @@ public class RegisterActivity extends AppCompatActivity {
         sp_title.setAdapter(dataAdapter);
 
         List<String> list2 = new ArrayList<>();
-        list2.add("Laki-Laki");
+        list2.add("Laki-laki");
         list2.add("Perempuan");
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, R.layout.spinner_item,list2);
         dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
