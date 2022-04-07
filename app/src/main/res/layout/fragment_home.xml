@@ -259,16 +259,12 @@
                 android:layout_height="wrap_content"
                 android:text="Tambah Data Pasien"/>
         </LinearLayout>
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="fill_parent">
             <ListView
-                android:background="@color/white"
+                android:background="@color/notwhite"
+                android:id="@+id/listpatient"
                 android:layout_width="match_parent"
-                android:layout_height="100dp">
-
+                android:layout_height="fill_parent">
             </ListView>
-        </ScrollView>
     </LinearLayout>
 
     <TextView

@@ -1,22 +1,12 @@
 package com.wynacom.wynahealth.apihelper;
 
-import com.wynacom.wynahealth.json_dashboard.Count;
-import com.wynacom.wynahealth.json_dashboard.Post;
-
-import java.util.List;
-import java.util.Map;
-
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
-import retrofit2.http.HeaderMap;
-import retrofit2.http.Headers;
 import retrofit2.http.POST;
-import retrofit2.http.Path;
-import retrofit2.http.Query;
 
 /**
  * Created by X260 on 09/09/2018.
@@ -46,16 +36,20 @@ public interface BaseApiService {
     @FormUrlEncoded
     @POST("datapatient?")
     Call<ResponseBody> datapatient(
-        @Field("patient_name") String patient_name,
+        @Field("token") String token,
+        @Field("name") String patient_name,
         @Field("email") String email,
         @Field("handphone") String handphone,
         @Field("city") String city,
         @Field("postal_code") String postal_code,
         @Field("sex") String sex,
-        @Field("age") String age,
+        @Field("dob") String age,
         @Field("nik") String nik);
 
 
     @GET("dashboard")
-    Call<List<Post>> getPosts(@Header("Authorization") String token);
+    Call<ResponseBody> getPosts(@Header("Authorization") String token);
+
+    @GET("datapatient")
+    Call<ResponseBody> getdatapatient(@Header("Authorization") String token);
 }

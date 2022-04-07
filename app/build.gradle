@@ -31,7 +31,6 @@ android {
 }
 
 dependencies {
-
     implementation 'androidx.appcompat:appcompat:1.4.1'
     implementation 'com.android.support.constraint:constraint-layout:2.0.4'
     implementation 'android.arch.lifecycle:livedata:1.1.1'
@@ -66,4 +65,7 @@ dependencies {
     implementation 'com.android.volley:volley:1.2.1'
 
     implementation 'com.fxn769:cue:1.1'
+
+    implementation "androidx.recyclerview:recyclerview:1.2.1"
+    implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
 }

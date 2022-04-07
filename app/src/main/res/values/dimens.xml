@@ -4,4 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="MoreTextSize">12sp</dimen>
+    <dimen name="dp10">10dp</dimen>
+    <dimen name="dp15">15dp</dimen>
+    <dimen name="dp20">20dp</dimen>
+    <dimen name="dp3">3dp</dimen>
 </resources>
