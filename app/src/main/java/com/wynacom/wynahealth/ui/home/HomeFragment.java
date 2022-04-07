@@ -70,7 +70,7 @@ public class HomeFragment extends Fragment {
     private FragmentHomeBinding binding;
     Local_Data local_data;
     protected Cursor cursor;
-    String id_pelanggan, string_nama, string_umur,string_jk, string_hp, string_ktp, string_kota, string_kodepos,token;
+    String id_pelanggan, string_nama, string_umur,string_jk, string_hp, string_ktp, string_kota, string_kodepos,token,bearer;
     //private HomeFragment.MyCustomAdapter dataAdapter = null;
     private Adapter_Data_Patient dataAdapter = null;
     private ArrayList<adapter_patient> List;
@@ -127,11 +127,11 @@ public class HomeFragment extends Fragment {
             string_ktp      = cursor.getString(9);
             string_kota     = cursor.getString(5);
             string_kodepos  = cursor.getString(3);
-            token           = "Bearer "+cursor.getString(10);
+
         }
-        //token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
-        homeViewModel =
-                new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(HomeViewModel.class);
+        token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
+        bearer          = "Bearer "+token;
+        homeViewModel   = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
@@ -280,7 +280,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void refreshList() {
-        Call<ResponseBody> listCall = ApiGetMethod.getdatapatient(token);
+        Call<ResponseBody> listCall = ApiGetMethod.getdatapatient(bearer);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -364,6 +364,7 @@ public class HomeFragment extends Fragment {
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if (jsonRESULTS.getString("success").equals("true")){
+                                dataAdapter.clear();
                                 listView.setAdapter(null);
                                 Toast.makeText(getContext(),"Add data success.", Toast.LENGTH_SHORT).show();
                                 refreshList();

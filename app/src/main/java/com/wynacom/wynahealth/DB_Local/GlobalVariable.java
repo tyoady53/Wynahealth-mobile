@@ -10,6 +10,6 @@ public class GlobalVariable extends Application {
     }
 
     public void setToken(String avail_token){
-        this.token = "Bearer "+avail_token;
+        this.token = avail_token;
     }
 }
