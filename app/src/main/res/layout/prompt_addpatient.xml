@@ -5,7 +5,10 @@
     android:layout_height="fill_parent"
     android:orientation="vertical"
     android:padding="10dp" >
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
+        android:layout_marginBottom="@dimen/dp10"
+        android:orientation="vertical"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
@@ -14,19 +17,19 @@
             android:text="Title"/>
         <Spinner
             android:id="@+id/prompt_title"
-            android:textSize="@dimen/MoreTextSize"
             android:maxLines="1"
             android:hint="Title"
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
         </Spinner>
-    </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginBottom="@dimen/dp10"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <EditText
             android:id="@+id/prompt_nama"
-            android:textSize="@dimen/MoreTextSize"
             android:inputType="text"
             android:maxLines="1"
             android:hint="Nama Lengkap"
@@ -36,11 +39,12 @@
         </EditText>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginBottom="@dimen/dp10"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <EditText
             android:id="@+id/prompt_email"
-            android:textSize="@dimen/MoreTextSize"
             android:inputType="textEmailAddress"
             android:maxLines="1"
             android:hint="Email"
@@ -48,7 +52,10 @@
             android:layout_width="match_parent">
         </EditText>
     </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/dp10"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
@@ -57,19 +64,19 @@
             android:text="Jenis Kelamin"/>
         <Spinner
             android:id="@+id/prompt_jeniskelamin"
-            android:textSize="@dimen/MoreTextSize"
             android:maxLines="1"
             android:hint="Jenis Kelamin"
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
         </Spinner>
-    </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginBottom="@dimen/dp10"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <EditText
             android:id="@+id/prompt_noktp"
-            android:textSize="@dimen/MoreTextSize"
             android:inputType="number"
             android:ems="16"
             android:maxLines="1"
@@ -78,7 +85,10 @@
             android:layout_width="match_parent">
         </EditText>
     </com.google.android.material.textfield.TextInputLayout>
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginBottom="@dimen/dp10"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <TextView
@@ -87,14 +97,15 @@
             android:text="Kota"/>
         <Spinner
             android:id="@+id/prompt_kota"
-            android:textSize="@dimen/MoreTextSize"
             android:maxLines="1"
             android:hint="Kota"
             android:layout_height="wrap_content"
             android:layout_width="match_parent">
         </Spinner>
-    </com.google.android.material.textfield.TextInputLayout>
+    </LinearLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginBottom="@dimen/dp10"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <EditText
@@ -108,11 +119,12 @@
         </EditText>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginBottom="@dimen/dp10"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <EditText
             android:id="@+id/prompt_nohp"
-            android:textSize="@dimen/MoreTextSize"
             android:inputType="phone"
             android:maxLines="1"
             android:minEms="10"
@@ -122,11 +134,12 @@
         </EditText>
     </com.google.android.material.textfield.TextInputLayout>
     <com.google.android.material.textfield.TextInputLayout
+        android:layout_marginBottom="@dimen/dp10"
+        android:background="@drawable/edittextround"
         android:layout_height="wrap_content"
         android:layout_width="match_parent">
         <EditText
             android:id="@+id/prompt_umur"
-            android:textSize="@dimen/MoreTextSize"
             android:clickable="false"
             android:cursorVisible="false"
             android:focusable="false"

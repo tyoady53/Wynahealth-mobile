@@ -1,6 +1,6 @@
-package com.wynacom.wynahealth.adapter;
+package com.wynacom.wynahealth.adapter.product;
 
-public class adapter_patient {
+public class adapter_order {
     String nama         = null;
     String handphone    = null;
     String sex          = null;
@@ -9,7 +9,7 @@ public class adapter_patient {
     String city         = null;
     String postal_code  = null;
 
-    public adapter_patient(String nama, String handphone, String sex, String dob,String nik, String city, String postal_code) {
+    public adapter_order(String nama, String handphone, String sex, String dob, String nik, String city, String postal_code) {
         super();
         this.nama       = nama;
         this.handphone  = handphone;

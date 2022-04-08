@@ -3,23 +3,18 @@ package com.wynacom.wynahealth.ui.home;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -36,12 +31,9 @@ import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
-import com.wynacom.wynahealth.Login_Activity;
-import com.wynacom.wynahealth.MainActivity;
 import com.wynacom.wynahealth.R;
-import com.wynacom.wynahealth.RegisterActivity;
-import com.wynacom.wynahealth.adapter.Adapter_Data_Patient;
-import com.wynacom.wynahealth.adapter.adapter_patient;
+import com.wynacom.wynahealth.adapter.patient.Adapter_Data_Patient;
+import com.wynacom.wynahealth.adapter.patient.adapter_patient;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.FragmentHomeBinding;
@@ -54,7 +46,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -136,8 +127,6 @@ public class HomeFragment extends Fragment {
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        refreshList();
-
         listView     = binding.listpatient;
 
         final Button tambahpasien = binding.tambahpasien;
@@ -154,13 +143,16 @@ public class HomeFragment extends Fragment {
             @Override
             public void onChanged(@Nullable String s) {
                 //textView.setText(s);
+                String tampilumur = ((GlobalVariable) getContext().getApplicationContext()).dateformat(string_umur);
                 IdPelanggan .setText(id_pelanggan);
                 TV_Nama     .setText(string_nama);
-                TV_umur     .setText(string_umur+", "+string_jk);
+                TV_umur     .setText(tampilumur+", "+string_jk);
                 TV_hp       .setText(string_hp);
                 TV_KTP      .setText(string_ktp);
                 TV_Kota     .setText(string_kota);
                 TV_kodepos  .setText(string_kodepos);
+
+                refreshList();
             }
         });
 
@@ -299,8 +291,8 @@ public class HomeFragment extends Fragment {
                                 String nik           = c.getString("nik");
                                 String city          = c.getString("city");
                                 String postal_code   = c.getString("postal_code");
-
-                                adapter_patient _states = new adapter_patient(nama,handphone,sex,dob,nik,city,postal_code);
+                                String tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
+                                adapter_patient _states = new adapter_patient(nama,handphone,sex,tampiltanggal,nik,city,postal_code);
                                 List.add(_states);
                                 Log.v("ConvertView ListCount", String.valueOf(nama));
                                 bindData();

@@ -1,8 +1,11 @@
 <resources>
     <string name="app_name">Wynahealth</string>
-    <string name="title_home">Informasi\nPelanggan</string>
+    <string name="title_home">Informasi Pelanggan</string>
     <string name="title_dashboard">Pemesanan Kesehatan</string>
     <string name="title_notifications">Ganti Password</string>
+    <string name="home_title">Me</string>
+    <string name="dashboard_title">Transaction</string>
+    <string name="notifications_title">Utilities</string>
     <string name="title_activity_settings">SettingsActivity</string>
 
     <!-- Preference Titles -->

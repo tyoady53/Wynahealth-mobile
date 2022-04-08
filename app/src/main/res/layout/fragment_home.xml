@@ -234,7 +234,7 @@
 
     <LinearLayout
         android:orientation="vertical"
-        android:background="@color/white"
+        android:background="@color/notwhite"
         android:layout_marginTop="10dp"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -259,12 +259,19 @@
                 android:layout_height="wrap_content"
                 android:text="Tambah Data Pasien"/>
         </LinearLayout>
-            <ListView
-                android:background="@color/notwhite"
-                android:id="@+id/listpatient"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-            </ListView>
+        <TextView
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginTop="@dimen/dp3"
+            android:text="Data Pasien"
+            android:textSize="18dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+        <ListView
+            android:background="@color/notwhite"
+            android:id="@+id/listpatient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        </ListView>
     </LinearLayout>
 
     <TextView

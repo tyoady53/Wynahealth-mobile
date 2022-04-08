@@ -13,6 +13,7 @@ import retrofit2.http.POST;
  */
 
 public interface BaseApiService {
+// API routes
     @FormUrlEncoded
     @POST("patient/login?")
     Call<ResponseBody> login(
@@ -33,6 +34,15 @@ public interface BaseApiService {
         @Field("nik") String nik,
         @Field("password_confirmation") String password_confirmation);
 
+    @GET("patient/dashboard")
+    Call<ResponseBody> getPosts(@Header("Authorization") String token);
+
+    @GET("patient/invoices")
+    Call<ResponseBody> getInvoices(@Header("Authorization") String token);
+
+    @GET("patient/datapatient")
+    Call<ResponseBody> getdatapatient(@Header("Authorization") String token);
+
     @FormUrlEncoded
     @POST("patient/datapatient?")
     Call<ResponseBody> datapatient(
@@ -46,10 +56,13 @@ public interface BaseApiService {
         @Field("dob") String age,
         @Field("nik") String nik);
 
+//WEB routes
+    @GET("web/categories")
+    Call<ResponseBody> getcategories(@Header("Authorization") String token);
 
-    @GET("patient/dashboard")
-    Call<ResponseBody> getPosts(@Header("Authorization") String token);
+    @GET("web/products")
+    Call<ResponseBody> getproducts(@Header("Authorization") String token);
 
-    @GET("patient/datapatient")
-    Call<ResponseBody> getdatapatient(@Header("Authorization") String token);
+    @GET("web/carts")
+    Call<ResponseBody> getcarts(@Header("Authorization") String token);
 }
