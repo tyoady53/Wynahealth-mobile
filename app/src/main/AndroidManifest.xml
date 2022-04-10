@@ -19,6 +19,12 @@
         android:theme="@style/Theme.Wynahealth"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".transaction.CartsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".transaction.OrderActivity"
+            android:exported="false" />
+        <activity
             android:name=".RegisterActivity"
             android:exported="true" />
         <activity

@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -15,7 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,8 +29,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.baoyz.swipemenulistview.SwipeMenu;
+import com.baoyz.swipemenulistview.SwipeMenuCreator;
+import com.baoyz.swipemenulistview.SwipeMenuItem;
+import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
+import com.github.clans.fab.FloatingActionButton;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.R;
@@ -65,9 +72,12 @@ public class HomeFragment extends Fragment {
     //private HomeFragment.MyCustomAdapter dataAdapter = null;
     private Adapter_Data_Patient dataAdapter = null;
     private ArrayList<adapter_patient> List;
-    ListView listView;
+    SwipeMenuListView listView;
     private BaseApiService mApiService,ApiGetMethod;
     ArrayList<String> names = new ArrayList<String>();
+    LinearLayout linearLayout;
+    Button buttonPatient;
+    FloatingActionButton fab_home;
 
     public static boolean stringname(String Name) {
         return Name.length() > 0;
@@ -139,6 +149,11 @@ public class HomeFragment extends Fragment {
         final TextView TV_KTP       = binding.tampilKtp;
         final TextView TV_Kota      = binding.tampilKota;
         final TextView TV_kodepos   = binding.tampilKodepos;
+
+        linearLayout    = binding.linearPatientList;
+        buttonPatient   = binding.btnNewPatient;
+        fab_home        = binding.fabHome;
+
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -156,119 +171,172 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        buttonPatient.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tambahdata();
+            }
+        });
+
         tambahpasien.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LayoutInflater li = LayoutInflater.from(getContext());
-                View promptsView = li.inflate(R.layout.prompt_addpatient,null);
-                final Calendar myCalendar= Calendar.getInstance();
-                final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-
-                // set prompts.xml to alertdialog builder
-                alertDialogBuilder.setView(promptsView);
-                final EditText age         = promptsView.findViewById(R.id.prompt_umur);
-                final EditText name        = promptsView.findViewById(R.id.prompt_nama);
-                final EditText ktp         = promptsView.findViewById(R.id.prompt_noktp);
-                final EditText postal      = promptsView.findViewById(R.id.prompt_postal);
-                final EditText phone       = promptsView.findViewById(R.id.prompt_nohp);
-                final EditText email       = promptsView.findViewById(R.id.prompt_email);
-
-                final Spinner sp_title    = promptsView.findViewById(R.id.prompt_title);
-                final Spinner sp_kelamin  = promptsView.findViewById(R.id.prompt_jeniskelamin);
-                final Spinner sp_kota     = promptsView.findViewById(R.id.prompt_kota);
-
-                List<String> list = new ArrayList<>();
-                list.add("Mr. ");
-                list.add("Mrs. ");
-                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list);
-                dataAdapter.setDropDownViewResource(R.layout.spinner_item);
-                sp_title.setAdapter(dataAdapter);
-
-                List<String> list2 = new ArrayList<>();
-                list2.add("Laki-laki");
-                list2.add("Perempuan");
-                ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list2);
-                dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
-                sp_kelamin.setAdapter(dataAdapter2);
-
-                List<String> list3 = new ArrayList<>();
-                list3.add("Jakarta");
-                list3.add("Bandung");
-                ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list3);
-                dataAdapter3.setDropDownViewResource(R.layout.spinner_item);
-                sp_kota.setAdapter(dataAdapter3);
-
-                DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int day) {
-                        myCalendar.set(Calendar.YEAR, year);
-                        myCalendar.set(Calendar.MONTH,month);
-                        myCalendar.set(Calendar.DAY_OF_MONTH,day);
-                        String myFormat="yyyy-MM-dd";
-                        SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
-                        age.setText(dateFormat.format(myCalendar.getTime()));
-                    }
-                };
-
-                age.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        new DatePickerDialog(getContext(),date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
-                    }
-                });
-
-                alertDialogBuilder
-                    .setTitle("Tambah Pasien")
-                    .setCancelable(false)
-                    .setPositiveButton("OK",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog,
-                                                int id) {
-                                final String fsnama     = sp_title.getSelectedItem().toString()+name.getText().toString();
-                                final String fsemail    = email.getText().toString();
-                                final String fsgender   = sp_kelamin.getSelectedItem().toString();
-                                final String fsktp      = ktp.getText().toString();
-                                final String fskota     = sp_kota.getSelectedItem().toString();
-                                final String fspostal   = postal.getText().toString();
-                                final String fsphone    = phone.getText().toString();
-                                final String fsdob      = age.getText().toString();
-                                if (!stringname(fsnama)) {
-                                    name.setText("");
-                                    name.requestFocus();
-                                    Toast.makeText(getContext(), "Nama Tidak Valid", Toast.LENGTH_SHORT).show();
-                                } else if (!stringnik(ktp.getText().toString())) {
-                                    ktp.setText("");
-                                    ktp.requestFocus();
-                                    Toast.makeText(getContext(), "NIP Tidak Sesuai", Toast.LENGTH_SHORT).show();
-                                }else if (!stringphone(phone.getText().toString())) {
-                                    phone.setText("");
-                                    phone.requestFocus();
-                                    Toast.makeText(getContext(), "Nomor Telepon Tidak Valid", Toast.LENGTH_SHORT).show();
-                                }else if (!isemail(email.getText().toString())){
-                                    email.setText("");
-                                    email.requestFocus();
-                                    Toast.makeText(getContext(), "Email TIdak Valid", Toast.LENGTH_SHORT).show();
-                                }else if (!stringpostal(postal.getText().toString())) {
-                                    postal.setText("");
-                                    postal.requestFocus();
-                                    Toast.makeText(getContext(), "Kode Pos Tidak Valid", Toast.LENGTH_SHORT).show();
-                                }else if (!stringage(age.getText().toString())) {
-                                    age.setText("");
-                                    age.requestFocus();
-                                    Toast.makeText(getContext(), "Harap Masukkan Tanggal Lahir", Toast.LENGTH_SHORT).show();
-                                }else{
-                                    datapatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,fsdob);
-                                }
-                            }
-                        })
-                    .setNegativeButton("Batal", null);
-
-                AlertDialog alertDialog = alertDialogBuilder.create();
-                alertDialog.show();
-                Cue.init().with(getContext()).setMessage("Button Tambah Pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                tambahdata();
             }
         });
+
+        SwipeMenuCreator creator = new SwipeMenuCreator() {
+
+            @Override
+            public void create(SwipeMenu menu) {
+                // create "delete" item
+                SwipeMenuItem deleteItem = new SwipeMenuItem(
+                    getContext());
+                // set item background
+                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
+                    0x3F, 0x25)));
+                // set item width
+                deleteItem.setWidth(90);
+                // set a icon
+                deleteItem.setIcon(R.drawable.vertor_icon_delete);
+                // add to menu
+                menu.addMenuItem(deleteItem);
+            }
+        };
+
+        listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                switch (index) {
+                    case 0:
+                        Cue.init().with(getContext()).setMessage("Delete Button").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
+                        break;
+//                    case 0:
+//                        // open
+//                        break;
+//                    case 1:
+//                        Cue.init().with(getContext()).setMessage("Delete Button").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
+//                        break;
+                }
+                // false : close the menu; true : not close the menu
+                return false;
+            }
+        });
+
+// set creator
+        listView.setMenuCreator(creator);
+
         return root;
+    }
+
+    private void tambahdata() {
+        LayoutInflater li = LayoutInflater.from(getContext());
+        View promptsView = li.inflate(R.layout.prompt_addpatient,null);
+        final Calendar myCalendar= Calendar.getInstance();
+        final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+
+        // set prompts.xml to alertdialog builder
+        alertDialogBuilder.setView(promptsView);
+        final EditText age         = promptsView.findViewById(R.id.prompt_umur);
+        final EditText name        = promptsView.findViewById(R.id.prompt_nama);
+        final EditText ktp         = promptsView.findViewById(R.id.prompt_noktp);
+        final EditText postal      = promptsView.findViewById(R.id.prompt_postal);
+        final EditText phone       = promptsView.findViewById(R.id.prompt_nohp);
+        final EditText email       = promptsView.findViewById(R.id.prompt_email);
+
+        final Spinner sp_title    = promptsView.findViewById(R.id.prompt_title);
+        final Spinner sp_kelamin  = promptsView.findViewById(R.id.prompt_jeniskelamin);
+        final Spinner sp_kota     = promptsView.findViewById(R.id.prompt_kota);
+
+        List<String> list = new ArrayList<>();
+        list.add("Mr. ");
+        list.add("Mrs. ");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list);
+        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
+        sp_title.setAdapter(dataAdapter);
+
+        List<String> list2 = new ArrayList<>();
+        list2.add("Laki-laki");
+        list2.add("Perempuan");
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list2);
+        dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
+        sp_kelamin.setAdapter(dataAdapter2);
+
+        List<String> list3 = new ArrayList<>();
+        list3.add("Jakarta");
+        list3.add("Bandung");
+        ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list3);
+        dataAdapter3.setDropDownViewResource(R.layout.spinner_item);
+        sp_kota.setAdapter(dataAdapter3);
+
+        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int day) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH,month);
+                myCalendar.set(Calendar.DAY_OF_MONTH,day);
+                String myFormat="yyyy-MM-dd";
+                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
+                age.setText(dateFormat.format(myCalendar.getTime()));
+            }
+        };
+
+        age.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DatePickerDialog(getContext(),date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        alertDialogBuilder
+            .setTitle("Tambah Pasien")
+            .setCancelable(false)
+            .setPositiveButton("OK",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog,
+                                        int id) {
+                        final String fsnama     = sp_title.getSelectedItem().toString()+name.getText().toString();
+                        final String fsemail    = email.getText().toString();
+                        final String fsgender   = sp_kelamin.getSelectedItem().toString();
+                        final String fsktp      = ktp.getText().toString();
+                        final String fskota     = sp_kota.getSelectedItem().toString();
+                        final String fspostal   = postal.getText().toString();
+                        final String fsphone    = phone.getText().toString();
+                        final String fsdob      = age.getText().toString();
+                        if (!stringname(fsnama)) {
+                            name.setText("");
+                            name.requestFocus();
+                            Toast.makeText(getContext(), "Nama Tidak Valid", Toast.LENGTH_SHORT).show();
+                        } else if (!stringnik(ktp.getText().toString())) {
+                            ktp.setText("");
+                            ktp.requestFocus();
+                            Toast.makeText(getContext(), "NIP Tidak Sesuai", Toast.LENGTH_SHORT).show();
+                        }else if (!stringphone(phone.getText().toString())) {
+                            phone.setText("");
+                            phone.requestFocus();
+                            Toast.makeText(getContext(), "Nomor Telepon Tidak Valid", Toast.LENGTH_SHORT).show();
+                        }else if (!isemail(email.getText().toString())){
+                            email.setText("");
+                            email.requestFocus();
+                            Toast.makeText(getContext(), "Email TIdak Valid", Toast.LENGTH_SHORT).show();
+                        }else if (!stringpostal(postal.getText().toString())) {
+                            postal.setText("");
+                            postal.requestFocus();
+                            Toast.makeText(getContext(), "Kode Pos Tidak Valid", Toast.LENGTH_SHORT).show();
+                        }else if (!stringage(age.getText().toString())) {
+                            age.setText("");
+                            age.requestFocus();
+                            Toast.makeText(getContext(), "Harap Masukkan Tanggal Lahir", Toast.LENGTH_SHORT).show();
+                        }else{
+                            datapatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,fsdob);
+                        }
+                    }
+                })
+            .setNegativeButton("Batal", null);
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+        Cue.init().with(getContext()).setMessage("Button Tambah Pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
     }
 
     private void refreshList() {
@@ -315,18 +383,7 @@ public class HomeFragment extends Fragment {
                         e.printStackTrace();
                     }
                 } else {
-                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-                    builder.setMessage("Gaagal Mengambil data Patient.");
-                    builder.setTitle("List Patient");
-                    builder.setCancelable(true);
-                    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    android.app.AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
+                    Cue.init().with(getContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
                 }
             }
 
@@ -339,11 +396,14 @@ public class HomeFragment extends Fragment {
 
     public void bindData() {
         if (!(List ==null)){
+            listView.setVisibility(View.VISIBLE);
+            linearLayout.setVisibility(View.GONE);
             //Toast.makeText(getContext(), Integer.toString(i), Toast.LENGTH_SHORT).show();
             dataAdapter = new Adapter_Data_Patient(getContext(),R.layout.list_patient, List);
             listView.setAdapter(dataAdapter);
         }else {
-
+            listView.setVisibility(View.GONE);
+            linearLayout.setVisibility(View.VISIBLE);
         }
     }
 

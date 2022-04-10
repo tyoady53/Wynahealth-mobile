@@ -16,8 +16,8 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
  */
 
 public class UtilsApi {
-    //public static String BASE_URL = "http://192.168.18.26:8000/api/";     //Riviera
-    public static String BASE_URL = "http://172.16.9.149:8000/api/";      //Kantor LC7
+    public static String BASE_URL = "http://192.168.18.26:8000/api/";     //Riviera
+    //public static String BASE_URL = "http://172.16.9.149:8000/api/";      //Kantor LC7
 
     public static BaseApiService getAPI(){
         return RetrofitClient.getClient(BASE_URL).create(BaseApiService.class);

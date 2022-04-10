@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -21,7 +22,10 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.fxn.cue.Cue;
+import com.fxn.cue.enums.Type;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
@@ -44,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     boolean doubleBackToExitPressedOnce = false;
     Local_Data local_data;
     private BaseApiService mApiService,ApiGetMethod;
+    String token,bearer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         local_data  = new Local_Data(getApplicationContext());
         mApiService = UtilsApi.getAPI();
         ApiGetMethod= UtilsApi.getMethod();
+
+        token           = ((GlobalVariable) getApplicationContext()).getToken();
+        bearer          = "Bearer "+token;
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -189,6 +197,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.e("debug", "onFailure: ERROR > " + t.toString());
+                    Cue.init().with(getApplicationContext()).setMessage("Tidak dapat terhubung ke server."+t.toString()).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
                 }
             });
     }
@@ -222,13 +231,67 @@ public class MainActivity extends AppCompatActivity {
             .setPositiveButton("Ya", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
                     local_data.HapusData();
-                    Intent login = new Intent(getApplicationContext(), Login_Activity.class);
-                    login.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(login);
+                    ((GlobalVariable) getApplicationContext()).clearToken();
+                    logout();
                 }
             })
             .setNegativeButton("Tidak",null)
             .show();
+    }
+
+    private void logout() {
+        mApiService.logout(token)
+            .enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        try {
+                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                            if (jsonRESULTS.getString("success").equals("true")){
+                                Intent login = new Intent(getApplicationContext(), Login_Activity.class);
+                                login.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(login);
+                            } else {
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+                                builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                                builder.setTitle("Login Gagal");
+                                builder.setCancelable(true);
+                                builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                        builder.setTitle("Login Gagal");
+                        builder.setCancelable(true);
+                        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        android.app.AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+                    Cue.init().with(getApplicationContext()).setMessage("Tidak dapat terhubung ke server."+t.toString()).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
+                }
+            });
     }
 
     @Override

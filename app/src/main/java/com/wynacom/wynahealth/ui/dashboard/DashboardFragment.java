@@ -1,12 +1,15 @@
 package com.wynacom.wynahealth.ui.dashboard;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,6 +21,8 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.fxn.cue.Cue;
+import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.MainActivity;
@@ -27,6 +32,7 @@ import com.wynacom.wynahealth.adapter.product.adapter_order;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.FragmentDashboardBinding;
+import com.wynacom.wynahealth.transaction.OrderActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -52,6 +58,7 @@ public class DashboardFragment extends Fragment {
     private ArrayList<adapter_order> List;
     ListView listView;
     LinearLayout linearLayout;
+    Button buttonOrder;
 
     private BaseApiService mApiService,ApiGetMethod;
 
@@ -75,7 +82,7 @@ public class DashboardFragment extends Fragment {
         TV_pending      = binding.tvPending;
         TV_failed       = binding.tvFailed;
         TV_expired      = binding.tvExpired;
-
+        buttonOrder     = binding.btnNewOrder;
         listView        = binding.listOrder;
         linearLayout    = binding.linearOrderList;
 
@@ -86,7 +93,18 @@ public class DashboardFragment extends Fragment {
             }
         });
 
+        buttonOrder.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                neworder();
+            }
+        });
         return root;
+    }
+
+    private void neworder() {
+        Intent i = new Intent(getContext(), OrderActivity.class);
+        startActivity(i);
     }
 
     private void getDashboard() {
@@ -139,24 +157,14 @@ public class DashboardFragment extends Fragment {
                         e.printStackTrace();
                     }
                 } else {
-                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-                    builder.setMessage("Gaagal Mengambil data Patient.");
-                    builder.setTitle("List Patient");
-                    builder.setCancelable(true);
-                    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    android.app.AlertDialog alertDialog = builder.create();
-                    alertDialog.show();
+                    Cue.init().with(getContext()).setMessage("Belum Ada transaksi").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "onFailure: ERROR > " + t.toString());
+                Cue.init().with(getContext()).setMessage("Tidak dapat terhubung ke server."+t.toString()).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
             }
         });
     }

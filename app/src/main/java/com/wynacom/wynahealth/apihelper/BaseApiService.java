@@ -34,6 +34,11 @@ public interface BaseApiService {
         @Field("nik") String nik,
         @Field("password_confirmation") String password_confirmation);
 
+    @FormUrlEncoded
+    @POST("patient/logout?")
+    Call<ResponseBody> logout(
+        @Field("token") String token);
+
     @GET("patient/dashboard")
     Call<ResponseBody> getPosts(@Header("Authorization") String token);
 

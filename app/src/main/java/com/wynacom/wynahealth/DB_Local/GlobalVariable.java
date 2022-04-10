@@ -32,4 +32,8 @@ public class GlobalVariable extends Application {
 
         return newDateString;
     }
+
+    public void clearToken() {
+        this.token = "";
+    }
 }
