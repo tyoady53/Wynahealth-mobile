@@ -3,6 +3,7 @@ package com.wynacom.wynahealth.ui.home;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Color;
@@ -25,6 +26,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -62,13 +65,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class HomeFragment extends Fragment {
-
     public static HomeFragment ma;
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
     Local_Data local_data;
     protected Cursor cursor;
-    String id_pelanggan, string_nama, string_umur,string_jk, string_hp, string_ktp, string_kota, string_kodepos,token,bearer;
+    String id_pelanggan, string_nama, string_umur,string_jk, string_hp, string_ktp, string_kota, string_kodepos,token,bearer,string_email;
     //private HomeFragment.MyCustomAdapter dataAdapter = null;
     private Adapter_Data_Patient dataAdapter = null;
     private ArrayList<adapter_patient> List;
@@ -78,6 +80,7 @@ public class HomeFragment extends Fragment {
     LinearLayout linearLayout;
     Button buttonPatient;
     FloatingActionButton fab_home;
+    TextView textView_dataPatientTile;
 
     public static boolean stringname(String Name) {
         return Name.length() > 0;
@@ -118,7 +121,7 @@ public class HomeFragment extends Fragment {
         SQLiteDatabase dbU = local_data.getReadableDatabase();
         cursor = dbU.rawQuery("SELECT * FROM TB_User", null);
         cursor.moveToFirst();
-        if (cursor.getCount()>0){
+        if (cursor.getCount()>0) {
             cursor.moveToPosition(0);
             id_pelanggan    = cursor.getString(0);
             string_nama     = cursor.getString(1);
@@ -128,7 +131,7 @@ public class HomeFragment extends Fragment {
             string_ktp      = cursor.getString(9);
             string_kota     = cursor.getString(5);
             string_kodepos  = cursor.getString(3);
-
+            string_email    = cursor.getString(8);
         }
         token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
         bearer          = "Bearer "+token;
@@ -136,8 +139,6 @@ public class HomeFragment extends Fragment {
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
-
-        listView     = binding.listpatient;
 
         final Button tambahpasien = binding.tambahpasien;
 
@@ -150,9 +151,12 @@ public class HomeFragment extends Fragment {
         final TextView TV_Kota      = binding.tampilKota;
         final TextView TV_kodepos   = binding.tampilKodepos;
 
+        listView        = binding.listpatient;
         linearLayout    = binding.linearPatientList;
         buttonPatient   = binding.btnNewPatient;
         fab_home        = binding.fabHome;
+
+        textView_dataPatientTile = binding.textTitleDataPatient;
 
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -198,7 +202,7 @@ public class HomeFragment extends Fragment {
                 // set item width
                 deleteItem.setWidth(90);
                 // set a icon
-                deleteItem.setIcon(R.drawable.vertor_icon_delete);
+                deleteItem.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.fab_add,null));
                 // add to menu
                 menu.addMenuItem(deleteItem);
             }
@@ -348,9 +352,11 @@ public class HomeFragment extends Fragment {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
-                            JSONArray jsonArray = jsonObject.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
+//                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
+//                            JSONArray jsonArray = jsonObject.getJSONArray("data");
+                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+jsonArray.length()+")");
+                            for (int i = 1; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String nama          = c.getString("name");
                                 String handphone     = c.getString("handphone");
@@ -360,10 +366,13 @@ public class HomeFragment extends Fragment {
                                 String city          = c.getString("city");
                                 String postal_code   = c.getString("postal_code");
                                 String tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
-                                adapter_patient _states = new adapter_patient(nama,handphone,sex,tampiltanggal,nik,city,postal_code);
-                                List.add(_states);
-                                Log.v("ConvertView ListCount", String.valueOf(nama));
-                                bindData();
+                                JSONObject jsonObjectPatient = c.getJSONObject("patient");
+                                String patientMain  = jsonObjectPatient.getString("email");
+
+                                    adapter_patient _states = new adapter_patient(nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i));
+                                    List.add(_states);
+                                    bindData();
+
                             }
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
@@ -386,7 +395,6 @@ public class HomeFragment extends Fragment {
                     Cue.init().with(getContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
                 }
             }
-
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "onFailure: ERROR > " + t.toString());

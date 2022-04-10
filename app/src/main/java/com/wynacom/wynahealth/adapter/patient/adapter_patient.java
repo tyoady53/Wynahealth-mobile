@@ -8,8 +8,9 @@ public class adapter_patient {
     String nik          = null;
     String city         = null;
     String postal_code  = null;
+    String number       = null;
 
-    public adapter_patient(String nama, String handphone, String sex, String dob,String nik, String city, String postal_code) {
+    public adapter_patient(String nama, String handphone, String sex, String dob,String nik, String city, String postal_code,String number) {
         super();
         this.nama       = nama;
         this.handphone  = handphone;
@@ -18,6 +19,7 @@ public class adapter_patient {
         this.nik        = nik;
         this.city       = city;
         this.postal_code= postal_code;
+        this.number     = number;
     }
 
     public String getNama() {
@@ -74,5 +76,13 @@ public class adapter_patient {
 
     public void setPostal(String postal_code) {
         this.postal_code = postal_code;
+    }
+
+    public String getNumber() {
+        return number;
+    }
+
+    public void setNumber(String getnumber) {
+        this.number = getnumber;
     }
 }

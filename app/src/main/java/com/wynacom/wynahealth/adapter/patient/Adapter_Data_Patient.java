@@ -24,7 +24,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
 
     private class ViewHolder
     {
-        TextView Vnama,Vhandphone,Vsex,Vdob,Vnik,Vcity,Vpostal;
+        TextView Vnama,Vhandphone,Vsex,Vdob,Vnik,Vcity,Vpostal,Vnumber;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
             //LayoutInflater vi = (LayoutInflater)convertView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView =  LayoutInflater.from(getContext()).inflate(R.layout.list_patient, parent, false);
 
-            holder = new Adapter_Data_Patient.ViewHolder();
+            holder = new ViewHolder();
             holder.Vnama        = (TextView) convertView.findViewById(R.id.list_patient_name);
             holder.Vhandphone   = (TextView) convertView.findViewById(R.id.list_patient_phone);
             holder.Vsex         = (TextView) convertView.findViewById(R.id.list_patient_sex);
@@ -47,11 +47,16 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
             holder.Vnik         = (TextView) convertView.findViewById(R.id.list_patient_nik);
             holder.Vcity        = (TextView) convertView.findViewById(R.id.list_patient_city);
             holder.Vpostal      = (TextView) convertView.findViewById(R.id.list_patient_post);
+            holder.Vnumber      = (TextView) convertView.findViewById(R.id.list_patient_number);
+
+            //holder.Vnumber.measure(0,0);
+            //holder.Vnumber.getWidth();
+            holder.Vnumber.setHeight(holder.Vnumber.getWidth());
 
             convertView.setTag(holder);
 
         } else {
-            holder = (Adapter_Data_Patient.ViewHolder) convertView.getTag();
+            holder = (ViewHolder) convertView.getTag();
         }
        // for (int i = 0; i < stateList.stream().count(); i++) {
          //   Log.v("ConvertView Adapter [i]", String.valueOf(i));
@@ -64,6 +69,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
             holder.Vnik         .setText(state.getNIK());
             holder.Vcity        .setText(state.getCity());
             holder.Vpostal      .setText(state.getPostal());
+            holder.Vnumber      .setText(state.getNumber());
         Log.v("ConvertView AdapterPos", String.valueOf(stateList.get(position)));
         //}
 //        holder.peta.setOnClickListener(new View.OnClickListener() {

@@ -264,12 +264,13 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/text_title_data_patient"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginStart="@dimen/dp10"
             android:layout_marginTop="@dimen/dp3"
-            android:text="Data Pasien"
-            android:textSize="18dp" />
+            android:text="@string/data_patient"
+            android:textSize="20sp" />
 
         <View
             android:layout_width="match_parent"

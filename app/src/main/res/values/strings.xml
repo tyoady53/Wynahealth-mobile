@@ -24,4 +24,5 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="add_new_patient">Add new patient</string>
     <string name="data_patient_empty">Data patient empty.</string>
+    <string name="data_patient">Data Pasien</string>
 </resources>

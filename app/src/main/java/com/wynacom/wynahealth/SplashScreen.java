@@ -10,11 +10,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.fxn.cue.Cue;
+import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
@@ -68,7 +71,8 @@ public class SplashScreen extends AppCompatActivity {
                 if (cursor.getCount()>0) {
                     email    = cursor.getString(8);
                     password     = cursor.getString(4);
-                    relogin(email,password);
+                    String token = cursor.getString(10);
+                    logout(token);
                 }
                 else {
                     Intent i = new Intent(SplashScreen.this, LandingPage.class);
@@ -77,6 +81,28 @@ public class SplashScreen extends AppCompatActivity {
                 }
             }
         }, SPLASH_TIME_OUT);
+    }
+
+    private void logout(String token) {
+        mApiService.logout(token)
+            .enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        relogin(email,password);
+                    } else {
+                        local_data.HapusData();
+                        System.exit(0);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+                    Cue.init().with(getApplicationContext()).setMessage("Tidak dapat terhubung ke server."+t.toString()).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
+                }
+            });
+        relogin(email,password);
     }
 
     private void relogin(String email,String password) {
