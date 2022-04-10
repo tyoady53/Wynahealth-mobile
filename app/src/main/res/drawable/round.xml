@@ -7,8 +7,8 @@
         android:height="10dp"
         android:width="10dp" />
     <corners
-        android:topRightRadius="@dimen/dp20"
-        android:topLeftRadius="@dimen/dp20"
-        android:bottomLeftRadius="@dimen/dp20"
-        android:bottomRightRadius="@dimen/dp20"/>
+        android:topRightRadius="@dimen/dpHigh"
+        android:topLeftRadius="@dimen/dpHigh"
+        android:bottomLeftRadius="@dimen/dpHigh"
+        android:bottomRightRadius="@dimen/dpHigh"/>
 </shape>

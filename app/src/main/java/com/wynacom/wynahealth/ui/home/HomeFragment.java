@@ -202,7 +202,7 @@ public class HomeFragment extends Fragment {
                 // set item width
                 deleteItem.setWidth(90);
                 // set a icon
-                deleteItem.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.fab_add,null));
+                deleteItem.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.vertor_icon_delete,null));
                 // add to menu
                 menu.addMenuItem(deleteItem);
             }
