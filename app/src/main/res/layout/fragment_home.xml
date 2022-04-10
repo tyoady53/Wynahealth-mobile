@@ -233,46 +233,92 @@
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
-        android:orientation="vertical"
-        android:background="@color/notwhite"
-        android:layout_marginTop="10dp"
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
+        android:background="@color/notwhite"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintVertical_bias="1.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_grey"
+            android:gravity="end">
+
+            <Button
+                android:id="@+id/tambahpasien"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/button_blue"
+                android:padding="10dp"
+                android:text="Tambah Data Pasien"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp10"
+            android:layout_marginTop="@dimen/dp3"
+            android:text="Data Pasien"
+            android:textSize="18dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#ff000000"/>
+
+        <com.baoyz.swipemenulistview.SwipeMenuListView
+            android:id="@+id/listpatient"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/notwhite"/>
+
+        <LinearLayout
+            android:id="@+id/linear_patient_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="@dimen/dp10"
+                android:text="@string/data_patient_empty"
+                android:textSize="@dimen/dp20" />
+
+            <Button
+                android:id="@+id/btn_new_patient"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_new_patient" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <com.github.clans.fab.FloatingActionButton
+        app:fab_colorNormal="@color/light_tosca"
+        app:fab_colorPressed="@color/light_tosca_pressed"
+        android:src="@drawable/vector_icon_plus"
+        android:layout_marginEnd="@dimen/dp20"
+        android:layout_marginBottom="@dimen/dp20"
+        android:id="@+id/fabHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.0">
-        <LinearLayout
-            android:background="@color/light_grey"
-            android:gravity="end"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <Button
-                android:background="@drawable/button_blue"
-                android:textColor="@color/white"
-                android:padding="10dp"
-                android:id="@+id/tambahpasien"
-                android:layout_margin="10dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tambah Data Pasien"/>
-        </LinearLayout>
-        <TextView
-            android:layout_marginLeft="@dimen/dp10"
-            android:layout_marginTop="@dimen/dp3"
-            android:text="Data Pasien"
-            android:textSize="18dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-        <ListView
-            android:background="@color/notwhite"
-            android:id="@+id/listpatient"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        </ListView>
-    </LinearLayout>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <TextView
         android:visibility="gone"
