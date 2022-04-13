@@ -23,6 +23,7 @@
             android:exported="false" />
         <activity
             android:name=".transaction.OrderActivity"
+            android:label="Order"
             android:exported="false" />
         <activity
             android:name=".RegisterActivity"
@@ -37,7 +38,7 @@
             android:theme="@style/Theme.Wynahealth.NoActionBar" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="true"/>
         <activity
             android:name=".SplashScreen"
             android:exported="true"

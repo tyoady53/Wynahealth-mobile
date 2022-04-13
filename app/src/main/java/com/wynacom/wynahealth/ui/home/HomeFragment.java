@@ -3,10 +3,8 @@ package com.wynacom.wynahealth.ui.home;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -175,7 +173,7 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        buttonPatient.setOnClickListener(new View.OnClickListener() {
+        fab_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 tambahdata();
@@ -197,12 +195,11 @@ public class HomeFragment extends Fragment {
                 SwipeMenuItem deleteItem = new SwipeMenuItem(
                     getContext());
                 // set item background
-                deleteItem.setBackground(new ColorDrawable(Color.rgb(0xF9,
-                    0x3F, 0x25)));
+                deleteItem.setBackground(new ColorDrawable(ContextCompat.getColor(getContext(),R.color.dark25)));
                 // set item width
                 deleteItem.setWidth(90);
                 // set a icon
-                deleteItem.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.vertor_icon_delete,null));
+                deleteItem.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.vector_edit,null));
                 // add to menu
                 menu.addMenuItem(deleteItem);
             }
@@ -213,7 +210,7 @@ public class HomeFragment extends Fragment {
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index) {
                     case 0:
-                        Cue.init().with(getContext()).setMessage("Delete Button").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
+                        Cue.init().with(getContext()).setMessage("Edit Button "+position).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.INFO).show();
                         break;
 //                    case 0:
 //                        // open
@@ -340,7 +337,7 @@ public class HomeFragment extends Fragment {
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
-        Cue.init().with(getContext()).setMessage("Button Tambah Pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+        //Cue.init().with(getContext()).setMessage("Button Tambah Pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
     }
 
     private void refreshList() {
@@ -356,7 +353,7 @@ public class HomeFragment extends Fragment {
 //                            JSONArray jsonArray = jsonObject.getJSONArray("data");
                             JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+jsonArray.length()+")");
-                            for (int i = 1; i < jsonArray.length(); i++) {
+                            for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String nama          = c.getString("name");
                                 String handphone     = c.getString("handphone");
@@ -369,7 +366,7 @@ public class HomeFragment extends Fragment {
                                 JSONObject jsonObjectPatient = c.getJSONObject("patient");
                                 String patientMain  = jsonObjectPatient.getString("email");
 
-                                    adapter_patient _states = new adapter_patient(nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i));
+                                    adapter_patient _states = new adapter_patient(nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1));
                                     List.add(_states);
                                     bindData();
 

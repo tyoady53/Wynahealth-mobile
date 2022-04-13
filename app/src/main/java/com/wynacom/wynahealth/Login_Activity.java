@@ -1,7 +1,5 @@
 package com.wynacom.wynahealth;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -18,11 +16,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -34,7 +34,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class Login_Activity extends AppCompatActivity {
-
+    GlobalVariable globalVariable;
     protected Cursor cursor;
     EditText input,password;
     Button bt_login,bt_register;
@@ -63,7 +63,7 @@ public class Login_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        globalVariable = (GlobalVariable)getApplicationContext();
         bt_login    = findViewById(R.id.btn_login);
         bt_register = findViewById(R.id.btn_regis);
         input       = findViewById(R.id.username);
@@ -128,6 +128,7 @@ public class Login_Activity extends AppCompatActivity {
 
                                     String token = jsonRESULTS.getString("token");
                                     local_data.SimpanData(nama,handphone,postal_code,Passwordsave,city,sex,age,email,nik,token);
+                                    globalVariable.setToken(token);
                                     cekDB();
                                 } else {
                                     nDialog.dismiss();

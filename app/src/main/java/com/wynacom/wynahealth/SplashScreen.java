@@ -92,7 +92,7 @@ public class SplashScreen extends AppCompatActivity {
                         relogin(email,password);
                     } else {
                         local_data.HapusData();
-                        System.exit(0);
+                        landingpage();
                     }
                 }
 
@@ -102,7 +102,7 @@ public class SplashScreen extends AppCompatActivity {
                     Cue.init().with(getApplicationContext()).setMessage("Tidak dapat terhubung ke server."+t.toString()).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
                 }
             });
-        relogin(email,password);
+        //relogin(email,password);
     }
 
     private void relogin(String email,String password) {
@@ -175,10 +175,7 @@ public class SplashScreen extends AppCompatActivity {
             cursor.moveToLast();
             String lasttoken = cursor.getString(10);
             if(lasttoken.equals(token)){
-                Intent i = new Intent(SplashScreen.this, MainActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                startActivity(i);
-                finish();
+                gotomenu();
             }else{
                 System.exit(0);
             }
@@ -211,16 +208,18 @@ public class SplashScreen extends AppCompatActivity {
     };
 
     private void landingpage() {
-        stopRepeating();
+        //stopRepeating();
         Intent i = new Intent(SplashScreen.this, LandingPage.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         startActivity(i);
+        finish();
     }
 
     private void gotomenu() {
-        stopRepeating();
+        //stopRepeating();
         Intent i = new Intent(SplashScreen.this, MainActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         startActivity(i);
+        finish();
     }
 }
