@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,12 +22,14 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
+import com.github.clans.fab.FloatingActionButton;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
-import com.wynacom.wynahealth.MainActivity;
-import com.wynacom.wynahealth.adapter.patient.adapter_patient;
-import com.wynacom.wynahealth.adapter.product.Adapter_Data_Order;
-import com.wynacom.wynahealth.adapter.product.adapter_order;
+import com.wynacom.wynahealth.R;
+import com.wynacom.wynahealth.adapter.order.Adapter_Data_Order;
+import com.wynacom.wynahealth.adapter.order.adapter_order;
+import com.wynacom.wynahealth.adapter.product.Adapter_Data_Product;
+import com.wynacom.wynahealth.adapter.product.adapter_product;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.FragmentDashboardBinding;
@@ -54,11 +55,17 @@ public class DashboardFragment extends Fragment {
     protected Cursor cursor;
     String string_pending, string_success,string_failed, string_expired, string_ktp, string_kota, string_kodepos,token,bearer;
     TextView TV_success,TV_pending,TV_failed,TV_expired;
-    private Adapter_Data_Order dataAdapter = null;
-    private ArrayList<adapter_order> List;
+
+    private Adapter_Data_Product dataAdapter = null;
+    private ArrayList<adapter_product> List;
+
+    private Adapter_Data_Order dataOrder = null;
+    private ArrayList<adapter_order> orderList;
+
     ListView listView;
     LinearLayout linearLayout;
     Button buttonOrder;
+    FloatingActionButton fab_add;
 
     private BaseApiService mApiService,ApiGetMethod;
 
@@ -67,7 +74,8 @@ public class DashboardFragment extends Fragment {
         mApiService = UtilsApi.getAPI();
         ApiGetMethod= UtilsApi.getMethod();
         local_data  = new Local_Data(getContext());
-        List = new ArrayList<adapter_order>();
+        List        = new ArrayList<adapter_product>();
+        orderList   = new ArrayList<adapter_order>();
 
         token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
         bearer          = "Bearer "+token;
@@ -86,10 +94,20 @@ public class DashboardFragment extends Fragment {
         listView        = binding.listOrder;
         linearLayout    = binding.linearOrderList;
 
+        fab_add         = binding.fabOrder;
+
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 getDashboard();
+                refreshList();
+            }
+        });
+
+        fab_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                neworder();
             }
         });
 
@@ -100,6 +118,70 @@ public class DashboardFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    private void refreshList() {
+        Call<ResponseBody> listCall = ApiGetMethod.getInvoices(bearer);
+        listCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                        if (jsonRESULTS.getString("success").equals("true")){
+                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
+                            JSONArray jsonArray = jsonObject.getJSONArray("data");
+//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject c = jsonArray.getJSONObject(i);
+                                String id            = c.getString("id");
+                                String nama          = c.getString("name");
+                                String invoice       = c.getString("invoice");
+                                String phone         = c.getString("phone");
+                                String address       = c.getString("address");
+                                String status        = c.getString("status");
+                                String grand_total   = c.getString("grand_total");
+
+                                adapter_order _states = new adapter_order(id,nama,invoice,phone,address,status,grand_total);
+                                orderList.add(_states);
+                                bindData();
+
+                            }
+                        } else {
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                            builder.setMessage("Data Patient Kosong.");
+                            builder.setTitle("List Patient");
+                            builder.setCancelable(true);
+                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Cue.init().with(getContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "onFailure: ERROR > " + t.toString());
+            }
+        });
+    }
+
+    private void bindData() {
+        if (!(orderList ==null)){
+            dataOrder = new Adapter_Data_Order(getContext(), R.layout.list_order, orderList);
+            listView.setAdapter(dataOrder);
+        }else {
+            listView.setVisibility(View.GONE);
+        }
     }
 
     private void neworder() {

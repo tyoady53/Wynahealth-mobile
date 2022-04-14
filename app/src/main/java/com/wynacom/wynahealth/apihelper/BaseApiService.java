@@ -66,7 +66,7 @@ public interface BaseApiService {
     Call<ResponseBody> getcategories(@Header("Authorization") String token);
 
     @GET("web/products")
-    Call<ResponseBody> getproducts(@Header("Authorization") String token);
+    Call<ResponseBody> getProducts(@Header("Authorization") String token);
 
     @GET("web/carts")
     Call<ResponseBody> getcarts(@Header("Authorization") String token);

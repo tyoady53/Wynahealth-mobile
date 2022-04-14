@@ -1,6 +1,7 @@
 package com.wynacom.wynahealth.adapter.patient;
 
 public class adapter_patient {
+    String id           = null;
     String nama         = null;
     String handphone    = null;
     String sex          = null;
@@ -10,8 +11,9 @@ public class adapter_patient {
     String postal_code  = null;
     String number       = null;
 
-    public adapter_patient(String nama, String handphone, String sex, String dob,String nik, String city, String postal_code,String number) {
+    public adapter_patient(String ID,String nama, String handphone, String sex, String dob,String nik, String city, String postal_code,String number) {
         super();
+        this.id         = ID;
         this.nama       = nama;
         this.handphone  = handphone;
         this.sex        = sex;
@@ -20,6 +22,14 @@ public class adapter_patient {
         this.city       = city;
         this.postal_code= postal_code;
         this.number     = number;
+    }
+
+    public String getID() {
+        return id;
+    }
+
+    public void setID(String ID) {
+        this.id = ID;
     }
 
     public String getNama() {

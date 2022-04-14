@@ -210,7 +210,9 @@ public class HomeFragment extends Fragment {
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index) {
                     case 0:
-                        Cue.init().with(getContext()).setMessage("Edit Button "+position).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.INFO).show();
+                        adapter_patient state = List.get(position);
+                        String id=state.getID();
+                        Cue.init().with(getContext()).setMessage("Edit Button "+id).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.INFO).show();
                         break;
 //                    case 0:
 //                        // open
@@ -349,12 +351,13 @@ public class HomeFragment extends Fragment {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-//                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
-//                            JSONArray jsonArray = jsonObject.getJSONArray("data");
-                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
+                            JSONArray jsonArray = jsonObject.getJSONArray("data");
+//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+jsonArray.length()+")");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
+                                String id            = c.getString("id");
                                 String nama          = c.getString("name");
                                 String handphone     = c.getString("handphone");
                                 String sex           = c.getString("sex");
@@ -363,10 +366,10 @@ public class HomeFragment extends Fragment {
                                 String city          = c.getString("city");
                                 String postal_code   = c.getString("postal_code");
                                 String tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
-                                JSONObject jsonObjectPatient = c.getJSONObject("patient");
-                                String patientMain  = jsonObjectPatient.getString("email");
+//                                JSONObject jsonObjectPatient = c.getJSONObject("patient");
+//                                String patientMain  = jsonObjectPatient.getString("email");
 
-                                    adapter_patient _states = new adapter_patient(nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1));
+                                    adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1));
                                     List.add(_states);
                                     bindData();
 
@@ -421,8 +424,10 @@ public class HomeFragment extends Fragment {
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if (jsonRESULTS.getString("success").equals("true")){
-                                dataAdapter.clear();
-                                listView.setAdapter(null);
+                                if(dataAdapter.getCount()>0)
+                                dataAdapter.clear();{
+                                    listView.setAdapter(null);
+                                }
                                 Toast.makeText(getContext(),"Add data success.", Toast.LENGTH_SHORT).show();
                                 refreshList();
                             } else {
