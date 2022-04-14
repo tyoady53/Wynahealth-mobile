@@ -1,6 +1,9 @@
 package com.wynacom.wynahealth.transaction;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -23,6 +26,7 @@ import com.anton46.stepsview.StepsView;
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
+import com.wynacom.wynahealth.OrderQRActivity;
 import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.adapter.patient.Adapter_Data_Patient;
 import com.wynacom.wynahealth.adapter.patient.adapter_patient;
@@ -52,7 +56,7 @@ public class OrderActivity extends AppCompatActivity {
     StepsView stepsView;
     //final String[] descriptionData = {"Pilih Pasien & Lokasi","Pilih Pemeriksaan","Konfirmasi"};
     final String[] descriptionData = {"","",""};
-    int currentState=0;
+    int currentState=0;String strView = "";
 
     private BaseApiService mApiService,ApiGetMethod;
     private Adapter_Data_Patient dataAdapter = null;
@@ -63,7 +67,7 @@ public class OrderActivity extends AppCompatActivity {
 
     TextView TV_date,TV_time,TV_doctor,TV_address,TV_product;
     Button next,prev,process;
-    String token,bearer,strFixedPosition,patient_id;
+    String token,bearer,strFixedPosition,patient_id,snap;
     Spinner spinner,Sp_order_city,Sp_order_time;
     EditText ET_order_date,ET_order_doctor,ET_order_address;
     LinearLayout lineDataPatient,step2,step3;
@@ -249,13 +253,83 @@ public class OrderActivity extends AppCompatActivity {
                 new DatePickerDialog(OrderActivity.this,date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
             }
         });
+
+        process.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendData();
+            }
+        });
+    }
+
+    private void sendData() {
+        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),ET_order_address.getText().toString(),"100000",ET_order_doctor.getText().toString())
+            .enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        try {
+                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                            if (jsonRESULTS.getString("success").equals("true")){
+                                JSONObject subObject = jsonRESULTS.getJSONObject("data");
+
+                                snap         = subObject.getString("snap_token");
+                                Intent intent = new Intent(OrderActivity.this, OrderQRActivity.class);
+                                intent.putExtra("emailKey", snap);
+                                startActivity(intent);
+                            } else {
+                                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                                builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                                builder.setTitle("Login Gagal");
+                                builder.setCancelable(true);
+                                builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                        builder.setTitle("Login Gagal");
+                        builder.setCancelable(true);
+                        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+                }
+            });
     }
 
     private void setdatalocal() {
+        GlobalVariable myAppClass = (GlobalVariable)getApplicationContext();
         TV_date.setText("Tanggal Datang : "+ET_order_date.getText());
         TV_time.setText("Waktu DDatang : "+Sp_order_time.getSelectedItem().toString());
         TV_doctor.setText("Dokter : "+ET_order_doctor.getText());
         TV_address.setText("Alamat Pasien : "+ET_order_address.getText());
+        List<String> globalArrayList = myAppClass.getGlobalArrayList();
+        for (int i = 0; i < globalArrayList.size(); i++) {
+            strView += globalArrayList.get(i)+"\n";
+        }
+        TV_product.setText(strView);
     }
 
     private void getProduct() {

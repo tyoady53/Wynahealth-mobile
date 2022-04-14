@@ -5,10 +5,21 @@ import android.app.Application;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 public class GlobalVariable extends Application {
     private String token;
     Date d;
+    private List<String> globalArrayList;
+
+    public List<String> getGlobalArrayList() {
+        return globalArrayList;
+    }
+
+    public void setGlobalArrayList(List<String> globalArrayList) {
+        this.globalArrayList = globalArrayList;
+    }
+
     public String getToken(){
         return token;
     }

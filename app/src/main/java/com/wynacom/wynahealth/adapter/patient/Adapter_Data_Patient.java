@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
+import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.R;
 
 import java.util.ArrayList;
@@ -33,10 +34,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
 
         ViewHolder holder = null;
 
-//        Log.v("ConvertView AdapterCnt", String.valueOf(stateList.stream().count()));
-
         if (convertView == null) {
-            //LayoutInflater vi = (LayoutInflater)convertView.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             convertView =  LayoutInflater.from(getContext()).inflate(R.layout.list_patient, parent, false);
 
             holder = new ViewHolder();
@@ -49,8 +47,6 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
             holder.Vpostal      = (TextView) convertView.findViewById(R.id.list_patient_post);
             holder.Vnumber      = (TextView) convertView.findViewById(R.id.list_patient_number);
 
-            //holder.Vnumber.measure(0,0);
-            //holder.Vnumber.getWidth();
             holder.Vnumber.setHeight(holder.Vnumber.getWidth());
 
             convertView.setTag(holder);
@@ -58,8 +54,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-       // for (int i = 0; i < stateList.stream().count(); i++) {
-         //   Log.v("ConvertView Adapter [i]", String.valueOf(i));
+
             final adapter_patient state = stateList.get(position);
 
             holder.Vnama        .setText(state.getNama());
@@ -71,18 +66,6 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
             holder.Vpostal      .setText(state.getPostal());
             holder.Vnumber      .setText(state.getNumber());
         Log.v("ConvertView AdapterPos", String.valueOf(stateList.get(position)));
-        //}
-//        holder.peta.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Double lat = Double.valueOf(state.getLat()); Double lon = Double.valueOf(state.getLon());
-//                String gmmIntentUri = "http://maps.google.com/maps?q=loc:" + lat + "," + lon;
-//                Intent mapIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(gmmIntentUri));
-//                mapIntent.setPackage("com.google.android.apps.maps");
-//                startActivity(mapIntent);
-//                //Toast.makeText(ListKejadianActivity.this, "Clicked on : " + state.getLat() + ", " + state.getLon(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
 
         return convertView;
     }

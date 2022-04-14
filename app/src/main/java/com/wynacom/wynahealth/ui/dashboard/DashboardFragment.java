@@ -9,15 +9,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.fxn.cue.Cue;
@@ -28,6 +28,8 @@ import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.adapter.order.Adapter_Data_Order;
 import com.wynacom.wynahealth.adapter.order.adapter_order;
+import com.wynacom.wynahealth.adapter.patient.Adapter_Data_Patient;
+import com.wynacom.wynahealth.adapter.patient.adapter_patient;
 import com.wynacom.wynahealth.adapter.product.Adapter_Data_Product;
 import com.wynacom.wynahealth.adapter.product.adapter_product;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
@@ -62,6 +64,9 @@ public class DashboardFragment extends Fragment {
     private Adapter_Data_Order dataOrder = null;
     private ArrayList<adapter_order> orderList;
 
+    private Adapter_Data_Patient dataPatient = null;
+    private ArrayList<adapter_patient> patientList;
+
     ListView listView;
     LinearLayout linearLayout;
     Button buttonOrder;
@@ -76,6 +81,7 @@ public class DashboardFragment extends Fragment {
         local_data  = new Local_Data(getContext());
         List        = new ArrayList<adapter_product>();
         orderList   = new ArrayList<adapter_order>();
+        patientList = new ArrayList<adapter_patient>();
 
         token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
         bearer          = "Bearer "+token;
@@ -96,13 +102,16 @@ public class DashboardFragment extends Fragment {
 
         fab_add         = binding.fabOrder;
 
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onChanged(@Nullable String s) {
-                getDashboard();
-                refreshList();
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                adapter_product state = List.get(position);
+                String ids=state.getID();
+                Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
             }
         });
+        getDashboard();
+        refreshList();
 
         fab_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -145,7 +154,6 @@ public class DashboardFragment extends Fragment {
                                 adapter_order _states = new adapter_order(id,nama,invoice,phone,address,status,grand_total);
                                 orderList.add(_states);
                                 bindData();
-
                             }
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());

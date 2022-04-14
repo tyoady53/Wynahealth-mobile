@@ -20,6 +20,7 @@
 
     <!--Button for creating a QR code-->
     <EditText
+        android:editable="false"
         android:id="@+id/idEdt"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -31,6 +32,7 @@
         tools:layout_editor_absoluteY="363dp" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/idBtnGenerateQR"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

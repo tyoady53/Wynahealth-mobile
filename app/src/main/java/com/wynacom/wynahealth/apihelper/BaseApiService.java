@@ -70,4 +70,16 @@ public interface BaseApiService {
 
     @GET("web/carts")
     Call<ResponseBody> getcarts(@Header("Authorization") String token);
+
+    @FormUrlEncoded
+    @POST("web/checkout?")
+    Call<ResponseBody> checkout(
+        @Field("token") String token,
+        @Field("datapatient_id") String datapatient_id,
+        @Field("ol_company_id") String ol_company_id,
+        @Field("name") String name,
+        @Field("phone") String phone,
+        @Field("address") String address,
+        @Field("grand_total") String grand_total,
+        @Field("doctor") String doctor);
 }

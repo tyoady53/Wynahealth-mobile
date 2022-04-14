@@ -320,6 +320,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <TextView
+                        android:visibility="gone"
                         android:id="@+id/order_show_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
