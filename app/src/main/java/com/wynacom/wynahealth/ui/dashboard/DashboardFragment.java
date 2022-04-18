@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,10 +68,13 @@ public class DashboardFragment extends Fragment {
     private Adapter_Data_Patient dataPatient = null;
     private ArrayList<adapter_patient> patientList;
 
+    int arrayCount = 0;
     ListView listView;
-    LinearLayout linearLayout;
+    LinearLayout linearLayout,linearInfo;
     Button buttonOrder;
     FloatingActionButton fab_add;
+    double cardWidth = 0;
+    ProgressBar progress;
 
     private BaseApiService mApiService,ApiGetMethod;
 
@@ -99,8 +103,12 @@ public class DashboardFragment extends Fragment {
         buttonOrder     = binding.btnNewOrder;
         listView        = binding.listOrder;
         linearLayout    = binding.linearOrderList;
+        linearInfo      = binding.listPatientNumber;
 
         fab_add         = binding.fabOrder;
+
+        progress        = binding.progressCircular;
+        listView.setVisibility(View.GONE);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -141,19 +149,24 @@ public class DashboardFragment extends Fragment {
                             JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
 //                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject c = jsonArray.getJSONObject(i);
-                                String id            = c.getString("id");
-                                String nama          = c.getString("name");
-                                String invoice       = c.getString("invoice");
-                                String phone         = c.getString("phone");
-                                String address       = c.getString("address");
-                                String status        = c.getString("status");
-                                String grand_total   = c.getString("grand_total");
+                            arrayCount = jsonArray.length();
+                            Toast.makeText(getContext(), String.valueOf(arrayCount), Toast.LENGTH_SHORT).show();
+                            if(arrayCount>0){
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject c = jsonArray.getJSONObject(i);
+                                    String id            = c.getString("id");
+                                    String nama          = c.getString("name");
+                                    String invoice       = c.getString("invoice");
+                                    String phone         = c.getString("phone");
+                                    String address       = c.getString("address");
+                                    String status        = c.getString("status");
+                                    String grand_total   = c.getString("grand_total");
 
-                                adapter_order _states = new adapter_order(id,nama,invoice,phone,address,status,grand_total);
-                                orderList.add(_states);
-                                bindData();
+                                    adapter_order _states = new adapter_order(id,nama,invoice,phone,address,status,grand_total);
+                                    orderList.add(_states);
+                                    progress.setVisibility(View.GONE);
+                                    bindData();
+                                }
                             }
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
@@ -184,11 +197,21 @@ public class DashboardFragment extends Fragment {
     }
 
     private void bindData() {
-        if (!(orderList ==null)){
+        String getReturn = ((GlobalVariable) getContext().getApplicationContext()).getWidth(getActivity());
+        int height = Integer.parseInt(getReturn);
+        ViewGroup.LayoutParams params = linearInfo.getLayoutParams();
+        params.height = height;
+        linearInfo.setLayoutParams(params);
+        if (arrayCount != 0 && arrayCount > 0){
+            progress.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            linearInfo.setVisibility(View.VISIBLE);
+            linearLayout.setVisibility(View.GONE);
             dataOrder = new Adapter_Data_Order(getContext(), R.layout.list_order, orderList);
             listView.setAdapter(dataOrder);
-        }else {
-            listView.setVisibility(View.GONE);
+        }else if (arrayCount == 0){
+            linearInfo.setVisibility(View.VISIBLE);
+            linearLayout.setVisibility(View.VISIBLE);
         }
     }
 
@@ -226,6 +249,7 @@ public class DashboardFragment extends Fragment {
                             }else {
                                 listView.setVisibility(View.GONE);
                                 linearLayout.setVisibility(View.VISIBLE);
+                                progress.setVisibility(View.GONE);
                             }
                             //Toast.makeText(getContext(), "Success : "+content, Toast.LENGTH_SHORT).show();
                         } else {

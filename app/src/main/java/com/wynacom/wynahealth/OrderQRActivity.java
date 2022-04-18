@@ -1,6 +1,7 @@
 package com.wynacom.wynahealth;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -195,5 +196,13 @@ public class OrderQRActivity extends AppCompatActivity {
             // exception handling.
             Log.e("Tag", e.toString());
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        Intent i = new Intent(OrderQRActivity.this, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        startActivity(i);
     }
 }

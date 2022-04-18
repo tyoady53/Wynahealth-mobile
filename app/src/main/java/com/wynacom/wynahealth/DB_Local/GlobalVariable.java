@@ -1,6 +1,9 @@
 package com.wynacom.wynahealth.DB_Local;
 
+import android.app.Activity;
 import android.app.Application;
+import android.util.DisplayMetrics;
+import android.widget.ProgressBar;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -11,6 +14,7 @@ public class GlobalVariable extends Application {
     private String token;
     Date d;
     private List<String> globalArrayList;
+    double cardWidth = 0;
 
     public List<String> getGlobalArrayList() {
         return globalArrayList;
@@ -46,5 +50,18 @@ public class GlobalVariable extends Application {
 
     public void clearToken() {
         this.token = "";
+    }
+
+    public String getWidth(Activity context){
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        context.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        double width = displayMetrics.widthPixels;
+        cardWidth       = 0.8*width;
+
+        double x = 0.625*(Double.parseDouble(String.valueOf(cardWidth)));
+        int height = (int)x;
+        String retHeight = String.valueOf(height);
+
+        return retHeight;
     }
 }

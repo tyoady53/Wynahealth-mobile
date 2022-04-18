@@ -17,6 +17,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
@@ -75,10 +77,13 @@ public class HomeFragment extends Fragment {
     SwipeMenuListView listView;
     private BaseApiService mApiService,ApiGetMethod;
     ArrayList<String> names = new ArrayList<String>();
-    LinearLayout linearLayout;
+    LinearLayout linearLayout,linearInfo,linearList,linearCard;
+    CardView cardInfo;
     Button buttonPatient;
     FloatingActionButton fab_home;
     TextView textView_dataPatientTile;
+    double cardWidth = 0;
+    ProgressBar progress;
 
     public static boolean stringname(String Name) {
         return Name.length() > 0;
@@ -115,6 +120,11 @@ public class HomeFragment extends Fragment {
         local_data  = new Local_Data(getContext());
         List = new ArrayList<adapter_patient>();
         ma = this;
+
+//        progress = new ProgressBar(getContext());
+////        progress.setCanc(false); // disable dismiss by tapping outside of the dialog
+////        progress.show();
+//        progress.setVisibility(View.VISIBLE);
 
         SQLiteDatabase dbU = local_data.getReadableDatabase();
         cursor = dbU.rawQuery("SELECT * FROM TB_User", null);
@@ -153,6 +163,14 @@ public class HomeFragment extends Fragment {
         linearLayout    = binding.linearPatientList;
         buttonPatient   = binding.btnNewPatient;
         fab_home        = binding.fabHome;
+        linearInfo      = binding.linearInformation;
+        cardInfo        = binding.cardViewInfo;
+        linearList      = binding.linearLayout;
+        linearCard      = binding.relLayout;
+
+        progress        = binding.progressCircular;
+        linearCard.setVisibility(View.GONE);
+        listView.setVisibility(View.GONE);
 
         textView_dataPatientTile = binding.textTitleDataPatient;
 
@@ -352,9 +370,10 @@ public class HomeFragment extends Fragment {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
                             JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
+                            String total = jsonObject.getString("total");
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
 //                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
-                            textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+jsonArray.length()+")");
+
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");
@@ -368,12 +387,10 @@ public class HomeFragment extends Fragment {
                                 String tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
 //                                JSONObject jsonObjectPatient = c.getJSONObject("patient");
 //                                String patientMain  = jsonObjectPatient.getString("email");
-
                                     adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1));
                                     List.add(_states);
                                     bindData();
-
-                            }
+                            }textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+total+")");
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");
@@ -403,9 +420,19 @@ public class HomeFragment extends Fragment {
     }
 
     public void bindData() {
+        String getReturn = ((GlobalVariable) getContext().getApplicationContext()).getWidth(getActivity());
+        int height = Integer.parseInt(getReturn);
+        ViewGroup.LayoutParams params = linearInfo.getLayoutParams();
+        params.height = height;
+
+
+        linearInfo.setLayoutParams(params);
+        //Toast.makeText(getContext(), "Width = "+String.valueOf(cardWidth)+"\nHeight = "+String.valueOf(height), Toast.LENGTH_SHORT).show();
         if (!(List ==null)){
+            linearCard.setVisibility(View.VISIBLE);
             listView.setVisibility(View.VISIBLE);
             linearLayout.setVisibility(View.GONE);
+            textView_dataPatientTile.setText(R.string.data_patient);
             //Toast.makeText(getContext(), Integer.toString(i), Toast.LENGTH_SHORT).show();
             dataAdapter = new Adapter_Data_Patient(getContext(),R.layout.list_patient, List);
             listView.setAdapter(dataAdapter);
@@ -413,6 +440,7 @@ public class HomeFragment extends Fragment {
             listView.setVisibility(View.GONE);
             linearLayout.setVisibility(View.VISIBLE);
         }
+        progress.setVisibility(View.GONE);
     }
 
     private void datapatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob) {

@@ -22,10 +22,12 @@
             android:layout_weight="8"
             android:orientation="vertical">
             <androidx.cardview.widget.CardView
+                app:cardCornerRadius="@dimen/dp10"
                 android:alpha="0.7"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
+                    android:padding="@dimen/dp10"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -76,11 +78,13 @@
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
             <androidx.cardview.widget.CardView
+                app:cardCornerRadius="@dimen/dp10"
                 android:alpha="0.7"
                 android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <LinearLayout
+                    android:padding="@dimen/dp10"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
@@ -94,8 +98,6 @@
                         <Spinner
                             android:id="@+id/regis_title"
                             android:textSize="@dimen/MoreTextSize"
-                            android:maxLines="1"
-                            android:hint="Title"
                             android:layout_height="wrap_content"
                             android:layout_width="match_parent">
                         </Spinner>
@@ -123,7 +125,6 @@
                         <Spinner
                             android:id="@+id/regis_jeniskelamin"
                             android:textSize="@dimen/MoreTextSize"
-                            android:maxLines="1"
                             android:hint="Jenis Kelamin"
                             android:layout_height="wrap_content"
                             android:layout_width="match_parent">
@@ -205,6 +206,7 @@
             </androidx.cardview.widget.CardView>
 
             <LinearLayout
+                android:layout_marginTop="5dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <CheckBox

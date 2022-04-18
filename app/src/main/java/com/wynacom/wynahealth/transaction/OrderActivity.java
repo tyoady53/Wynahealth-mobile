@@ -159,29 +159,33 @@ public class OrderActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(currentState<(descriptionData.length-1)){
-                    currentState = currentState+1;
-                    stepsView.setCompletedPosition(currentState).drawView();
+                if(!spinner.getSelectedItem().equals("Pilih")){
+                    if(currentState<(descriptionData.length-1)){
+                        currentState = currentState+1;
+                        stepsView.setCompletedPosition(currentState).drawView();
+                    }else{
+                        next.setVisibility(View.GONE);
+                    }
+                    if(currentState>0){
+                        prev.setVisibility(View.VISIBLE);
+                    }
+                    if(currentState==(descriptionData.length-1)){
+                        next.setVisibility(View.GONE);
+                    }
+                    if(currentState==1){
+                        step1.setVisibility(View.GONE);
+                        step2.setVisibility(View.VISIBLE);
+                        step3.setVisibility(View.GONE);
+                    }
+                    else if(currentState==2){
+                        step1.setVisibility(View.GONE);
+                        step2.setVisibility(View.GONE);
+                        process.setVisibility(View.VISIBLE);
+                        step3.setVisibility(View.VISIBLE);
+                        setdatalocal();
+                    }
                 }else{
-                    next.setVisibility(View.GONE);
-                }
-                if(currentState>0){
-                    prev.setVisibility(View.VISIBLE);
-                }
-                if(currentState==(descriptionData.length-1)){
-                    next.setVisibility(View.GONE);
-                }
-                if(currentState==1){
-                    step1.setVisibility(View.GONE);
-                    step2.setVisibility(View.VISIBLE);
-                    step3.setVisibility(View.GONE);
-                }
-                else if(currentState==2){
-                    step1.setVisibility(View.GONE);
-                    step2.setVisibility(View.GONE);
-                    process.setVisibility(View.VISIBLE);
-                    step3.setVisibility(View.VISIBLE);
-                    setdatalocal();
+                    Toast.makeText(getApplicationContext(),"Silahkan Pilih Pasien",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -226,7 +230,6 @@ public class OrderActivity extends AppCompatActivity {
                     adapter_patient state = List.get(Integer.parseInt(strFixedPosition));
                     patient_id =state.getID();
                     Toast.makeText(getApplicationContext(), "Selected Spinner "+String.valueOf(patient_id), Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(getApplicationContext(), "Selected index number "+String.valueOf(fixed_index), Toast.LENGTH_SHORT).show();
                 }
 
             }

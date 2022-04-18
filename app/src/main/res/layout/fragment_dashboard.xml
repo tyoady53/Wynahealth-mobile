@@ -7,6 +7,8 @@
     tools:context=".ui.dashboard.DashboardFragment">
 
     <androidx.cardview.widget.CardView
+        app:cardCornerRadius="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp10"
         android:id="@+id/cardViewDashboard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -19,6 +21,7 @@
         app:layout_constraintWidth_percent="0.8">
 
         <LinearLayout
+            android:id="@+id/list_patient_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -204,8 +207,7 @@
             android:id="@+id/linear_order_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal"
-            android:visibility="gone">
+            android:gravity="center_horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -222,6 +224,16 @@
         </LinearLayout>
     </LinearLayout>
 
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.github.clans.fab.FloatingActionButton
         app:fab_colorNormal="@color/light_tosca"
         app:fab_colorPressed="@color/light_tosca_pressed"
@@ -229,6 +241,8 @@
         android:id="@+id/fab_order"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/dp20"
+        android:layout_marginBottom="@dimen/dp20"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
