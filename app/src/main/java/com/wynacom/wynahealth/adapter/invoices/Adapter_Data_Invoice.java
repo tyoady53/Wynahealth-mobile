@@ -1,4 +1,4 @@
-package com.wynacom.wynahealth.adapter.order;
+package com.wynacom.wynahealth.adapter.invoices;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -15,9 +15,9 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Locale;
 
-public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
-    private final ArrayList<adapter_order> stateList;
-    public Adapter_Data_Order(@NonNull Context context, int list_patient, ArrayList<adapter_order> list) {
+public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
+    private final ArrayList<adapter_invoice> stateList;
+    public Adapter_Data_Invoice(@NonNull Context context, int list_patient, ArrayList<adapter_invoice> list) {
         super(context, list_patient,list);
         this.stateList = new ArrayList<>();
         this.stateList.addAll(list);
@@ -43,16 +43,17 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
         holder.Vaddress      = (TextView) convertView.findViewById(R.id.order_address);
         holder.Vtotal        = (TextView) convertView.findViewById(R.id.order_total);
 
-        final adapter_order state = stateList.get(position);
+        final adapter_invoice state = stateList.get(position);
 
         holder.name         .setText(state.getNames());
         holder.Vstatus      .setText(state.getStatus());
         holder.Vinvno       .setText(state.getInvoice());
         holder.Vphone       .setText(state.getTelephone());
         holder.Vaddress     .setText(state.getAddress());
-        NumberFormat nf = NumberFormat.getInstance(Locale.ITALY);
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
         String c = nf.format(Integer.parseInt(state.getTotal()));
-        holder.Vtotal       .setText("Total : Rp. "+c);
+        holder.Vtotal       .setText(c);
 
         return convertView;
     }

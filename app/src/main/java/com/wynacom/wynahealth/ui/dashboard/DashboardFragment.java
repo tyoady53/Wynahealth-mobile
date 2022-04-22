@@ -26,9 +26,10 @@ import com.fxn.cue.enums.Type;
 import com.github.clans.fab.FloatingActionButton;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
+import com.wynacom.wynahealth.OrderQRActivity;
 import com.wynacom.wynahealth.R;
-import com.wynacom.wynahealth.adapter.order.Adapter_Data_Order;
-import com.wynacom.wynahealth.adapter.order.adapter_order;
+import com.wynacom.wynahealth.adapter.invoices.Adapter_Data_Invoice;
+import com.wynacom.wynahealth.adapter.invoices.adapter_invoice;
 import com.wynacom.wynahealth.adapter.patient.Adapter_Data_Patient;
 import com.wynacom.wynahealth.adapter.patient.adapter_patient;
 import com.wynacom.wynahealth.adapter.product.Adapter_Data_Product;
@@ -62,8 +63,8 @@ public class DashboardFragment extends Fragment {
     private Adapter_Data_Product dataAdapter = null;
     private ArrayList<adapter_product> List;
 
-    private Adapter_Data_Order dataOrder = null;
-    private ArrayList<adapter_order> orderList;
+    private Adapter_Data_Invoice dataOrder = null;
+    private ArrayList<adapter_invoice> orderList;
 
     private Adapter_Data_Patient dataPatient = null;
     private ArrayList<adapter_patient> patientList;
@@ -84,7 +85,7 @@ public class DashboardFragment extends Fragment {
         ApiGetMethod= UtilsApi.getMethod();
         local_data  = new Local_Data(getContext());
         List        = new ArrayList<adapter_product>();
-        orderList   = new ArrayList<adapter_order>();
+        orderList   = new ArrayList<adapter_invoice>();
         patientList = new ArrayList<adapter_patient>();
 
         token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
@@ -110,16 +111,20 @@ public class DashboardFragment extends Fragment {
         progress        = binding.progressCircular;
         listView.setVisibility(View.GONE);
 
+        getDashboard();
+        refreshList();
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                adapter_product state = List.get(position);
-                String ids=state.getID();
-                Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
+                adapter_invoice state = orderList.get(position);
+                String snap=state.getSnap();
+                //Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getContext(), OrderQRActivity.class);
+                intent.putExtra("emailKey", snap);
+                startActivity(intent);
             }
         });
-        getDashboard();
-        refreshList();
 
         fab_add.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -161,8 +166,9 @@ public class DashboardFragment extends Fragment {
                                     String address       = c.getString("address");
                                     String status        = c.getString("status");
                                     String grand_total   = c.getString("grand_total");
+                                    String snap          = c.getString("snap_token");
 
-                                    adapter_order _states = new adapter_order(id,nama,invoice,phone,address,status,grand_total);
+                                    adapter_invoice _states = new adapter_invoice(id,nama,invoice,phone,address,status,grand_total,snap);
                                     orderList.add(_states);
                                     progress.setVisibility(View.GONE);
                                     bindData();
@@ -207,7 +213,7 @@ public class DashboardFragment extends Fragment {
             listView.setVisibility(View.VISIBLE);
             linearInfo.setVisibility(View.VISIBLE);
             linearLayout.setVisibility(View.GONE);
-            dataOrder = new Adapter_Data_Order(getContext(), R.layout.list_order, orderList);
+            dataOrder = new Adapter_Data_Invoice(getContext(), R.layout.list_order, orderList);
             listView.setAdapter(dataOrder);
         }else if (arrayCount == 0){
             linearInfo.setVisibility(View.VISIBLE);

@@ -201,6 +201,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/notwhite"
+            android:divider="@null"
             android:visibility="gone"/>
 
         <LinearLayout

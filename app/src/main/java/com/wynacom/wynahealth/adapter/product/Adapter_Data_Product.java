@@ -9,24 +9,27 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
+import com.wynacom.wynahealth.DB_Local.Order_Data;
 import com.wynacom.wynahealth.R;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
 public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
     private ArrayList<adapter_product> stateList;
+    Order_Data orderData;
     ArrayList<String> selectedStrings = new ArrayList<String>();
     public Adapter_Data_Product(@NonNull Context context, int list_patient, ArrayList<adapter_product> list) {
         super(context, list_patient,list);
         this.stateList = new ArrayList<adapter_product>();
         this.stateList.addAll(list);
+        orderData  = new Order_Data(getContext());
     }
 
     private class ViewHolder
@@ -57,23 +60,34 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
         }
 
         final adapter_product state = stateList.get(position);
-        List<String> list2 = new ArrayList<>();
         holder.cbProduct    .setText(state.getTitle());
-        NumberFormat nf = NumberFormat.getInstance(Locale.ITALY);
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
         String c = nf.format(Integer.parseInt(state.getPrice()));
-        holder.Vprice       .setText("Rp. "+c);
+        holder.Vprice       .setText(c);
         holder.Vdesc        .setText(state.getDescription());
         holder.cbProduct    .setChecked(state.isSelected());
+        String id_patient       = ((GlobalVariable) getContext()).getPatient_id();
         holder.cbProduct.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked)
                 {
-                    list2.add(state.getID());
-                    myAppClass.setGlobalArrayList(list2);
-                    //Toast.makeText(getContext(), state.getID(), Toast.LENGTH_SHORT).show();
+                    String product_id       = state.getID();
+                    String ol_category_id   = state.getCetegory();
+                    String title            = state.getTitle();
+                    String description      = state.getDescription();
+                    String price            = state.getPrice();
+                    String discount         = state.getDiscount();
+                    String image            = state.getImage();
+                    String slug             = state.getSlug();
+                    orderData.SimpanData(id_patient,product_id,ol_category_id,title,description,price,discount,image,slug);
+                    Toast.makeText(getContext(),"Add Priduct "+product_id,Toast.LENGTH_SHORT).show();
+                    //list2.add(state.getID());
                 }else{
-                    list2.remove(state.getID());
+                    String product_id       = state.getID();
+                    orderData.HapusRow(id_patient,product_id);
+                    //list2.remove(state.getID());
                 }
             }
         });

@@ -1,15 +1,10 @@
 package com.wynacom.wynahealth;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,10 +12,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -28,12 +24,6 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.common.api.CommonStatusCodes;
-import com.google.android.gms.safetynet.SafetyNet;
-import com.google.android.gms.safetynet.SafetyNetApi;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
@@ -49,12 +39,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.Executor;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
-import retrofit2.http.Field;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -225,9 +213,14 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void RegisterRequest() {
         String namalengkap,stringemail,stringjk,stringktp,stringkota,stringkodepos,stringhp,stringumur,passwd,passwdr;
+        if(sp_kelamin.getSelectedItem().toString().equals("Laki-laki")){
+            stringjk = "M";
+        }else{
+            stringjk = "F";
+        }
         namalengkap = sp_title.getSelectedItem().toString() + " " + name.getText().toString();
         stringemail = email.getText().toString();
-        stringjk    = sp_kelamin.getSelectedItem().toString();
+        //stringjk    = sp_kelamin.getSelectedItem().toString();
         stringktp   = ktp.getText().toString();
         stringkota  = sp_kota.getSelectedItem().toString();
         stringkodepos = postal.getText().toString();

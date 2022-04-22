@@ -20,7 +20,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".OrderQRActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Order" />
         <activity
             android:name=".transaction.CartsActivity"
             android:exported="false" />

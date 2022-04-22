@@ -68,7 +68,7 @@
     <LinearLayout
         android:id="@+id/order_layout_step1"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="fill_parent"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -305,6 +305,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingBottom="80dp"
             android:paddingStart="@dimen/dp10"
             android:paddingEnd="@dimen/dp10">
             <androidx.cardview.widget.CardView
@@ -312,15 +313,13 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/dp10"
                 app:cardCornerRadius="@dimen/dp3">
-
                 <LinearLayout
                     android:padding="@dimen/dp20"
                     android:id="@+id/order_layout3"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:orientation="vertical">
                     <TextView
-                        android:visibility="gone"
                         android:id="@+id/order_show_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -341,6 +340,37 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/order_show_product"/>
+                    <LinearLayout
+                        android:id="@+id/detail_order"
+                        android:layout_width="match_parent"
+                        android:layout_height="fill_parent"
+                        android:orientation="vertical">
+                        <ListView
+                            android:layout_weight="1"
+                            android:id="@+id/list_order_confirmation"
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="fill_parent"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_weight="1"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/dp20"
+                                android:text="TOTAL"
+                                android:textAlignment="textEnd"
+                                android:textSize="20sp" />
+                            <TextView
+                                android:id="@+id/total_orders"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Harga"
+                                android:textSize="20sp" />
+                        </LinearLayout>
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -360,7 +390,6 @@
                 <ScrollView
                     android:visibility="gone"
                     android:id="@+id/order_layout1"
-                    android:layout_marginBottom="175dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
                     <LinearLayout

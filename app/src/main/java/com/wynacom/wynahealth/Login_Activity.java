@@ -115,7 +115,7 @@ public class Login_Activity extends AppCompatActivity {
                                 JSONObject jsonRESULTS = new JSONObject(response.body().string());
                                 if (jsonRESULTS.getString("success").equals("true")){
                                     JSONObject subObject = jsonRESULTS.getJSONObject("user");
-
+                                    String id    = subObject.getString("id");
                                     nama         = subObject.getString("patient_name");
                                     email        = subObject.getString("email");
                                     Passwordsave = password.getText().toString();
@@ -127,7 +127,7 @@ public class Login_Activity extends AppCompatActivity {
                                     nik          = subObject.getString("nik");
 
                                     String token = jsonRESULTS.getString("token");
-                                    local_data.SimpanData(nama,handphone,postal_code,Passwordsave,city,sex,age,email,nik,token);
+                                    local_data.SimpanData(id,nama,handphone,postal_code,Passwordsave,city,sex,age,email,nik,token);
                                     globalVariable.setToken(token);
                                     cekDB();
                                 } else {

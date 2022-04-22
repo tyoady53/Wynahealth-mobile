@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class Local_Data extends SQLiteOpenHelper {
 
@@ -21,18 +22,19 @@ public class Local_Data extends SQLiteOpenHelper {
     public static final String COL_7 = "email";
     public static final String COL_8 = "nik";
     public static final String COL_9 = "user_id";
+    public static final String COL_id= "patient_id";
 
     private SQLiteDatabase db;
 
     public Local_Data(Context context) {
-        super(context, DATABASE_NAME, null, 2);
+        super(context, DATABASE_NAME, null, 3);
         db = this.getWritableDatabase();
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_NAME + " (" +
-            "patient_id INTEGER primary key ASC autoincrement," +
+            "patient_id TEXT," +
             "patient_name TEXT," +
             "handphone TEXT," +
             "postal_code TEXT," +
@@ -42,14 +44,32 @@ public class Local_Data extends SQLiteOpenHelper {
             "age TEXT," +
             "email TEXT," +
             "nik TEXT,"+
-            "user_id TEXT)");
+            "user_id TEXT,"+
+            "id INTEGER primary key ASC autoincrement)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        Log.e(TAG, "Updating table from " + oldVersion + " to " + newVersion);
+        if (oldVersion < 3){
+            db.execSQL("drop table TB_User;");
+            db.execSQL("create table " + TABLE_NAME + " (" +
+                "patient_id TEXT," +
+                "patient_name TEXT," +
+                "handphone TEXT," +
+                "postal_code TEXT," +
+                "title_id TEXT," +
+                "city TEXT," +
+                "sex TEXT," +
+                "age TEXT," +
+                "email TEXT," +
+                "nik TEXT,"+
+                "user_id TEXT,"+
+                "id INTEGER primary key ASC autoincrement)");
+        }
     }
 
-    public void SimpanData(String patient_name, String handphone, String postal_code, String title_id, String city, String sex, String age, String email,String nik,String user_id) {
+    public void SimpanData(String id,String patient_name, String handphone, String postal_code, String title_id, String city, String sex, String age, String email,String nik,String user_id) {
         ContentValues values = new ContentValues();
         values.put(COL_0, patient_name);
         values.put(COL_1, handphone);
@@ -61,6 +81,7 @@ public class Local_Data extends SQLiteOpenHelper {
         values.put(COL_7, email);
         values.put(COL_8, nik);
         values.put(COL_9, user_id);
+        values.put(COL_id, id);
         db.insert(TABLE_NAME, null, values);
         //close();
     }

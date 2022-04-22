@@ -1,6 +1,6 @@
-package com.wynacom.wynahealth.adapter.order;
+package com.wynacom.wynahealth.adapter.invoices;
 
-public class adapter_order {
+public class adapter_invoice {
     String id               = null;
     String name             = null;
     String status           = null;
@@ -8,10 +8,10 @@ public class adapter_order {
     String telephone        = null;
     String total            = null;
     String address          = null;
-
+    String snap             = null;
     boolean selected        = false;
 
-    public adapter_order(String id, String name, String invoiceNumber, String telephone, String address, String status,String total) {
+    public adapter_invoice(String id, String name, String invoiceNumber, String telephone, String address, String status, String total, String snap) {
         super();
         this.id             = id;
         this.name           = name;
@@ -20,6 +20,7 @@ public class adapter_order {
         this.total          = total;
         this.address        = address;
         this.status         = status;
+        this.snap           = snap;
     }
 
     public String getID() {
@@ -69,5 +70,12 @@ public class adapter_order {
     }
     public void setTotal(String total) {
         this.total = total;
+    }
+
+    public String getSnap() {
+        return snap;
+    }
+    public void setSnap(String snap) {
+        this.snap = snap;
     }
 }

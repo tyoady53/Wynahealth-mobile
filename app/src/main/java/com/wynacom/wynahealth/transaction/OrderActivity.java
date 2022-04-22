@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -14,8 +16,10 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
+import android.widget.SimpleAdapter;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +30,8 @@ import com.anton46.stepsview.StepsView;
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
+import com.wynacom.wynahealth.DB_Local.Local_Data;
+import com.wynacom.wynahealth.DB_Local.Order_Data;
 import com.wynacom.wynahealth.OrderQRActivity;
 import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.adapter.patient.Adapter_Data_Patient;
@@ -40,9 +46,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -65,15 +73,23 @@ public class OrderActivity extends AppCompatActivity {
     private Adapter_Data_Product dataProduct = null;
     private ArrayList<adapter_product> list_product;
 
+    GlobalVariable globalVariable;
+
     TextView TV_date,TV_time,TV_doctor,TV_address,TV_product;
     Button next,prev,process;
-    String token,bearer,strFixedPosition,patient_id,snap;
+    String token,bearer,strFixedPosition,patient_id,snap,strTotal,cartsStatus;
     Spinner spinner,Sp_order_city,Sp_order_time;
     EditText ET_order_date,ET_order_doctor,ET_order_address;
-    LinearLayout lineDataPatient,step2,step3;
+    LinearLayout lineDataPatient,step2,step3,detail_order;
     ScrollView step1;
-    TextView orderName,orderPhone,orderGender,orderDOB,orderNIK,orderCity;
-    ListView listViewProduct;
+    TextView orderName,orderPhone,orderGender,orderDOB,orderNIK,orderCity,TV_total_orders;
+    ListView listViewProduct,listViewOrder;
+
+    Adapter_Data_Product myAppClass;
+    Order_Data orderData;
+    protected Cursor cursor,cursor2;
+
+    Local_Data localData;
 
     final Calendar myCalendar= Calendar.getInstance();
 
@@ -81,13 +97,19 @@ public class OrderActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
-        token           = ((GlobalVariable) getApplicationContext()).getToken();
+        globalVariable  = (GlobalVariable) getApplicationContext();
+        token           = globalVariable.getToken();
         bearer          = "Bearer "+token;
         mApiService     = UtilsApi.getAPI();
         ApiGetMethod    = UtilsApi.getMethod();
 
         List            = new ArrayList<adapter_patient>();
         list_product    = new ArrayList<adapter_product>();
+
+        myAppClass      = new Adapter_Data_Product(getApplicationContext(),R.layout.list_patient,list_product);
+
+        orderData       = new Order_Data(getApplicationContext());
+        localData       = new Local_Data(getApplicationContext());
 
         stepsView       = findViewById(R.id.StepView);
         next            = findViewById(R.id.next);
@@ -122,8 +144,13 @@ public class OrderActivity extends AppCompatActivity {
 
         listViewProduct = findViewById(R.id.list_product_order);
 
+        listViewOrder   = findViewById(R.id.list_order_confirmation);
+        TV_total_orders = findViewById(R.id.total_orders);
+
         lineDataPatient = findViewById(R.id.order_data_patient);
         lineDataPatient.setVisibility(View.GONE);
+
+        detail_order    = findViewById(R.id.detail_order);
 
         getPatient();
         getProduct();
@@ -156,6 +183,9 @@ public class OrderActivity extends AppCompatActivity {
         dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
         Sp_order_time.setAdapter(dataAdapter2);
 
+        step2.setVisibility(View.GONE);
+        step3.setVisibility(View.GONE);
+
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -176,8 +206,8 @@ public class OrderActivity extends AppCompatActivity {
                         step1.setVisibility(View.GONE);
                         step2.setVisibility(View.VISIBLE);
                         step3.setVisibility(View.GONE);
-                    }
-                    else if(currentState==2){
+                        PatientOrder();
+                    } else if(currentState==2){
                         step1.setVisibility(View.GONE);
                         step2.setVisibility(View.GONE);
                         process.setVisibility(View.VISIBLE);
@@ -202,6 +232,7 @@ public class OrderActivity extends AppCompatActivity {
                     }
                     if(currentState<(descriptionData.length-1)){
                         next.setVisibility(View.VISIBLE);
+                        TV_product.setText("");
                     }
                     if(currentState==0){
                         step1.setVisibility(View.VISIBLE);
@@ -231,9 +262,7 @@ public class OrderActivity extends AppCompatActivity {
                     patient_id =state.getID();
                     Toast.makeText(getApplicationContext(), "Selected Spinner "+String.valueOf(patient_id), Toast.LENGTH_SHORT).show();
                 }
-
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
 
@@ -260,13 +289,79 @@ public class OrderActivity extends AppCompatActivity {
         process.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendData();
+                addCarts();
+                //sendData();
             }
         });
     }
 
+    private void addCarts() {
+        String userID = globalVariable.getUserID();
+        String ol_product_id,datapatient_id,qty,price,ol_patient_id;
+        SQLiteDatabase dbU = orderData.getReadableDatabase();
+        cursor2 = dbU.rawQuery("SELECT * FROM TB_Orders", null);
+        cursor2.moveToFirst();
+        if (cursor2.getCount()>0) {
+            cursor2.moveToPosition(0);
+            cursor2.getCount();
+            for (int i = 1; i <= cursor2.getCount(); i++) {
+                datapatient_id  = cursor2.getString(0);
+                ol_product_id   = cursor2.getString(1);
+                qty             = "1";
+                price           = cursor2.getString(5);
+                ol_patient_id   = userID;
+                sendCarts(datapatient_id,ol_product_id,qty,price,ol_patient_id);
+                if(i == cursor2.getCount()){
+                    sendData();
+                }
+//                do{
+//
+//                }while (i == cursor2.getCount());
+            }
+        }
+    }
+
+    private void sendCarts(String datapatient_id, String ol_product_id, String qty, String price, String ol_patient_id) {
+        mApiService.postCarts(token,ol_product_id,datapatient_id,qty,price,ol_patient_id)
+            .enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        try {
+                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                            if (jsonRESULTS.getString("success").equals("true")){
+                                cursor2.moveToNext();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+                        builder.setMessage("Gagal Kirim Data "+ol_product_id);
+                        builder.setCancelable(true);
+                        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+                }
+            });
+    }
+
     private void sendData() {
-        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),ET_order_address.getText().toString(),"100000",ET_order_doctor.getText().toString())
+        strTotal = this.getTotal();
+        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),Sp_order_city.getSelectedItem().toString(),strTotal,ET_order_doctor.getText().toString(),ET_order_address.getText().toString())
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -275,15 +370,13 @@ public class OrderActivity extends AppCompatActivity {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if (jsonRESULTS.getString("success").equals("true")){
                                 JSONObject subObject = jsonRESULTS.getJSONObject("data");
-
                                 snap         = subObject.getString("snap_token");
                                 Intent intent = new Intent(OrderActivity.this, OrderQRActivity.class);
                                 intent.putExtra("emailKey", snap);
                                 startActivity(intent);
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                                builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
-                                builder.setTitle("Login Gagal");
+                                builder.setMessage("Gagal Kirim data ."+orderName.getText().toString());
                                 builder.setCancelable(true);
                                 builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
                                     @Override
@@ -323,16 +416,12 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void setdatalocal() {
-        GlobalVariable myAppClass = (GlobalVariable)getApplicationContext();
+        strView = "";
         TV_date.setText("Tanggal Datang : "+ET_order_date.getText());
         TV_time.setText("Waktu DDatang : "+Sp_order_time.getSelectedItem().toString());
         TV_doctor.setText("Dokter : "+ET_order_doctor.getText());
         TV_address.setText("Alamat Pasien : "+ET_order_address.getText());
-        List<String> globalArrayList = myAppClass.getGlobalArrayList();
-        for (int i = 0; i < globalArrayList.size(); i++) {
-            strView += globalArrayList.get(i)+"\n";
-        }
-        TV_product.setText(strView);
+        getDataOrder();
     }
 
     private void getProduct() {
@@ -346,7 +435,7 @@ public class OrderActivity extends AppCompatActivity {
                         if (jsonRESULTS.getString("success").equals("true")){
                             JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
- //                           JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            //                           JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");
@@ -356,8 +445,9 @@ public class OrderActivity extends AppCompatActivity {
                                 String price         = c.getString("price");
                                 String stock         = c.getString("stock");
                                 String discount      = c.getString("discount");
-
-                                adapter_product _states = new adapter_product(id,title,ol_category_id,description,price,discount,false);
+                                String slug          = c.getString("slug");
+                                String image         = c.getString("image");
+                                adapter_product _states = new adapter_product(id,title,ol_category_id,description,price,discount,slug,image,false);
                                 list_product.add(_states);
                                 bindDataProduct();
                             }
@@ -421,7 +511,7 @@ public class OrderActivity extends AppCompatActivity {
                                 String nik           = c.getString("nik");
                                 String city          = c.getString("city");
                                 String postal_code   = c.getString("postal_code");
-                                String tampiltanggal = ((GlobalVariable) getApplicationContext()).dateformat(dob);
+                                String tampiltanggal = globalVariable.dateformat(dob);
 
                                 adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1));
                                 List.add(_states);
@@ -458,5 +548,68 @@ public class OrderActivity extends AppCompatActivity {
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, R.layout.spinner_item,list2);
         dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
         spinner.setAdapter(dataAdapter2);
+    }
+
+    private void getDataOrder() {
+        ArrayList<HashMap<String, String>> userList = orderData.GetUsers();
+        ListAdapter adapter = new SimpleAdapter(OrderActivity.this, userList, R.layout.list_order_confirmation,
+        new String[]{"name","description","price","discount","total"}, new int[]{R.id.confirm_product_name, R.id.confirm_product_desc, R.id.confirm_product_price,R.id.confirm_product_discount,R.id.confirm_product_subtotal});
+        listViewOrder.setAdapter(adapter);
+        TV_product.setText(strView);
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
+        Double total = Double.parseDouble(this.getTotal());
+        String s = nf.format(total);
+        TV_total_orders.setText(s);
+    }
+
+    public String getTotal(){
+        String product_id,ol_category_id,title,description,price,discount,image,slug = null;
+        Double total = 0.0;
+        SQLiteDatabase dbU = orderData.getReadableDatabase();
+        cursor = dbU.rawQuery("SELECT * FROM TB_Orders", null);
+        cursor.moveToFirst();
+        if (cursor.getCount()>0) {
+            cursor.moveToPosition(0);
+            for (int i = 0; i < cursor.getCount(); i++) {
+                price = cursor.getString(5);
+                discount = cursor.getString(6);
+
+                double a = Double.parseDouble(price);
+                double b = Double.parseDouble(discount);
+                double c = a * b;
+                double subTotal = a - c;
+                total = total + subTotal;
+                cursor.moveToNext();
+            }slug = String.valueOf(total);
+        }
+        return slug;
+    }
+
+    @Override
+    public void onBackPressed() {
+        //
+        AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+        builder.setMessage("Kembali ke menu sebelumnya akan membatalkan pesanan.\nAnda ingin melanjutkan?");
+        builder.setCancelable(true);
+        builder.setNegativeButton("Tidak", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                orderData.HapusData();
+                OrderActivity.super.onBackPressed();
+            }
+        });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    public void PatientOrder(){
+        globalVariable.setPatient_id(patient_id);
     }
 }

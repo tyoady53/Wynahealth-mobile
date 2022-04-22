@@ -72,6 +72,16 @@ public interface BaseApiService {
     Call<ResponseBody> getcarts(@Header("Authorization") String token);
 
     @FormUrlEncoded
+    @POST("web/carts?")
+    Call<ResponseBody> postCarts(
+        @Field("token") String token,
+        @Field("ol_product_id") String ol_product_id,
+        @Field("datapatient_id") String datapatient_id,
+        @Field("qty") String qty,
+        @Field("price") String price,
+        @Field("ol_patient_id") String ol_patient_id);
+
+    @FormUrlEncoded
     @POST("web/checkout?")
     Call<ResponseBody> checkout(
         @Field("token") String token,
@@ -81,5 +91,6 @@ public interface BaseApiService {
         @Field("phone") String phone,
         @Field("address") String address,
         @Field("grand_total") String grand_total,
-        @Field("doctor") String doctor);
+        @Field("dokter") String dokter,
+        @Field("perusahaan") String perusahaan);
 }

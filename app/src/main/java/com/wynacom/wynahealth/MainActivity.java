@@ -27,6 +27,7 @@ import com.fxn.cue.enums.Type;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
+import com.wynacom.wynahealth.DB_Local.Order_Data;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.ActivityMainBinding;
@@ -44,9 +45,10 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
-    protected Cursor cursor;
+    protected Cursor cursor,cursor2;
     boolean doubleBackToExitPressedOnce = false;
     Local_Data local_data;
+    Order_Data order_data;
     private BaseApiService mApiService,ApiGetMethod;
     String token,bearer;
 
@@ -57,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         local_data  = new Local_Data(getApplicationContext());
+        order_data  = new Order_Data(getApplicationContext());
         mApiService = UtilsApi.getAPI();
         ApiGetMethod= UtilsApi.getMethod();
 
@@ -74,6 +77,12 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         //cekDashboard();
+        SQLiteDatabase dbU = order_data.getReadableDatabase();
+        cursor2 = dbU.rawQuery("SELECT * FROM TB_Orders", null);
+        cursor2.moveToFirst();
+        if (cursor2.getCount()>0) {
+            order_data.HapusData();
+        }
     }
 
     private void cekDashboard() {

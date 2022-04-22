@@ -7,10 +7,12 @@ public class adapter_product {
     String description      = null;
     String price            = null;
     String discount         = null;
+    String slug             = null;
+    String image            = null;
 
     boolean selected        = false;
 
-    public adapter_product(String id, String title, String ol_category_id, String description, String price, String discount, boolean selected) {
+    public adapter_product(String id, String title, String ol_category_id, String description, String price, String discount, String slug, String image, boolean selected) {
         super();
         this.id             = id;
         this.title          = title;
@@ -18,6 +20,8 @@ public class adapter_product {
         this.description    = description;
         this.price          = price;
         this.discount       = discount;
+        this.slug           = slug;
+        this.image          = image;
         this.selected       = selected;
     }
 
@@ -54,6 +58,20 @@ public class adapter_product {
     }
     public void setPrice(String price) {
         this.price = price;
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+    public void setSlug(String slug) {
+        this.slug = slug;
+    }
+
+    public String getImage() {
+        return image;
+    }
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public String getDiscount() {

@@ -424,8 +424,6 @@ public class HomeFragment extends Fragment {
         int height = Integer.parseInt(getReturn);
         ViewGroup.LayoutParams params = linearInfo.getLayoutParams();
         params.height = height;
-
-
         linearInfo.setLayoutParams(params);
         //Toast.makeText(getContext(), "Width = "+String.valueOf(cardWidth)+"\nHeight = "+String.valueOf(height), Toast.LENGTH_SHORT).show();
         if (!(List ==null)){
@@ -444,7 +442,13 @@ public class HomeFragment extends Fragment {
     }
 
     private void datapatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob) {
-        mApiService.datapatient(token,fnama,femail,fphone,fkota,fpostal,fgender,fdob,fktp)
+        String gender;
+        if(fgender.equals("Laki-laki")){
+            gender   = "M";
+        }else {
+            gender   = "F";
+        }
+        mApiService.datapatient(token,fnama,femail,fphone,fkota,fpostal,gender,fdob,fktp)
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {

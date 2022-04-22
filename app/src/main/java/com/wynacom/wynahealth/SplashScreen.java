@@ -88,12 +88,14 @@ public class SplashScreen extends AppCompatActivity {
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()){
+                    do{
                         relogin(email,password);
-                    } else {
-                        local_data.HapusData();
-                        landingpage();
-                    }
+                    }while (response.isSuccessful());
+//                    if (response.isSuccessful()){
+//                        relogin(email,password);
+//                    } else {
+//                        relogin(email,password);
+//                    }
                 }
 
                 @Override
@@ -117,7 +119,6 @@ public class SplashScreen extends AppCompatActivity {
                             try {
                                 JSONObject jsonRESULTS = new JSONObject(response.body().string());
                                 if (jsonRESULTS.getString("success").equals("true")){
-
                                     String token = jsonRESULTS.getString("token");
                                     local_data.UpdateToken(email,token);
                                     globalVariable.setToken(token);
