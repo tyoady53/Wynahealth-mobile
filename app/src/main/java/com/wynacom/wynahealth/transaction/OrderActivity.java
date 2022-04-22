@@ -490,7 +490,7 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     private void getPatient() {
-        Call<ResponseBody> listCall = ApiGetMethod.getdatapatient(bearer);
+        Call<ResponseBody> listCall = ApiGetMethod.getdatapatient(bearer,"1");
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

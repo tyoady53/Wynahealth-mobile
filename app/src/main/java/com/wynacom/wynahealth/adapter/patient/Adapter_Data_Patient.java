@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 
-import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.R;
 
 import java.util.ArrayList;
@@ -31,8 +30,8 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent)
     {
-
         ViewHolder holder = null;
+        String gender;
 
         if (convertView == null) {
             convertView =  LayoutInflater.from(getContext()).inflate(R.layout.list_patient, parent, false);
@@ -57,9 +56,15 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
 
             final adapter_patient state = stateList.get(position);
 
+            if(state.getGender().equals("M")){
+                gender  = "Laki-laki";
+            }else{
+                gender  = "Perempuan";
+            }
+            holder.Vsex         .setText(gender);
+
             holder.Vnama        .setText(state.getNama());
             holder.Vhandphone   .setText(state.getPhone());
-            holder.Vsex         .setText(state.getGender());
             holder.Vdob         .setText(state.getDOB());
             holder.Vnik         .setText(state.getNIK());
             holder.Vcity        .setText(state.getCity());

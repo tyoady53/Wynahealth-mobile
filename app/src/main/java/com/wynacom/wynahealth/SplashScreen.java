@@ -88,14 +88,14 @@ public class SplashScreen extends AppCompatActivity {
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    do{
+//                    do{
+//                        relogin(email,password);
+//                    }while (response.isSuccessful());
+                    if (response.isSuccessful()){
                         relogin(email,password);
-                    }while (response.isSuccessful());
-//                    if (response.isSuccessful()){
-//                        relogin(email,password);
-//                    } else {
-//                        relogin(email,password);
-//                    }
+                    } else {
+                        relogin(email,password);
+                    }
                 }
 
                 @Override

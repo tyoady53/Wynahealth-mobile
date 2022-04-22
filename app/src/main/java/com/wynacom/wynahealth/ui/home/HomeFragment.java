@@ -39,6 +39,8 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.github.clans.fab.FloatingActionButton;
+import com.lakue.pagingbutton.LakuePagingButton;
+import com.lakue.pagingbutton.OnPageSelectListener;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.R;
@@ -84,6 +86,9 @@ public class HomeFragment extends Fragment {
     TextView textView_dataPatientTile;
     double cardWidth = 0;
     ProgressBar progress;
+    LakuePagingButton lpb_buttonlist;
+    String last_page;
+    int int_last_page,max_page = 30;
 
     public static boolean stringname(String Name) {
         return Name.length() > 0;
@@ -134,15 +139,21 @@ public class HomeFragment extends Fragment {
             id_pelanggan    = cursor.getString(0);
             string_nama     = cursor.getString(1);
             string_umur     = cursor.getString(7);
-            string_jk       = cursor.getString(6);
+            //string_jk       = cursor.getString(6);
             string_hp       = cursor.getString(2);
             string_ktp      = cursor.getString(9);
             string_kota     = cursor.getString(5);
             string_kodepos  = cursor.getString(3);
             string_email    = cursor.getString(8);
+            if (cursor.getString(6).equals("M")){
+                string_jk   = "Laki-laki";
+            }else{
+                string_jk   = "Perempuan";
+            }
         }
         token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
         bearer          = "Bearer "+token;
+        int_last_page   = 1;
         homeViewModel   = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -158,6 +169,8 @@ public class HomeFragment extends Fragment {
         final TextView TV_KTP       = binding.tampilKtp;
         final TextView TV_Kota      = binding.tampilKota;
         final TextView TV_kodepos   = binding.tampilKodepos;
+
+        lpb_buttonlist  = binding.lpbButtonlist;;
 
         listView        = binding.listpatient;
         linearLayout    = binding.linearPatientList;
@@ -186,8 +199,8 @@ public class HomeFragment extends Fragment {
                 TV_KTP      .setText(string_ktp);
                 TV_Kota     .setText(string_kota);
                 TV_kodepos  .setText(string_kodepos);
-
-                refreshList();
+                String nowPage = String.valueOf(int_last_page);
+                refreshList(nowPage);
             }
         });
 
@@ -360,8 +373,8 @@ public class HomeFragment extends Fragment {
         //Cue.init().with(getContext()).setMessage("Button Tambah Pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
     }
 
-    private void refreshList() {
-        Call<ResponseBody> listCall = ApiGetMethod.getdatapatient(bearer);
+    private void refreshList(String string_nowPage) {
+        Call<ResponseBody> listCall = ApiGetMethod.getdatapatient(bearer,string_nowPage);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -369,11 +382,13 @@ public class HomeFragment extends Fragment {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
-                            String total = jsonObject.getString("total");
-                            JSONArray jsonArray = jsonObject.getJSONArray("data");
+                            JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
+                            String total            = jsonObject.getString("total");
+                            last_page               = jsonObject.getString("last_page");
+                            int_last_page           = Integer.parseInt(last_page);
+                            max_page                = int_last_page;
+                            JSONArray jsonArray     = jsonObject.getJSONArray("data");
 //                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
-
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");
@@ -390,7 +405,8 @@ public class HomeFragment extends Fragment {
                                     adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1));
                                     List.add(_states);
                                     bindData();
-                            }textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+total+")");
+                            }setPaging(string_nowPage);
+                            textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+total+")");
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");
@@ -415,6 +431,38 @@ public class HomeFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "onFailure: ERROR > " + t.toString());
+            }
+        });
+    }
+
+    private void setPaging(String string_nowPage) {
+        lpb_buttonlist.setPageItemCount(int_last_page);
+        int now = Integer.parseInt(string_nowPage);
+        lpb_buttonlist.addBottomPageButton(max_page,now);
+        lpb_buttonlist.setOnPageSelectListener(new OnPageSelectListener() {
+            //BeforeButton Click
+            @Override
+            public void onPageBefore(int now_page) {
+                lpb_buttonlist.addBottomPageButton(max_page,now_page);
+                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPageCenter(int now_page) {
+                Toast.makeText(getContext(), "Page Number : "+now_page, Toast.LENGTH_SHORT).show();
+                String nowPage = String.valueOf(now_page);
+                if(dataAdapter.getCount()>0){
+                    dataAdapter.clear();
+                }
+                refreshList(nowPage);
+                //  lpb_buttonlist.addBottomPageButton(max_page,page);
+            }
+
+            //NextButton Click
+            @Override
+            public void onPageNext(int now_page) {
+                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
+                lpb_buttonlist.addBottomPageButton(max_page,now_page);
             }
         });
     }
@@ -456,12 +504,12 @@ public class HomeFragment extends Fragment {
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if (jsonRESULTS.getString("success").equals("true")){
-                                if(dataAdapter.getCount()>0)
-                                dataAdapter.clear();{
-                                    listView.setAdapter(null);
+                                if(dataAdapter.getCount()>0) {
+                                    dataAdapter.clear();
+                                    //listView.setAdapter(null);
                                 }
                                 Toast.makeText(getContext(),"Add data success.", Toast.LENGTH_SHORT).show();
-                                refreshList();
+                                refreshList("1");
                             } else {
                                 Toast.makeText(getContext(),"Can not add data.", Toast.LENGTH_SHORT).show();
                             }
