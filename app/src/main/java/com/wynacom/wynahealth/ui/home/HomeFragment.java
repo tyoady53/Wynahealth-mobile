@@ -88,7 +88,7 @@ public class HomeFragment extends Fragment {
     ProgressBar progress;
     LakuePagingButton lpb_buttonlist;
     String last_page;
-    int int_last_page,max_page = 30;
+    int int_last_page,max_page,NowPage;
 
     public static boolean stringname(String Name) {
         return Name.length() > 0;
@@ -153,7 +153,7 @@ public class HomeFragment extends Fragment {
         }
         token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
         bearer          = "Bearer "+token;
-        int_last_page   = 1;
+        int_last_page   = 0;
         homeViewModel   = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(HomeViewModel.class);
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
@@ -187,6 +187,10 @@ public class HomeFragment extends Fragment {
 
         textView_dataPatientTile = binding.textTitleDataPatient;
 
+        if(int_last_page==0){
+            int_last_page = 1;
+        }
+
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -201,6 +205,33 @@ public class HomeFragment extends Fragment {
                 TV_kodepos  .setText(string_kodepos);
                 String nowPage = String.valueOf(int_last_page);
                 refreshList(nowPage);
+            }
+        });
+
+        lpb_buttonlist.setOnPageSelectListener(new OnPageSelectListener() {
+            //BeforeButton Click
+            @Override
+            public void onPageBefore(int now_page) {
+                lpb_buttonlist.addBottomPageButton(max_page,now_page);
+                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onPageCenter(int now_page) {
+                //Toast.makeText(getContext(), "Page Number : "+now_page, Toast.LENGTH_SHORT).show();
+                String nowPage = String.valueOf(now_page);
+                if(dataAdapter.getCount()>0){
+                    dataAdapter.clear();
+                }
+                refreshList(nowPage);
+                //lpb_buttonlist.addBottomPageButton(max_page,now_page);
+            }
+
+            //NextButton Click
+            @Override
+            public void onPageNext(int now_page) {
+                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
+                lpb_buttonlist.addBottomPageButton(max_page,now_page);
             }
         });
 
@@ -385,8 +416,12 @@ public class HomeFragment extends Fragment {
                             JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
                             String total            = jsonObject.getString("total");
                             last_page               = jsonObject.getString("last_page");
+                            String now              = jsonObject.getString("current_page");
+                            Toast.makeText(getContext(),"Page Now : "+now,Toast.LENGTH_SHORT).show();
+                            NowPage                 = Integer.parseInt(now);
                             int_last_page           = Integer.parseInt(last_page);
                             max_page                = int_last_page;
+                            lpb_buttonlist.addBottomPageButton(max_page,NowPage);
                             JSONArray jsonArray     = jsonObject.getJSONArray("data");
 //                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
@@ -405,7 +440,7 @@ public class HomeFragment extends Fragment {
                                     adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1));
                                     List.add(_states);
                                     bindData();
-                            }setPaging(string_nowPage);
+                            }//setPaging(string_nowPage);
                             textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+total+")");
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
@@ -435,37 +470,37 @@ public class HomeFragment extends Fragment {
         });
     }
 
-    private void setPaging(String string_nowPage) {
-        lpb_buttonlist.setPageItemCount(int_last_page);
-        int now = Integer.parseInt(string_nowPage);
-        lpb_buttonlist.addBottomPageButton(max_page,now);
-        lpb_buttonlist.setOnPageSelectListener(new OnPageSelectListener() {
-            //BeforeButton Click
-            @Override
-            public void onPageBefore(int now_page) {
-                lpb_buttonlist.addBottomPageButton(max_page,now_page);
-                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onPageCenter(int now_page) {
-                Toast.makeText(getContext(), "Page Number : "+now_page, Toast.LENGTH_SHORT).show();
-                String nowPage = String.valueOf(now_page);
-                if(dataAdapter.getCount()>0){
-                    dataAdapter.clear();
-                }
-                refreshList(nowPage);
-                //  lpb_buttonlist.addBottomPageButton(max_page,page);
-            }
-
-            //NextButton Click
-            @Override
-            public void onPageNext(int now_page) {
-                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
-                lpb_buttonlist.addBottomPageButton(max_page,now_page);
-            }
-        });
-    }
+//    private void setPaging(String string_nowPage) {
+//        lpb_buttonlist.setPageItemCount(int_last_page);
+//        int now = Integer.parseInt(string_nowPage);
+//        //lpb_buttonlist.addBottomPageButton(max_page,now);
+//        lpb_buttonlist.setOnPageSelectListener(new OnPageSelectListener() {
+//            //BeforeButton Click
+//            @Override
+//            public void onPageBefore(int now_page) {
+//                //lpb_buttonlist.addBottomPageButton(max_page,now_page);
+//                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
+//            }
+//
+//            @Override
+//            public void onPageCenter(int now_page) {
+//                //Toast.makeText(getContext(), "Page Number : "+now_page, Toast.LENGTH_SHORT).show();
+//                String nowPage = String.valueOf(now_page);
+//                if(dataAdapter.getCount()>0){
+//                    dataAdapter.clear();
+//                }
+//                refreshList(nowPage);
+//                //lpb_buttonlist.addBottomPageButton(max_page,now_page);
+//            }
+//
+//            //NextButton Click
+//            @Override
+//            public void onPageNext(int now_page) {
+//                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
+//                //lpb_buttonlist.addBottomPageButton(max_page,now_page);
+//            }
+//        });
+//    }
 
     public void bindData() {
         String getReturn = ((GlobalVariable) getContext().getApplicationContext()).getWidth(getActivity());

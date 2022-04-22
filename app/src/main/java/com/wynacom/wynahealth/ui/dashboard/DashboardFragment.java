@@ -121,7 +121,7 @@ public class DashboardFragment extends Fragment {
                 String snap=state.getSnap();
                 //Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getContext(), OrderQRActivity.class);
-                intent.putExtra("emailKey", snap);
+                intent.putExtra("snap_token", snap);
                 startActivity(intent);
             }
         });

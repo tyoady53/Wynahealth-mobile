@@ -12,6 +12,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -22,7 +23,6 @@ import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -37,10 +37,11 @@ import retrofit2.Response;
 
 public class OrderQRActivity extends AppCompatActivity {
 
-    String token,bearer,email;
+    String token,bearer,snap,strGender;
     private ImageView qrCodeIV;
     private EditText dataEdt;
     private Button generateQrBtn;
+    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total;
     Bitmap bitmap;
     QRGEncoder qrgEncoder;
     private BaseApiService mApiService,ApiGetMethod;
@@ -50,18 +51,26 @@ public class OrderQRActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_qr);
 
-        mApiService = UtilsApi.getAPI();
-        ApiGetMethod= UtilsApi.getMethod();
-        qrCodeIV = findViewById(R.id.idIVQrcode);
-        dataEdt = findViewById(R.id.idEdt);
-        generateQrBtn = findViewById(R.id.idBtnGenerateQR);
+        mApiService     = UtilsApi.getAPI();
+        ApiGetMethod    = UtilsApi.getMethod();
+        qrCodeIV        = findViewById(R.id.idIVQrcode);
+        dataEdt         = findViewById(R.id.idEdt);
+        generateQrBtn   = findViewById(R.id.idBtnGenerateQR);
 
-        email =getIntent().getStringExtra("emailKey");
+        TV_inv_date     = findViewById(R.id.inv_order_date);
+        TV_inv_time     = findViewById(R.id.inv_order_time);
+        TV_inv_patient  = findViewById(R.id.inv_order_patient);
+        TV_inv_gender   = findViewById(R.id.inv_order_gender);
+        TV_inv_dob      = findViewById(R.id.inv_order_dob);
+        TV_inv_address  = findViewById(R.id.inv_order_address);
+        TV_inv_total    = findViewById(R.id.inv_total);
+
+        snap            = getIntent().getStringExtra("snap_token");
         token           = ((GlobalVariable) getApplicationContext()).getToken();
         bearer          = "Bearer "+token;
         getInvoices();
         // initializing onclick listener for button.
-        dataEdt.setText(email);
+        dataEdt.setText(snap);
 //        generateQrBtn.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -112,7 +121,7 @@ public class OrderQRActivity extends AppCompatActivity {
     }
 
     private void getInvoices() {
-        Call<ResponseBody> listCall = ApiGetMethod.getInvoices(bearer);
+        Call<ResponseBody> listCall = ApiGetMethod.getInvoicesBySnap(bearer,snap);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -120,17 +129,31 @@ public class OrderQRActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
-                            JSONArray jsonArray = jsonObject.getJSONArray("data");
-//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject c = jsonArray.getJSONObject(i);
-                                String snap_response            = c.getString("snap_token");
-                                String invoice_response            = c.getString("invoice");
-                                if(snap_response.equals(email)){
-                                    dataEdt.setText("http://wynacom.com/"+invoice_response);
-                                    generateQR(invoice_response);
+                            JSONObject jsonObject           = jsonRESULTS.getJSONObject("data");
+                            JSONObject jsonDataPatient      = jsonObject.getJSONObject("datapatient");
+                            String invoice_response         = jsonObject.getString("invoice");
+                            String snap_response            = jsonObject.getString("snap_token");
+                            //String invoice_response         = c.getString("invoice");
+                            if(snap_response.equals(snap)){
+                                dataEdt.setText("http://wynacom.com/"+invoice_response);
+                                generateQR("http://wynacom.com/"+invoice_response);
+                                String tanggal      = jsonObject.getString("created_at");
+                                String DisplayDate  = tanggal.substring(0,9);
+                                String jam          = tanggal.substring(11,19);
+                                String sex          = jsonDataPatient.getString("sex");
+                                String dob          = jsonDataPatient.getString("dob");
+                                if(sex.equals("M")){
+                                    strGender = "Laki-laki";
+                                }else{
+                                    strGender = "Perempuan";
                                 }
+                                TV_inv_patient  .setText(jsonObject.getString("name"));
+                                TV_inv_date     .setText(((GlobalVariable) getApplicationContext()).dateformat(DisplayDate));
+                                TV_inv_time     .setText(jam);
+                                TV_inv_gender   .setText(strGender);
+                                TV_inv_dob      .setText(((GlobalVariable) getApplicationContext()).dateformat(dob));
+                                TV_inv_address  .setText(jsonDataPatient.getString("city"));
+                                TV_inv_total    .setText(jsonObject.getString("grand_total"));
                             }
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());

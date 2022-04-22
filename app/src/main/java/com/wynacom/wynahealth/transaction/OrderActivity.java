@@ -372,7 +372,7 @@ public class OrderActivity extends AppCompatActivity {
                                 JSONObject subObject = jsonRESULTS.getJSONObject("data");
                                 snap         = subObject.getString("snap_token");
                                 Intent intent = new Intent(OrderActivity.this, OrderQRActivity.class);
-                                intent.putExtra("emailKey", snap);
+                                intent.putExtra("snap_token", snap);
                                 startActivity(intent);
                             } else {
                                 AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());

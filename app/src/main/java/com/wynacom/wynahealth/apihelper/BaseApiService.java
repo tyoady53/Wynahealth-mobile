@@ -7,6 +7,7 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 /**
@@ -45,6 +46,11 @@ public interface BaseApiService {
 
     @GET("patient/invoices")
     Call<ResponseBody> getInvoices(@Header("Authorization") String token);
+
+    @GET("patient/invoices/{snap}")
+    Call<ResponseBody> getInvoicesBySnap(
+        @Header("Authorization")   String token,
+        @Path("snap")              String snap);
 
     @GET("patient/datapatient")
     Call<ResponseBody> getdatapatient(
