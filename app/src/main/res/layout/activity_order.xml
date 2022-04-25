@@ -362,13 +362,14 @@
                                 android:layout_marginEnd="@dimen/dp20"
                                 android:text="TOTAL"
                                 android:textAlignment="textEnd"
-                                android:textSize="20sp" />
+                                android:textSize="20sp"
+                                android:layout_marginRight="@dimen/dp20"
+                                android:gravity="end" />
                             <TextView
                                 android:id="@+id/total_orders"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Harga"
-                                android:textSize="20sp" />
+                                android:text="Harga"/>
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -504,7 +505,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_marginBottom="@dimen/dp3"
-                                android:hint="Address"
+                                android:hint="Company"
                                 android:inputType="text"/>
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>

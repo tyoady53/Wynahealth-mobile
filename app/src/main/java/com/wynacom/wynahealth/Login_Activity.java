@@ -156,13 +156,21 @@ public class Login_Activity extends AppCompatActivity {
                         } else {
                             nDialog.dismiss();
                             AlertDialog.Builder builder = new AlertDialog.Builder(Login_Activity.this);
-                            builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                            builder.setMessage("Tidak dapat terhubung ke server.\nApakah anda ingin mengulangi proses Login?");
                             builder.setTitle("Login Gagal");
                             builder.setCancelable(true);
-                            builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                            builder.setNegativeButton("Ya", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     dialog.dismiss();
+                                    mtdLogin();
+                                }
+                            });
+                            builder.setPositiveButton("Tidak, dan Keluar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                    System.exit(0);
                                 }
                             });
                             AlertDialog alertDialog = builder.create();
@@ -173,6 +181,19 @@ public class Login_Activity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<ResponseBody> call, Throwable t) {
                         Log.e("debug", "onFailure: ERROR > " + t.toString());
+                        nDialog.dismiss();
+                        AlertDialog.Builder builder = new AlertDialog.Builder(Login_Activity.this);
+                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                        builder.setTitle("Login Gagal");
+                        builder.setCancelable(true);
+                        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
                     }
                 });}
         else{

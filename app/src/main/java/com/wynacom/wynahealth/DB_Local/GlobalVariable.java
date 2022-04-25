@@ -7,10 +7,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.DisplayMetrics;
 import android.widget.Toast;
 
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class GlobalVariable extends Application {
     private String token,patient_id,UserID;
@@ -89,5 +91,13 @@ public class GlobalVariable extends Application {
         String retHeight = String.valueOf(height);
 
         return retHeight;
+    }
+
+    public String toCurrency(String number){
+        Locale localeID = new Locale("in", "ID");
+        NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
+        String c = nf.format(Integer.parseInt(number));
+
+        return c;
     }
 }

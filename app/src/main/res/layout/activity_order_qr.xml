@@ -37,6 +37,10 @@
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 android:contentDescription="Image" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/inv_order_invNo"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -158,15 +162,16 @@
             <ListView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
                 android:id="@+id/inv_list_view"/>
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="@color/black"/>
             <LinearLayout
+                android:layout_marginRight="5dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="5dp">
                 <TextView
                     android:layout_weight="1"
                     android:layout_width="wrap_content"

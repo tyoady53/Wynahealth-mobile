@@ -67,13 +67,14 @@ public class Order_Data extends SQLiteOpenHelper {
             double a = Double.parseDouble(price);
             double b = Double.parseDouble(discount);
             String p = nf.format(Integer.parseInt(price));
-            String d = nf.format(Integer.parseInt(discount));
             user.put("price",       p);
-            user.put("discount",    d);
-            double c = a*b;
+            double c = a*(b/100);
             double subTotal = a-c;
             String s = nf.format(subTotal);
-            user.put("total",s);
+            String d = "-"+nf.format(c);
+            user.put("viewDisc",    discount+"%");
+            user.put("discount",    d);
+            user.put("total",       s);
             userList.add(user);
         }
         return  userList;
@@ -111,5 +112,11 @@ public class Order_Data extends SQLiteOpenHelper {
     public void HapusData() {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("delete from " + TABLE_NAME);
+        db.close();
+    }
+
+    public void CloseDatabase(){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.close();
     }
 }

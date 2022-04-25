@@ -82,7 +82,7 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
                     String image            = state.getImage();
                     String slug             = state.getSlug();
                     orderData.SimpanData(id_patient,product_id,ol_category_id,title,description,price,discount,image,slug);
-                    Toast.makeText(getContext(),"Add Priduct "+product_id,Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"Add Product "+product_id,Toast.LENGTH_SHORT).show();
                     //list2.add(state.getID());
                 }else{
                     String product_id       = state.getID();

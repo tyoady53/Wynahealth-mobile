@@ -77,7 +77,8 @@ public class OrderActivity extends AppCompatActivity {
 
     TextView TV_date,TV_time,TV_doctor,TV_address,TV_product;
     Button next,prev,process;
-    String token,bearer,strFixedPosition,patient_id,snap,strTotal,cartsStatus;
+    int cartsStatus;
+    String token,bearer,strFixedPosition,patient_id,snap,strTotal,strDoctor,strCompany;
     Spinner spinner,Sp_order_city,Sp_order_time;
     EditText ET_order_date,ET_order_doctor,ET_order_address;
     LinearLayout lineDataPatient,step2,step3,detail_order;
@@ -90,6 +91,7 @@ public class OrderActivity extends AppCompatActivity {
     protected Cursor cursor,cursor2;
 
     Local_Data localData;
+    SQLiteDatabase dbU;
 
     final Calendar myCalendar= Calendar.getInstance();
 
@@ -298,7 +300,7 @@ public class OrderActivity extends AppCompatActivity {
     private void addCarts() {
         String userID = globalVariable.getUserID();
         String ol_product_id,datapatient_id,qty,price,ol_patient_id;
-        SQLiteDatabase dbU = orderData.getReadableDatabase();
+        dbU = orderData.getReadableDatabase();
         cursor2 = dbU.rawQuery("SELECT * FROM TB_Orders", null);
         cursor2.moveToFirst();
         if (cursor2.getCount()>0) {
@@ -314,9 +316,7 @@ public class OrderActivity extends AppCompatActivity {
                 if(i == cursor2.getCount()){
                     sendData();
                 }
-//                do{
-//
-//                }while (i == cursor2.getCount());
+                cursor2.moveToNext();
             }
         }
     }
@@ -330,7 +330,7 @@ public class OrderActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if (jsonRESULTS.getString("success").equals("true")){
-                                cursor2.moveToNext();
+                                cartsStatus = 1;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -361,7 +361,17 @@ public class OrderActivity extends AppCompatActivity {
 
     private void sendData() {
         strTotal = this.getTotal();
-        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),Sp_order_city.getSelectedItem().toString(),strTotal,ET_order_doctor.getText().toString(),ET_order_address.getText().toString())
+        if(ET_order_doctor.getText().toString().equals("")){
+            strDoctor = "-";
+        } else {
+            strDoctor = ET_order_doctor.getText().toString();
+        }
+        if(ET_order_address.getText().toString().equals("")){
+            strCompany = "-";
+        } else {
+            strCompany = ET_order_address.getText().toString();
+        }
+        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),Sp_order_city.getSelectedItem().toString(),strTotal,strDoctor,strCompany)
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -553,7 +563,7 @@ public class OrderActivity extends AppCompatActivity {
     private void getDataOrder() {
         ArrayList<HashMap<String, String>> userList = orderData.GetUsers();
         ListAdapter adapter = new SimpleAdapter(OrderActivity.this, userList, R.layout.list_order_confirmation,
-        new String[]{"name","description","price","discount","total"}, new int[]{R.id.confirm_product_name, R.id.confirm_product_desc, R.id.confirm_product_price,R.id.confirm_product_discount,R.id.confirm_product_subtotal});
+        new String[]{"name","description","price","discount","total","viewDisc"}, new int[]{R.id.confirm_product_name, R.id.confirm_product_desc, R.id.confirm_product_price,R.id.confirm_product_discount,R.id.confirm_product_subtotal,R.id.confirm_view_discount});
         listViewOrder.setAdapter(adapter);
         TV_product.setText(strView);
         Locale localeID = new Locale("in", "ID");
@@ -577,8 +587,9 @@ public class OrderActivity extends AppCompatActivity {
 
                 double a = Double.parseDouble(price);
                 double b = Double.parseDouble(discount);
-                double c = a * b;
+                double c = a * (b/100);
                 double subTotal = a - c;
+                Toast.makeText(getApplicationContext(),"Discount : "+c,Toast.LENGTH_SHORT).show();
                 total = total + subTotal;
                 cursor.moveToNext();
             }slug = String.valueOf(total);
@@ -601,7 +612,14 @@ public class OrderActivity extends AppCompatActivity {
         builder.setPositiveButton("Ya", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                orderData.HapusData();
+                dbU     = orderData.getReadableDatabase();
+                cursor2 = dbU.rawQuery("SELECT * FROM TB_Orders", null);
+                cursor2.moveToFirst();
+                if (cursor2.getCount()>0) {
+                    orderData.HapusData();
+                }else{
+                    orderData.CloseDatabase();
+                }
                 OrderActivity.super.onBackPressed();
             }
         });

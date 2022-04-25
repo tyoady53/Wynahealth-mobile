@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity {
         cursor2.moveToFirst();
         if (cursor2.getCount()>0) {
             order_data.HapusData();
+        }else{
+            order_data.CloseDatabase();
         }
     }
 

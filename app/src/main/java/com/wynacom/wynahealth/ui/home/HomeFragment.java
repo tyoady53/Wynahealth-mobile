@@ -76,6 +76,7 @@ public class HomeFragment extends Fragment {
     //private HomeFragment.MyCustomAdapter dataAdapter = null;
     private Adapter_Data_Patient dataAdapter = null;
     private ArrayList<adapter_patient> List;
+
     SwipeMenuListView listView;
     private BaseApiService mApiService,ApiGetMethod;
     ArrayList<String> names = new ArrayList<String>();

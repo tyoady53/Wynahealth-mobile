@@ -7,4 +7,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Wynahealth"
-include ':app', ':pagingbutton'
+include ':app'
+include ':lib'
+include ':pagingbutton'
+include ':pagingbutton'

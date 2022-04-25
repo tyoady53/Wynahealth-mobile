@@ -19,8 +19,11 @@
             android:layout_height="wrap_content"
             android:textSize="10sp"
             android:id="@+id/confirm_product_desc"
-            android:text="Product Name"/>
+            android:text="Product Name"
+            android:layout_marginLeft="@dimen/dp20" />
         <TableLayout
+            android:paddingLeft="@dimen/dp10"
+            android:paddingRight="@dimen/dp10"
             android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -32,7 +35,8 @@
                     android:layout_marginEnd="@dimen/dp10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Harga" />
+                    android:text="Harga"
+                    android:layout_marginRight="@dimen/dp10" />
                 <TextView
                     android:layout_weight="1"
                     android:textAlignment="textEnd"
@@ -40,7 +44,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/confirm_product_price"
-                    android:text="Product Name"/>
+                    android:text="Product Name"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="@dimen/dp10" />
             </TableRow>
             <TableRow
                 android:layout_width="match_parent"
@@ -53,11 +59,21 @@
                 <TextView
                     android:layout_weight="1"
                     android:textAlignment="textEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/confirm_view_discount"
+                    android:text="View Discount"
+                    android:layout_gravity="end" />
+                <TextView
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
                     android:layout_marginStart="@dimen/dp10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/confirm_product_discount"
-                    android:text="Product Name"/>
+                    android:text="Product Name"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="@dimen/dp10" />
             </TableRow>
             <TableRow
                 android:layout_width="match_parent"
@@ -74,7 +90,9 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/confirm_product_subtotal"
-                    android:text="Product Name"/>
+                    android:text="Product Name"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="@dimen/dp10" />
             </TableRow>
         </TableLayout>
     </LinearLayout>
