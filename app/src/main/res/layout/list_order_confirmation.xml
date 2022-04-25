@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:padding="@dimen/dp10"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/confirm_product_name"
+            android:text="Product Name"/>
+        <TextView
+            android:layout_marginStart="@dimen/dp20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:id="@+id/confirm_product_desc"
+            android:text="Product Name"
+            android:layout_marginLeft="@dimen/dp20" />
+        <TableLayout
+            android:paddingLeft="@dimen/dp10"
+            android:paddingRight="@dimen/dp10"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp">
+                <TextView
+                    android:layout_marginEnd="@dimen/dp10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Harga"
+                    android:layout_marginRight="@dimen/dp10" />
+                <TextView
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    android:layout_marginStart="@dimen/dp10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/confirm_product_price"
+                    android:text="Product Name"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="@dimen/dp10" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Diskon" />
+                <TextView
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/confirm_view_discount"
+                    android:text="View Discount"
+                    android:layout_gravity="end" />
+                <TextView
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    android:layout_marginStart="@dimen/dp10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/confirm_product_discount"
+                    android:text="Product Name"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="@dimen/dp10" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="3dp">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sub Total" />
+                <TextView
+                    android:layout_weight="1"
+                    android:textAlignment="textEnd"
+                    android:layout_marginStart="@dimen/dp10"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/confirm_product_subtotal"
+                    android:text="Product Name"
+                    android:layout_gravity="end"
+                    android:layout_marginLeft="@dimen/dp10" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+</LinearLayout>

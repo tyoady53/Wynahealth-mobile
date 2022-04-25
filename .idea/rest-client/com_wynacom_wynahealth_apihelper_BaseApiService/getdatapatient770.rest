@@ -1,0 +1,146 @@
+GET
+http://172.16.9.149:8000/api/patient/datapatient?
+
+# Headers
+@Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xNzIuMTYuOS4xNDk6ODAwMFwvYXBpXC9wYXRpZW50XC9sb2dpbiIsImlhdCI6MTY1MDYwOTAyMiwiZXhwIjoxNjUwNjEyNjIyLCJuYmYiOjE2NTA2MDkwMjIsImp0aSI6Ilo5RWt2UlFVR3pkckh2OFUiLCJzdWIiOjEsInBydiI6Ijk1MjRjMWMyMDljMDY3YzA0NTA1MDM0NWMxNDdjYmVmYWI0ZGY1ZmIifQ.MhpM1Ei5tgaeeQ-YkOZGxsrGfUlx9AhErJV56Ab6y88
+page=2
+
+%%%
+# Duration: 259 ms
+# GET
+# http://172.16.9.149:8000/api/patient/datapatient?
+# Headers
+# @Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwOlwvXC8xNzIuMTYuOS4xNDk6ODAwMFwvYXBpXC9wYXRpZW50XC9sb2dpbiIsImlhdCI6MTY1MDYwOTAyMiwiZXhwIjoxNjUwNjEyNjIyLCJuYmYiOjE2NTA2MDkwMjIsImp0aSI6Ilo5RWt2UlFVR3pkckh2OFUiLCJzdWIiOjEsInBydiI6Ijk1MjRjMWMyMDljMDY3YzA0NTA1MDM0NWMxNDdjYmVmYWI0ZGY1ZmIifQ.MhpM1Ei5tgaeeQ-YkOZGxsrGfUlx9AhErJV56Ab6y88
+# Body
+# page=2
+
+
+# status 200
+
+@Host: 172.16.9.149:8000
+@Date: Fri, 22 Apr 2022 06:31:12 GMT
+@Connection: close
+@X-Powered-By: PHP/7.4.16
+@Cache-Control: no-cache, private
+@Date: Fri, 22 Apr 2022 06:31:12 GMT
+@Content-Type: application/json
+@X-RateLimit-Limit: 60
+@X-RateLimit-Remaining: 57
+@Access-Control-Allow-Origin: *
+
+{
+  "success": true,
+  "message": "List Data Keluarga Saya",
+  "data": {
+    "current_page": 1,
+    "data": [
+      {
+        "id": 10,
+        "name": "Mr. tester",
+        "patient_id": 1,
+        "email": "tester33@gmail.com",
+        "handphone": "0263215588555",
+        "postal_code": "68000",
+        "city": "Jakarta",
+        "sex": "M",
+        "dob": "2000-04-14",
+        "nik": "3648876518453168",
+        "created_at": "2022-04-13T17:35:12.000000Z",
+        "updated_at": "2022-04-13T17:35:12.000000Z",
+        "patient": null
+      },
+      {
+        "id": 6,
+        "name": "Mr. Contoh",
+        "patient_id": 1,
+        "email": "saktiinda2222@gmail.com",
+        "handphone": "08649467549499",
+        "postal_code": "69000",
+        "city": "Jakarta",
+        "sex": "M",
+        "dob": "1996-04-08",
+        "nik": "35879458887946584",
+        "created_at": "2022-04-08T07:34:45.000000Z",
+        "updated_at": "2022-04-08T07:34:45.000000Z",
+        "patient": null
+      },
+      {
+        "id": 5,
+        "name": "Mrs. Rani",
+        "patient_id": 1,
+        "email": "hanyahereui@gmail.com",
+        "handphone": "0864646494604534",
+        "postal_code": "968648",
+        "city": "Jakarta",
+        "sex": "F",
+        "dob": "2007-04-07",
+        "nik": "39494679846797640579",
+        "created_at": "2022-04-07T13:38:27.000000Z",
+        "updated_at": "2022-04-07T13:38:27.000000Z",
+        "patient": null
+      },
+      {
+        "id": 4,
+        "name": "Mr. Angelo",
+        "patient_id": 1,
+        "email": "test@gmail.com",
+        "handphone": "08649464666444",
+        "postal_code": "69000",
+        "city": "Jakarta",
+        "sex": "M",
+        "dob": "1999-04-07",
+        "nik": "3994946775499994",
+        "created_at": "2022-04-07T08:25:16.000000Z",
+        "updated_at": "2022-04-07T08:25:16.000000Z",
+        "patient": null
+      },
+      {
+        "id": 3,
+        "name": "Mr. Hamdani",
+        "patient_id": 1,
+        "email": "hanyahereui3@gmail.com",
+        "handphone": "0864676487679744",
+        "postal_code": "96589",
+        "city": "Jakarta",
+        "sex": "M",
+        "dob": "1999-04-07",
+        "nik": "38464949766794976",
+        "created_at": "2022-04-07T08:21:12.000000Z",
+        "updated_at": "2022-04-07T08:21:12.000000Z",
+        "patient": null
+      }
+    ],
+    "first_page_url": "http:\/\/172.16.9.149:8000\/api\/patient\/datapatient?page=1",
+    "from": 1,
+    "last_page": 2,
+    "last_page_url": "http:\/\/172.16.9.149:8000\/api\/patient\/datapatient?page=2",
+    "links": [
+      {
+        "url": null,
+        "label": "&laquo; Previous",
+        "active": false
+      },
+      {
+        "url": "http:\/\/172.16.9.149:8000\/api\/patient\/datapatient?page=1",
+        "label": "1",
+        "active": true
+      },
+      {
+        "url": "http:\/\/172.16.9.149:8000\/api\/patient\/datapatient?page=2",
+        "label": "2",
+        "active": false
+      },
+      {
+        "url": "http:\/\/172.16.9.149:8000\/api\/patient\/datapatient?page=2",
+        "label": "Next &raquo;",
+        "active": false
+      }
+    ],
+    "next_page_url": "http:\/\/172.16.9.149:8000\/api\/patient\/datapatient?page=2",
+    "path": "http:\/\/172.16.9.149:8000\/api\/patient\/datapatient",
+    "per_page": 5,
+    "prev_page_url": null,
+    "to": 5,
+    "total": 7
+  }
+}
