@@ -6,6 +6,7 @@ import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -57,9 +58,27 @@ public interface BaseApiService {
         @Header("Authorization")String token,
         @Query("page")          String page);
 
+    @GET("patient/datapatient")
+    Call<ResponseBody> getAllDataPatient(
+        @Header("Authorization")String token);
+
     @FormUrlEncoded
     @POST("patient/datapatient?")
     Call<ResponseBody> datapatient(
+        @Field("token")         String token,
+        @Field("name")          String patient_name,
+        @Field("email")         String email,
+        @Field("handphone")     String handphone,
+        @Field("city")          String city,
+        @Field("postal_code")   String postal_code,
+        @Field("sex")           String sex,
+        @Field("dob")           String age,
+        @Field("nik")           String nik);
+
+    @FormUrlEncoded
+    @PATCH("patient/datapatient/{id}?")
+    Call<ResponseBody> PatchPatient(
+        @Path("id")             String id,
         @Field("token")         String token,
         @Field("name")          String patient_name,
         @Field("email")         String email,

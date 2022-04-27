@@ -43,6 +43,7 @@ public class SplashScreen extends AppCompatActivity {
     protected Cursor cursor;
     private Handler mHandler = new Handler();
     private BaseApiService mApiService;
+    String email_verify;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +123,8 @@ public class SplashScreen extends AppCompatActivity {
                                     String token = jsonRESULTS.getString("token");
                                     local_data.UpdateToken(email,token);
                                     globalVariable.setToken(token);
+                                    JSONObject subObject = jsonRESULTS.getJSONObject("user");
+                                    email_verify    = subObject.getString("email_verified_at");
                                     cekDB(token);
                                 } else {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(SplashScreen.this);
@@ -175,11 +178,14 @@ public class SplashScreen extends AppCompatActivity {
         if (cursor.getCount()>0) {
             cursor.moveToLast();
             String lasttoken = cursor.getString(10);
-            if(lasttoken.equals(token)){
+            if(!email_verify.equals("null")){
                 gotomenu();
             }else{
-                System.exit(0);
+                gotomenu();
+                //gotoEmailVerification();
             }
+        }else{
+            System.exit(0);
         }
     }
 
@@ -211,6 +217,14 @@ public class SplashScreen extends AppCompatActivity {
     private void landingpage() {
         //stopRepeating();
         Intent i = new Intent(SplashScreen.this, LandingPage.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        startActivity(i);
+        finish();
+    }
+
+    private void gotoEmailVerification() {
+        //stopRepeating();
+        Intent i = new Intent(SplashScreen.this, EmailVerificationActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         startActivity(i);
         finish();

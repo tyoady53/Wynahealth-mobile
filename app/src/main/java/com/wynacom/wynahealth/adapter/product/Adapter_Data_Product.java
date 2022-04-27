@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.bumptech.glide.Glide;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Order_Data;
 import com.wynacom.wynahealth.R;
@@ -35,6 +37,7 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
     private class ViewHolder
     {
         TextView Vname,Vprice,Vdesc;
+        ImageView ViewImage;
         CheckBox cbProduct;
     }
 
@@ -52,6 +55,8 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
             holder.Vprice       = (TextView) convertView.findViewById(R.id.tv_product_price);
             holder.Vdesc        = (TextView) convertView.findViewById(R.id.tv_product_desc);
 
+            holder.ViewImage    = (ImageView) convertView.findViewById(R.id.product_image);
+
             holder.cbProduct    = (CheckBox) convertView.findViewById(R.id.cb_product);
 
             convertView.setTag(holder);
@@ -64,6 +69,7 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
         Locale localeID = new Locale("in", "ID");
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
         String c = nf.format(Integer.parseInt(state.getPrice()));
+        String path     = state.getImage();
         holder.Vprice       .setText(c);
         holder.Vdesc        .setText(state.getDescription());
         holder.cbProduct    .setChecked(state.isSelected());
@@ -91,6 +97,23 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
                 }
             }
         });
+
+//        ViewHolder finalHolder = holder;
+//        Glide.with(getContext())
+//            .asBitmap()
+//            .load(path)
+//            .into(new CustomTarget<Bitmap>() {
+//                @Override
+//                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+//                    finalHolder.ViewImage.setImageBitmap(resource);
+//                }
+//
+//                @Override
+//                public void onLoadCleared(@Nullable Drawable placeholder) {
+//                }
+//            });
+        Glide.with(getContext()).load(path).into(holder.ViewImage);
+
         holder.cbProduct.setTag(state);
 
         Log.v("ConvertView AdapterPos", String.valueOf(stateList.get(position)));

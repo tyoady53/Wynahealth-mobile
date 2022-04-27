@@ -23,6 +23,8 @@
                     android:layout_height="wrap_content"
                     android:text="Title"/>
                 <Spinner
+                    android:layout_marginLeft="@dimen/dp10"
+                    android:layout_marginRight="@dimen/dp10"
                     android:id="@+id/prompt_title"
                     android:maxLines="1"
                     android:hint="Title"
@@ -70,6 +72,8 @@
                     android:layout_height="wrap_content"
                     android:text="Jenis Kelamin"/>
                 <Spinner
+                    android:layout_marginLeft="@dimen/dp10"
+                    android:layout_marginRight="@dimen/dp10"
                     android:id="@+id/prompt_jeniskelamin"
                     android:maxLines="1"
                     android:hint="Jenis Kelamin"
@@ -103,6 +107,8 @@
                     android:layout_height="wrap_content"
                     android:text="Kota"/>
                 <Spinner
+                    android:layout_marginLeft="@dimen/dp10"
+                    android:layout_marginRight="@dimen/dp10"
                     android:id="@+id/prompt_kota"
                     android:maxLines="1"
                     android:hint="Kota"

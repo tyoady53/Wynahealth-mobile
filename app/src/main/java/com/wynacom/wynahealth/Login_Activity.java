@@ -42,7 +42,7 @@ public class Login_Activity extends AppCompatActivity {
     Local_Data local_data;
     String nama,email,Passwordsave,handphone,postal_code,city,sex,age,nik;
     private ProgressDialog nDialog;
-
+    String email_verify;
     private BaseApiService mApiService;
     private Handler mHandler = new Handler();
 
@@ -125,11 +125,11 @@ public class Login_Activity extends AppCompatActivity {
                                     sex          = subObject.getString("sex");
                                     age          = subObject.getString("age");
                                     nik          = subObject.getString("nik");
-
+                                    email_verify = subObject.getString("email_verified_at");
                                     String token = jsonRESULTS.getString("token");
                                     local_data.SimpanData(id,nama,handphone,postal_code,Passwordsave,city,sex,age,email,nik,token);
                                     globalVariable.setToken(token);
-                                    cekDB();
+                                    cekDB(token);
                                 } else {
                                     nDialog.dismiss();
 
@@ -201,15 +201,23 @@ public class Login_Activity extends AppCompatActivity {
         }
     }
 
-    private void cekDB() {
+    private void cekDB(String token) {
         SQLiteDatabase db1 = local_data.getReadableDatabase();
         cursor = db1.rawQuery("SELECT * FROM TB_User", null);
         cursor.moveToFirst();
         if (cursor.getCount()>0) {
             cursor.moveToLast();
-            nDialog.dismiss();
-            Intent i = new Intent(getApplicationContext(), MainActivity.class);
-            startActivity(i);
+            String lasttoken = cursor.getString(10);
+            if(lasttoken.equals(token)){
+                if(!email_verify.equals("null")){
+                    gotomenu();
+                }else{
+                    gotomenu();
+                    //gotoEmailVerification();
+                }
+            }else{
+                System.exit(0);
+            }
         }
         else {
             nDialog.dismiss();
@@ -227,6 +235,22 @@ public class Login_Activity extends AppCompatActivity {
             AlertDialog alertDialog = builder.create();
             alertDialog.show();
         }
+    }
+
+    private void gotoEmailVerification() {
+        //stopRepeating();
+        Intent i = new Intent(Login_Activity.this, EmailVerificationActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        startActivity(i);
+        finish();
+    }
+
+    private void gotomenu() {
+        //stopRepeating();
+        Intent i = new Intent(Login_Activity.this, MainActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        startActivity(i);
+        finish();
     }
 
     @Override

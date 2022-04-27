@@ -58,6 +58,7 @@ public class DashboardFragment extends Fragment {
     Local_Data local_data;
     protected Cursor cursor;
     String string_pending, string_success,string_failed, string_expired, string_ktp, string_kota, string_kodepos,token,bearer;
+    String nama_pasien,handphone,sex,dob,nik,city,postal_code,tampiltanggal,patient_id;
     TextView TV_success,TV_pending,TV_failed,TV_expired;
 
     private Adapter_Data_Product dataAdapter = null;
@@ -167,13 +168,73 @@ public class DashboardFragment extends Fragment {
                                     String status        = c.getString("status");
                                     String grand_total   = c.getString("grand_total");
                                     String snap          = c.getString("snap_token");
+                                    patient_id           = c.getString("datapatient_id");
 
-                                    adapter_invoice _states = new adapter_invoice(id,nama,invoice,phone,address,status,grand_total,snap);
-                                    orderList.add(_states);
-                                    progress.setVisibility(View.GONE);
-                                    bindData();
+                                    getDataPatient(id,nama,invoice,phone,address,status,grand_total,snap,patient_id);
                                 }
                             }
+                        } else {
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                            builder.setMessage("Data Patient Kosong.");
+                            builder.setTitle("List Patient");
+                            builder.setCancelable(true);
+                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Cue.init().with(getContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "onFailure: ERROR > " + t.toString());
+            }
+        });
+    }
+
+    private void getDataPatient(String id, String nama, String invoice, String phone, String address, String status, String grand_total, String snap,String id_patient) {
+        Call<ResponseBody> listCall = ApiGetMethod.getAllDataPatient(bearer);
+        listCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                        if (jsonRESULTS.getString("success").equals("true")){
+                            JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
+                            JSONArray jsonArray     = jsonObject.getJSONArray("data");
+//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject c = jsonArray.getJSONObject(i);
+                                nama_pasien   = c.getString("name");
+                                handphone     = c.getString("handphone");
+                                sex           = c.getString("sex");
+                                dob           = c.getString("dob");
+                                nik           = c.getString("nik");
+                                city          = c.getString("city");
+                                postal_code   = c.getString("postal_code");
+                                String id_P   = c.getString("id");
+                                tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
+//                                do{
+//                                    adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status,grand_total,snap);
+//                                    orderList.add(_states);
+//                                }while(id_patient.equals(id_P));
+                                if(id_patient.equals(id_P)){
+                                    adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status,grand_total,snap);
+                                    orderList.add(_states);
+                                }
+                            }
+                            progress.setVisibility(View.GONE);
+                            bindData();
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");

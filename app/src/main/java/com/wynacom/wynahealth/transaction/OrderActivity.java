@@ -520,10 +520,11 @@ public class OrderActivity extends AppCompatActivity {
                                 String dob           = c.getString("dob");
                                 String nik           = c.getString("nik");
                                 String city          = c.getString("city");
+                                String email         = c.getString("email");
                                 String postal_code   = c.getString("postal_code");
                                 String tampiltanggal = globalVariable.dateformat(dob);
 
-                                adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1));
+                                adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1),email);
                                 List.add(_states);
                                 setspinner();
                             }

@@ -9,9 +9,10 @@ public class adapter_patient {
     String nik          = null;
     String city         = null;
     String postal_code  = null;
+    String email        = null;
     String number       = null;
 
-    public adapter_patient(String ID,String nama, String handphone, String sex, String dob,String nik, String city, String postal_code,String number) {
+    public adapter_patient(String ID,String nama, String handphone, String sex, String dob,String nik, String city, String postal_code,String number,String email) {
         super();
         this.id         = ID;
         this.nama       = nama;
@@ -22,12 +23,12 @@ public class adapter_patient {
         this.city       = city;
         this.postal_code= postal_code;
         this.number     = number;
+        this.email      = email;
     }
 
     public String getID() {
         return id;
     }
-
     public void setID(String ID) {
         this.id = ID;
     }
@@ -35,7 +36,6 @@ public class adapter_patient {
     public String getNama() {
         return nama;
     }
-
     public void setNama(String nama) {
         this.nama = nama;
     }
@@ -43,7 +43,6 @@ public class adapter_patient {
     public String getPhone() {
         return handphone;
     }
-
     public void setPhone(String handphone) {
         this.handphone = handphone;
     }
@@ -51,7 +50,6 @@ public class adapter_patient {
     public String getGender() {
         return sex;
     }
-
     public void setGender(String sex) {
         this.sex = sex;
     }
@@ -59,7 +57,6 @@ public class adapter_patient {
     public String getDOB() {
         return dob;
     }
-
     public void setDOB(String lat) {
         this.dob = dob;
     }
@@ -67,7 +64,6 @@ public class adapter_patient {
     public String getNIK() {
         return nik;
     }
-
     public void setNIK(String nik) {
         this.nik = nik;
     }
@@ -75,7 +71,6 @@ public class adapter_patient {
     public String getCity() {
         return city;
     }
-
     public void setCity(String city) {
         this.city = city;
     }
@@ -83,7 +78,6 @@ public class adapter_patient {
     public String getPostal() {
         return postal_code;
     }
-
     public void setPostal(String postal_code) {
         this.postal_code = postal_code;
     }
@@ -91,8 +85,14 @@ public class adapter_patient {
     public String getNumber() {
         return number;
     }
-
     public void setNumber(String getnumber) {
         this.number = getnumber;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

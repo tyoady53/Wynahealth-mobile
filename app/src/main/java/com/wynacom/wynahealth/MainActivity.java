@@ -253,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                     logout();
                 }
             })
-            .setNegativeButton("Tidak",null)
+            .setNegativeButton("Batal",null)
             .show();
     }
 

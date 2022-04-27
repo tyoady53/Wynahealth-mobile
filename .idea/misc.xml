@@ -6,6 +6,7 @@
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable-v23/button_oval.xml" value="0.3265" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/border.xml" value="0.326" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/button_blue.xml" value="0.3345" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/button_check_verify.xml" value="0.201" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/button_oval.xml" value="0.3265" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/button_oval_left.xml" value="0.3265" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/custom_password_eye.xml" value="0.21875" />
@@ -31,6 +32,7 @@
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vertor_icon_delete.xml" value="0.326" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout-v26/fragment_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/a.xml" value="0.18541666666666667" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_email_verification.xml" value="0.3625" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_landing_page.xml" value="0.25" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_login.xml" value="0.5282776349614395" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_main.xml" value="0.25" />
@@ -43,7 +45,7 @@
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/fragment_notifications.xml" value="0.20260416666666667" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/list_order.xml" value="0.3298791018998273" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/list_order_confirmation.xml" value="0.26537785588752194" />
-        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/list_patient.xml" value="0.617124394184168" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/list_patient.xml" value="0.33" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/list_product.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/prompt_addpatient.xml" value="0.3625" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/row.xml" value="0.25416666666666665" />
@@ -55,7 +57,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_7" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
