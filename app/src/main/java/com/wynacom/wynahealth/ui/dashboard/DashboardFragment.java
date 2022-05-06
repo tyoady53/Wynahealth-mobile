@@ -15,9 +15,9 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -77,6 +77,7 @@ public class DashboardFragment extends Fragment {
     FloatingActionButton fab_add;
     double cardWidth = 0;
     ProgressBar progress;
+    CardView CardSuccess,CarsPending,CardFailed,CardExpired;
 
     private BaseApiService mApiService,ApiGetMethod;
 
@@ -106,6 +107,11 @@ public class DashboardFragment extends Fragment {
         listView        = binding.listOrder;
         linearLayout    = binding.linearOrderList;
         linearInfo      = binding.listPatientNumber;
+
+        CardSuccess     = binding.cardSuccess;
+        CarsPending     = binding.cardPending;
+        CardFailed      = binding.cardFailed;
+        CardExpired     = binding.cardExpired;
 
         fab_add         = binding.fabOrder;
 
@@ -156,21 +162,18 @@ public class DashboardFragment extends Fragment {
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
 //                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             arrayCount = jsonArray.length();
-                            Toast.makeText(getContext(), String.valueOf(arrayCount), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(getContext(), String.valueOf(arrayCount), Toast.LENGTH_SHORT).show();
                             if(arrayCount>0){
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject c = jsonArray.getJSONObject(i);
                                     String id            = c.getString("id");
-                                    String nama          = c.getString("name");
-                                    String invoice       = c.getString("invoice");
-                                    String phone         = c.getString("phone");
-                                    String address       = c.getString("address");
+                                    String invoice       = c.getString("booked");
                                     String status        = c.getString("status");
                                     String grand_total   = c.getString("grand_total");
                                     String snap          = c.getString("snap_token");
                                     patient_id           = c.getString("datapatient_id");
 
-                                    getDataPatient(id,nama,invoice,phone,address,status,grand_total,snap,patient_id);
+                                    getDataPatient(id,invoice,status,grand_total,snap,patient_id);
                                 }
                             }
                         } else {
@@ -196,12 +199,32 @@ public class DashboardFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("debug", "onFailure: ERROR > " + t.toString());
+                Log.e("debug", "onFailure: ERROR > refreshList" + t.toString());
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                builder.setMessage("Failed loading data. Do you want to retry?");
+                builder.setTitle("Error Load Data Order");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        refreshList();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                });
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
     }
 
-    private void getDataPatient(String id, String nama, String invoice, String phone, String address, String status, String grand_total, String snap,String id_patient) {
+    private void getDataPatient(String id, String invoice, String status, String grand_total, String snap,String id_patient) {
         Call<ResponseBody> listCall = ApiGetMethod.getAllDataPatient(bearer);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -258,17 +281,47 @@ public class DashboardFragment extends Fragment {
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("debug", "onFailure: ERROR > " + t.toString());
+                Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                builder.setMessage("Failed loading data. Do you want to retry?");
+                builder.setTitle("Error Load Data Order");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        refreshList();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                });
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
     }
 
     private void bindData() {
-        String getReturn = ((GlobalVariable) getContext().getApplicationContext()).getWidth(getActivity());
-        int height = Integer.parseInt(getReturn);
-        ViewGroup.LayoutParams params = linearInfo.getLayoutParams();
-        params.height = height;
-        linearInfo.setLayoutParams(params);
+        String getReturn = ((GlobalVariable) getContext().getApplicationContext()).quarterWidth(getActivity());
+        int quarterWidth = Integer.parseInt(getReturn);
+        ViewGroup.LayoutParams successHeight = CardSuccess.getLayoutParams();
+        ViewGroup.LayoutParams pendingHeight = CarsPending.getLayoutParams();
+        ViewGroup.LayoutParams failedHeight  = CardFailed .getLayoutParams();
+        ViewGroup.LayoutParams expiredHeight = CardExpired.getLayoutParams();
+        successHeight.width = quarterWidth;
+        pendingHeight.width = quarterWidth;
+        failedHeight .width = quarterWidth;
+        expiredHeight.width = quarterWidth;
+        CardSuccess.setLayoutParams(successHeight);
+        CarsPending.setLayoutParams(pendingHeight);
+        CardFailed.setLayoutParams(failedHeight);
+        CardExpired.setLayoutParams(expiredHeight);
+        //Toast.makeText(getContext(),String.valueOf(quarterWidth),Toast.LENGTH_SHORT).show();
         if (arrayCount != 0 && arrayCount > 0){
             progress.setVisibility(View.GONE);
             listView.setVisibility(View.VISIBLE);
@@ -284,6 +337,7 @@ public class DashboardFragment extends Fragment {
 
     private void neworder() {
         Intent i = new Intent(getContext(), OrderActivity.class);
+        i.putExtra("index_position", "");
         startActivity(i);
     }
 

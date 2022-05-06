@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,9 +49,9 @@ public class OrderQRActivity extends AppCompatActivity {
     String id,qty,subtotal,image,title,slug,description,product_price,discount;
     private ImageView qrCodeIV;
     private EditText dataEdt;
-    private Button generateQrBtn;
+    private Button generateQrBtn,Bt_Payment;
     private ListView listView;
-    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total,TV_invNo;
+    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total,TV_invNo,TV_status;
     Bitmap bitmap;
     QRGEncoder qrgEncoder;
     private BaseApiService mApiService,ApiGetMethod;
@@ -73,6 +74,8 @@ public class OrderQRActivity extends AppCompatActivity {
 
         listView        = findViewById(R.id.inv_list_view);
 
+        Bt_Payment      = findViewById(R.id.payment_gateway);
+
         qrCodeIV        = findViewById(R.id.idIVQrcode);
         dataEdt         = findViewById(R.id.idEdt);
         generateQrBtn   = findViewById(R.id.idBtnGenerateQR);
@@ -85,6 +88,7 @@ public class OrderQRActivity extends AppCompatActivity {
         TV_inv_address  = findViewById(R.id.inv_order_address);
         TV_inv_total    = findViewById(R.id.inv_total);
         TV_invNo        = findViewById(R.id.inv_order_invNo);
+        TV_status       = findViewById(R.id.inv_order_status);
 
         getInvoices();
         // initializing onclick listener for button.
@@ -101,25 +105,32 @@ public class OrderQRActivity extends AppCompatActivity {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
                             JSONObject jsonObject           = jsonRESULTS.getJSONObject("data");
-                            String invoice_response         = jsonObject.getString("invoice");
+                            String invoice_response         = jsonObject.getString("booked");
                             String snap_response            = jsonObject.getString("snap_token");
                             //String invoice_response         = c.getString("invoice");
                             if(snap_response.equals(snap)){
                                 JSONObject jsonDataPatient      = jsonObject.getJSONObject("datapatient");
                                 dataEdt.setText("http://wynacom.com/"+invoice_response);
                                 generateQR("http://wynacom.com/"+invoice_response);
+                                String order_stts   = jsonObject.getString("status");
                                 String tanggal      = jsonObject.getString("created_at");
                                 String DisplayDate  = tanggal.substring(0,9);
                                 String jam          = tanggal.substring(11,19);
                                 String sex          = jsonDataPatient.getString("sex");
                                 String dob          = jsonDataPatient.getString("dob");
+                                if(order_stts.equals("pending")){
+                                   Bt_Payment.setVisibility(View.VISIBLE);
+                                }else{
+                                    Bt_Payment.setVisibility(View.GONE);
+                                }
                                 if(sex.equals("M")){
                                     strGender = "Laki-laki";
                                 }else{
                                     strGender = "Perempuan";
                                 }
-                                TV_invNo        .setText("No. Invoice : "+jsonObject.getString("invoice"));
-                                TV_inv_patient  .setText(jsonObject.getString("name"));
+                                TV_status       .setText(order_stts);
+                                TV_invNo        .setText("Booking Number : "+jsonObject.getString("booked"));
+                                TV_inv_patient  .setText(jsonDataPatient.getString("name"));
                                 TV_inv_date     .setText(((GlobalVariable) getApplicationContext()).dateformat(DisplayDate));
                                 TV_inv_time     .setText(jam);
                                 TV_inv_gender   .setText(strGender);
@@ -133,8 +144,6 @@ public class OrderQRActivity extends AppCompatActivity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject c = jsonArray.getJSONObject(i);
                                     JSONObject Data_OrderProduct = c.getJSONObject("product");
-
-
                                     subtotal        = c.getString("price");
                                     id              = c.getString("id");
                                     qty             = Data_OrderProduct.getString("title");

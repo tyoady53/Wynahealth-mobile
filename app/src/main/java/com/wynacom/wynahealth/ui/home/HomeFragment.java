@@ -1,21 +1,30 @@
 package com.wynacom.wynahealth.ui.home;
 
+import static android.content.Context.WINDOW_SERVICE;
+
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
@@ -24,6 +33,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -39,6 +49,7 @@ import com.baoyz.swipemenulistview.SwipeMenuListView;
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.github.clans.fab.FloatingActionButton;
+import com.google.zxing.WriterException;
 import com.lakue.pagingbutton.LakuePagingButton;
 import com.lakue.pagingbutton.OnPageSelectListener;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
@@ -49,6 +60,7 @@ import com.wynacom.wynahealth.adapter.patient.adapter_patient;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.FragmentHomeBinding;
+import com.wynacom.wynahealth.transaction.OrderActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -61,6 +73,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import androidmads.library.qrgenearator.QRGContents;
+import androidmads.library.qrgenearator.QRGEncoder;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -70,10 +84,16 @@ public class HomeFragment extends Fragment {
     public static HomeFragment ma;
     private HomeViewModel homeViewModel;
     private FragmentHomeBinding binding;
+
+    Bitmap bitmap;
+    QRGEncoder qrgEncoder;
+
     Local_Data local_data;
     protected Cursor cursor;
-    String id_pelanggan, string_nama, string_umur,string_jk, string_hp, string_ktp, string_kota, string_kodepos,token,bearer,string_email;
-    String editID,edit_name, edit_email,edit_handphone,edit_city,edit_postalcode,edit_sex,edit_dob,edit_nik;
+
+    String id_pelanggan, string_nama, string_umur,string_jk, string_hp, string_ktp, string_kota, string_kodepos,token,bearer,string_email,string_hash,
+        editID,edit_name, edit_email,edit_handphone,edit_city,edit_postalcode,edit_sex,edit_dob,edit_nik,index_loop;
+
     //private HomeFragment.MyCustomAdapter dataAdapter = null;
     private Adapter_Data_Patient dataAdapter = null;
     private ArrayList<adapter_patient> List;
@@ -91,6 +111,7 @@ public class HomeFragment extends Fragment {
     LakuePagingButton lpb_buttonlist;
     String last_page;
     int int_last_page,max_page,NowPage;
+    ImageView signature;
 
     public static boolean stringname(String Name) {
         return Name.length() > 0;
@@ -147,6 +168,7 @@ public class HomeFragment extends Fragment {
             string_kota     = cursor.getString(5);
             string_kodepos  = cursor.getString(3);
             string_email    = cursor.getString(8);
+            string_hash     = cursor.getString(13);
             if (cursor.getString(6).equals("M")){
                 string_jk   = "Laki-laki";
             }else{
@@ -171,6 +193,7 @@ public class HomeFragment extends Fragment {
         final TextView TV_KTP       = binding.tampilKtp;
         final TextView TV_Kota      = binding.tampilKota;
         final TextView TV_kodepos   = binding.tampilKodepos;
+        final TextView TV_gender    = binding.tampilGender;
 
         lpb_buttonlist  = binding.lpbButtonlist;;
 
@@ -182,6 +205,7 @@ public class HomeFragment extends Fragment {
         cardInfo        = binding.cardViewInfo;
         linearList      = binding.linearLayout;
         linearCard      = binding.relLayout;
+        signature       = binding.homeSignature;
 
         progress        = binding.progressCircular;
         linearCard.setVisibility(View.GONE);
@@ -200,7 +224,8 @@ public class HomeFragment extends Fragment {
                 String tampilumur = ((GlobalVariable) getContext().getApplicationContext()).dateformat(string_umur);
                 IdPelanggan .setText(id_pelanggan);
                 TV_Nama     .setText(string_nama);
-                TV_umur     .setText(tampilumur+", "+string_jk);
+                TV_umur     .setText(tampilumur);
+                TV_gender   .setText(string_jk);
                 TV_hp       .setText(string_hp);
                 TV_KTP      .setText(string_ktp);
                 TV_Kota     .setText(string_kota);
@@ -255,13 +280,24 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void create(SwipeMenu menu) {
+                SwipeMenuItem openItem = new SwipeMenuItem(
+                    getContext());
+                // set item background
+                openItem.setBackground(new ColorDrawable(ContextCompat.getColor(getContext(),R.color.light_tosca)));
+                // set item width
+                openItem.setWidth(150);
+                // set item title font color
+                openItem.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.vector_add_box,null));
+                // add to menu
+                menu.addMenuItem(openItem);
+
                 // create "delete" item
                 SwipeMenuItem deleteItem = new SwipeMenuItem(
                     getContext());
                 // set item background
                 deleteItem.setBackground(new ColorDrawable(ContextCompat.getColor(getContext(),R.color.dark25)));
                 // set item width
-                deleteItem.setWidth(90);
+                deleteItem.setWidth(150);
                 // set a icon
                 deleteItem.setIcon(ResourcesCompat.getDrawable(getResources(),R.drawable.vector_edit,null));
                 // add to menu
@@ -274,6 +310,12 @@ public class HomeFragment extends Fragment {
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index) {
                     case 0:
+                        Intent i = new Intent(getContext(), OrderActivity.class);
+                        i.putExtra("index_position", String.valueOf(position+1));
+                        startActivity(i);
+                        //Cue.init().with(getContext()).setMessage("Pemeriksaan "+position).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
+                        break;
+                    case 1:
                         adapter_patient state = List.get(position);
                         editID          = state.getID();
                         edit_name       = state.getNama();
@@ -285,15 +327,7 @@ public class HomeFragment extends Fragment {
                         edit_dob        = state.getDOB();
                         edit_nik        = state.getNIK();
                         tambahdata("edit");
-//                        Cue.init().with(getContext()).setMessage("Patient ID : "+editID+"\nPatient Name : "+edit_name).
-//                            setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.INFO).show();
                         break;
-//                    case 0:
-//                        // open
-//                        break;
-//                    case 1:
-//                        Cue.init().with(getContext()).setMessage("Delete Button").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
-//                        break;
                 }
                 // false : close the menu; true : not close the menu
                 return false;
@@ -303,7 +337,48 @@ public class HomeFragment extends Fragment {
 // set creator
         listView.setMenuCreator(creator);
 
+        generateQR();
+
         return root;
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.M)
+    private void generateQR() {
+        // below line is for getting
+        // the windowmanager service.
+        WindowManager manager = (WindowManager) getActivity().getSystemService(WINDOW_SERVICE);
+
+        // initializing a variable for default display.
+        Display display = manager.getDefaultDisplay();
+
+        // creating a variable for point which
+        // is to be displayed in QR Code.
+        Point point = new Point();
+        display.getSize(point);
+
+        // getting width and
+        // height of a point
+        int width = point.x;
+        int height = point.y;
+
+        // generating dimension from width and height.
+        int dimen = Math.min(width, height);
+        dimen = dimen * 3 / 4;
+
+        // setting this dimensions inside our qr code
+        // encoder to generate our qr code.
+        qrgEncoder = new QRGEncoder(id_pelanggan+"/"+string_hash, null, QRGContents.Type.TEXT, dimen);
+        try {
+            // getting our qrcode in the form of bitmap.
+            bitmap = qrgEncoder.encodeAsBitmap();
+            // the bitmap is set inside our image
+            // view using .setimagebitmap method.
+            signature.setImageBitmap(bitmap);
+        } catch (WriterException e) {
+            // this method is called for
+            // exception handling.
+            Log.e("Tag", e.toString());
+        }
     }
 
     private void refreshList(String string_nowPage) {
@@ -338,6 +413,7 @@ public class HomeFragment extends Fragment {
                                 String email         = c.getString("email");
                                 String postal_code   = c.getString("postal_code");
                                 String tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
+                                index_loop           = String.valueOf(i);
 //                                JSONObject jsonObjectPatient = c.getJSONObject("patient");
 //                                String patientMain  = jsonObjectPatient.getString("email");
                                     adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1),email);

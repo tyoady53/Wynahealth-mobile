@@ -77,8 +77,8 @@ public class OrderActivity extends AppCompatActivity {
 
     TextView TV_date,TV_time,TV_doctor,TV_address,TV_product;
     Button next,prev,process;
-    int cartsStatus;
-    String token,bearer,strFixedPosition,patient_id,snap,strTotal,strDoctor,strCompany;
+    int cartsStatus,fixed_index;
+    String token,bearer,strFixedPosition,patient_id,snap,strTotal,strDoctor,strCompany,id_user;
     Spinner spinner,Sp_order_city,Sp_order_time;
     EditText ET_order_date,ET_order_doctor,ET_order_address;
     LinearLayout lineDataPatient,step2,step3,detail_order;
@@ -104,6 +104,8 @@ public class OrderActivity extends AppCompatActivity {
         bearer          = "Bearer "+token;
         mApiService     = UtilsApi.getAPI();
         ApiGetMethod    = UtilsApi.getMethod();
+
+        id_user         = getIntent().getStringExtra("index_position");
 
         List            = new ArrayList<adapter_patient>();
         list_product    = new ArrayList<adapter_product>();
@@ -155,7 +157,6 @@ public class OrderActivity extends AppCompatActivity {
         detail_order    = findViewById(R.id.detail_order);
 
         getPatient();
-        getProduct();
 
         stepsView.setLabels(descriptionData)
             .setBarColorIndicator(getApplicationContext().getResources().getColor(R.color.white))
@@ -209,6 +210,7 @@ public class OrderActivity extends AppCompatActivity {
                         step2.setVisibility(View.VISIBLE);
                         step3.setVisibility(View.GONE);
                         PatientOrder();
+                        spinner.setEnabled(false);
                     } else if(currentState==2){
                         step1.setVisibility(View.GONE);
                         step2.setVisibility(View.GONE);
@@ -240,6 +242,8 @@ public class OrderActivity extends AppCompatActivity {
                         step1.setVisibility(View.VISIBLE);
                         step2.setVisibility(View.GONE);
                         step3.setVisibility(View.GONE);
+                        list_product.clear();
+                        spinner.setEnabled(true);
                     }else if(currentState==1){
                         step1.setVisibility(View.GONE);
                         step2.setVisibility(View.VISIBLE);
@@ -253,7 +257,8 @@ public class OrderActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                int fixed_index = position-1;
+                //Toast.makeText(OrderActivity.this, "Selected index : "+String.valueOf(position), Toast.LENGTH_SHORT).show();
+                fixed_index = position-1;
                 if(spinner.getSelectedItem().equals("Pilih")){
                     lineDataPatient.setVisibility(View.GONE);
                 }else{
@@ -262,7 +267,7 @@ public class OrderActivity extends AppCompatActivity {
                     setDataVIew(fixed_index);
                     adapter_patient state = List.get(Integer.parseInt(strFixedPosition));
                     patient_id =state.getID();
-                    Toast.makeText(getApplicationContext(), "Selected Spinner "+String.valueOf(patient_id), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(getApplicationContext(), "Selected Spinner "+String.valueOf(patient_id), Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
@@ -371,7 +376,7 @@ public class OrderActivity extends AppCompatActivity {
         } else {
             strCompany = ET_order_address.getText().toString();
         }
-        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),Sp_order_city.getSelectedItem().toString(),strTotal,strDoctor,strCompany)
+        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),Sp_order_city.getSelectedItem().toString(),strTotal,strDoctor,strCompany,ET_order_date.getText().toString())
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -434,8 +439,8 @@ public class OrderActivity extends AppCompatActivity {
         getDataOrder();
     }
 
-    private void getProduct() {
-        Call<ResponseBody> listCall = ApiGetMethod.getProducts(bearer);
+    private void getProduct(String s) {
+        Call<ResponseBody> listCall = ApiGetMethod.getProducts(bearer,s);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -443,8 +448,8 @@ public class OrderActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
-                            JSONArray jsonArray = jsonObject.getJSONArray("data");
+                            //JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
+                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             //                           JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
@@ -559,6 +564,9 @@ public class OrderActivity extends AppCompatActivity {
         ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, R.layout.spinner_item,list2);
         dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
         spinner.setAdapter(dataAdapter2);
+        if(!id_user.equals("")){
+            spinner.setSelection(Integer.parseInt(id_user));
+        }
     }
 
     private void getDataOrder() {
@@ -590,7 +598,7 @@ public class OrderActivity extends AppCompatActivity {
                 double b = Double.parseDouble(discount);
                 double c = a * (b/100);
                 double subTotal = a - c;
-                Toast.makeText(getApplicationContext(),"Discount : "+c,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(),"Discount : "+c,Toast.LENGTH_SHORT).show();
                 total = total + subTotal;
                 cursor.moveToNext();
             }slug = String.valueOf(total);
@@ -600,7 +608,6 @@ public class OrderActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //
         AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
         builder.setMessage("Kembali ke menu sebelumnya akan membatalkan pesanan.\nAnda ingin melanjutkan?");
         builder.setCancelable(true);
@@ -629,6 +636,7 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     public void PatientOrder(){
+        getProduct(orderGender.getText().toString());
         globalVariable.setPatient_id(patient_id);
     }
 }

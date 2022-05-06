@@ -6,13 +6,228 @@
     android:layout_height="fill_parent"
     tools:context=".ui.dashboard.DashboardFragment">
 
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/dp10"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            app:cardCornerRadius="@dimen/dp10"
+            android:layout_weight="1"
+            android:id="@+id/card_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/green"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/dp3"
+                    android:paddingBottom="@dimen/dp3"
+                    android:text="Success"
+                    android:textAlignment="center"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_success"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:textSize="30sp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="4"
+                    android:paddingLeft="@dimen/dp10"
+                    android:paddingTop="@dimen/dp3"
+                    android:paddingRight="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp3"
+                    android:text="99" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            app:cardCornerRadius="@dimen/dp10"
+            android:layout_weight="1"
+            android:id="@+id/card_pending"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/yellow"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/dp3"
+                    android:paddingBottom="@dimen/dp3"
+                    android:text="Pending"
+                    android:textAlignment="center"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_pending"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:textSize="30sp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="4"
+                    android:paddingLeft="@dimen/dp10"
+                    android:paddingTop="@dimen/dp3"
+                    android:paddingRight="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp3"
+                    android:text="10" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            app:cardCornerRadius="@dimen/dp10"
+            android:layout_weight="1"
+            android:id="@+id/card_failed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/red"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/dp3"
+                    android:paddingBottom="@dimen/dp3"
+                    android:text="Failed"
+                    android:textAlignment="center"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/black" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_failed"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:textSize="30sp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="4"
+                    android:paddingLeft="@dimen/dp10"
+                    android:paddingTop="@dimen/dp3"
+                    android:paddingRight="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp3"
+                    android:text="99" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            app:cardCornerRadius="@dimen/dp10"
+            android:layout_weight="1"
+            android:id="@+id/card_expired"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="@dimen/dp3"
+                    android:paddingBottom="@dimen/dp3"
+                    android:text="Expired"
+                    android:textColor="@color/white"
+                    android:textAlignment="center"/>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "
+                    android:textSize="16sp"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/tv_expired"
+                    android:textAlignment="center"
+                    android:layout_width="match_parent"
+                    android:textSize="30sp"
+                    android:layout_height="wrap_content"
+                    android:maxLines="4"
+                    android:paddingLeft="@dimen/dp10"
+                    android:paddingTop="@dimen/dp3"
+                    android:paddingRight="@dimen/dp10"
+                    android:paddingBottom="@dimen/dp3"
+                    android:text="99"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+
     <androidx.cardview.widget.CardView
-        app:cardCornerRadius="@dimen/dp10"
-        android:layout_marginTop="@dimen/dp10"
         android:id="@+id/cardViewDashboard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
         android:foregroundGravity="center"
+        android:visibility="gone"
+        app:cardCornerRadius="@dimen/dp10"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,25 +267,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="3dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Pending Order"
-                                android:textSize="16sp" />
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=" : "
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/tv_pending"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLines="4"
-                                android:text="Pending"
-                                android:textSize="16sp" />
                         </TableRow>
 
                         <TableRow
@@ -78,25 +275,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="3dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Success Transaction"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=" : "
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/tv_success"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLines="4"
-                                android:text="success"
-                                android:textSize="16sp" />
                         </TableRow>
 
                         <TableRow
@@ -104,25 +282,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="3dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Failed"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=" : "
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/tv_failed"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:maxLines="4"
-                                android:text="failed"
-                                android:textSize="16sp" />
                         </TableRow>
 
                         <TableRow
@@ -130,25 +289,6 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="3dp">
 
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Expired"
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text=" : "
-                                android:textSize="16sp" />
-
-                            <TextView
-                                android:id="@+id/tv_expired"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:maxLines="4"
-                                android:text="expired"
-                                android:textSize="16sp" />
                         </TableRow>
                     </TableLayout>
                 </LinearLayout>
@@ -157,17 +297,16 @@
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
+        android:layout_marginTop="@dimen/dp10"
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="10dp"
         android:background="@color/notwhite"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardViewDashboard"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
         app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
@@ -193,8 +332,14 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="@dimen/dp10"
             android:layout_marginTop="@dimen/dp3"
+            android:padding="5dp"
             android:text="Order History"
-            android:textSize="18dp" />
+            android:textSize="20sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/darkerWhite" />
 
         <ListView
             android:id="@+id/list_order"
@@ -202,15 +347,17 @@
             android:layout_height="wrap_content"
             android:background="@color/notwhite"
             android:divider="@null"
-            android:visibility="gone"/>
+            android:visibility="gone" />
 
         <LinearLayout
             android:id="@+id/linear_order_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center_horizontal">
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
 
             <TextView
+                android:layout_marginTop="@dimen/dpHigh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginRight="@dimen/dp10"
@@ -218,9 +365,11 @@
                 android:textSize="@dimen/dp20" />
 
             <Button
+                android:padding="@dimen/dp10"
                 android:id="@+id/btn_new_order"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@drawable/button_two_tone"
                 android:text="Create New Order" />
         </LinearLayout>
     </LinearLayout>
@@ -236,14 +385,14 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <com.github.clans.fab.FloatingActionButton
-        app:fab_colorNormal="@color/light_tosca"
-        app:fab_colorPressed="@color/light_tosca_pressed"
-        android:src="@drawable/vector_list_add"
         android:id="@+id/fab_order"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/dp20"
         android:layout_marginBottom="@dimen/dp20"
+        android:src="@drawable/vector_list_add"
+        app:fab_colorNormal="@color/light_tosca"
+        app:fab_colorPressed="@color/light_tosca_pressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"

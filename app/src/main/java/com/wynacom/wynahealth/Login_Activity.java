@@ -127,7 +127,8 @@ public class Login_Activity extends AppCompatActivity {
                                     nik          = subObject.getString("nik");
                                     email_verify = subObject.getString("email_verified_at");
                                     String token = jsonRESULTS.getString("token");
-                                    local_data.SimpanData(id,nama,handphone,postal_code,Passwordsave,city,sex,age,email,nik,token);
+                                    String hash  = subObject.getString("password");
+                                    local_data.SimpanData(id,nama,handphone,postal_code,Passwordsave,city,sex,age,email,nik,token,hash);
                                     globalVariable.setToken(token);
                                     cekDB(token);
                                 } else {

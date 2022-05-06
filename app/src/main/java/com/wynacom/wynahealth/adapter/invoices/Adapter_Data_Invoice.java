@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.wynacom.wynahealth.R;
 
@@ -26,6 +27,7 @@ public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
     private static class ViewHolder
     {
         TextView Vstatus,name,Vinvno,Vphone,Vaddress,Vtotal;
+        View status_color;
     }
 
     @Override
@@ -42,6 +44,7 @@ public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
         holder.Vphone        = (TextView) convertView.findViewById(R.id.order_phone);
         holder.Vaddress      = (TextView) convertView.findViewById(R.id.order_address);
         holder.Vtotal        = (TextView) convertView.findViewById(R.id.order_total);
+        holder.status_color  = (View) convertView.findViewById(R.id.status_color);
 
         final adapter_invoice state = stateList.get(position);
 
@@ -54,6 +57,14 @@ public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
         String c = nf.format(Integer.parseInt(state.getTotal()));
         holder.Vtotal       .setText(c);
+
+        if (holder.Vstatus.getText().toString().equals("pending")) {
+            holder.status_color.setBackgroundColor(ResourcesCompat.getColor(convertView.getResources(),R.color.yellow,null));
+        } else if (holder.Vstatus.getText().toString().equals("success")) {
+            holder.status_color.setBackgroundColor(ResourcesCompat.getColor(convertView.getResources(), R.color.green, null));
+        } else if (holder.Vstatus.getText().toString().equals("failed")) {
+            holder.status_color.setBackgroundColor(ResourcesCompat.getColor(convertView.getResources(), R.color.red, null));
+        }
 
         return convertView;
     }

@@ -121,7 +121,9 @@ public class SplashScreen extends AppCompatActivity {
                                 JSONObject jsonRESULTS = new JSONObject(response.body().string());
                                 if (jsonRESULTS.getString("success").equals("true")){
                                     String token = jsonRESULTS.getString("token");
-                                    local_data.UpdateToken(email,token);
+                                    JSONObject userObj = jsonRESULTS.getJSONObject("user");
+                                    String hash  = userObj.getString("password");
+                                    local_data.UpdateToken(email,token,hash);
                                     globalVariable.setToken(token);
                                     JSONObject subObject = jsonRESULTS.getJSONObject("user");
                                     email_verify    = subObject.getString("email_verified_at");

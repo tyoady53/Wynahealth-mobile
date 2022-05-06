@@ -93,8 +93,9 @@ public interface BaseApiService {
     @GET("web/categories")
     Call<ResponseBody> getcategories(@Header("Authorization") String token);
 
-    @GET("web/products")
-    Call<ResponseBody> getProducts(@Header("Authorization") String token);
+    @GET("web/products/{gender}")
+    Call<ResponseBody> getProducts(@Header("Authorization") String token,
+                                   @Path("gender")          String gender);
 
     @GET("web/carts")
     Call<ResponseBody> getcarts(@Header("Authorization") String token);
@@ -120,5 +121,6 @@ public interface BaseApiService {
         @Field("address")       String address,
         @Field("grand_total")   String grand_total,
         @Field("dokter")        String dokter,
-        @Field("perusahaan")    String perusahaan);
+        @Field("perusahaan")    String perusahaan,
+        @Field("service_date")  String service_date);
 }

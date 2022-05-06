@@ -23,11 +23,12 @@ public class Local_Data extends SQLiteOpenHelper {
     public static final String COL_8 = "nik";
     public static final String COL_9 = "user_id";
     public static final String COL_id= "patient_id";
+    public static final String COL_h = "password_hash";
 
     private SQLiteDatabase db;
 
     public Local_Data(Context context) {
-        super(context, DATABASE_NAME, null, 3);
+        super(context, DATABASE_NAME, null, 5);
         db = this.getWritableDatabase();
     }
 
@@ -45,13 +46,18 @@ public class Local_Data extends SQLiteOpenHelper {
             "email TEXT," +
             "nik TEXT,"+
             "user_id TEXT,"+
-            "id INTEGER primary key ASC autoincrement)");
+            "id INTEGER primary key ASC autoincrement," +
+            "image TEXT," +
+            "password_hash TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.e(TAG, "Updating table from " + oldVersion + " to " + newVersion);
-        if (oldVersion < 3){
+        if (oldVersion == 4){
+            db.execSQL("ALTER table " + TABLE_NAME + " ADD " +
+                "password_hash TEXT;");
+        } else if (oldVersion < 4){
             db.execSQL("drop table TB_User;");
             db.execSQL("create table " + TABLE_NAME + " (" +
                 "patient_id TEXT," +
@@ -65,11 +71,13 @@ public class Local_Data extends SQLiteOpenHelper {
                 "email TEXT," +
                 "nik TEXT,"+
                 "user_id TEXT,"+
-                "id INTEGER primary key ASC autoincrement)");
+                "id INTEGER primary key ASC autoincrement," +
+                "image TEXT," +
+                "password_hash TEXT)");
         }
     }
 
-    public void SimpanData(String id,String patient_name, String handphone, String postal_code, String title_id, String city, String sex, String age, String email,String nik,String user_id) {
+    public void SimpanData(String id,String patient_name, String handphone, String postal_code, String title_id, String city, String sex, String age, String email,String nik,String user_id,String hash) {
         ContentValues values = new ContentValues();
         values.put(COL_0, patient_name);
         values.put(COL_1, handphone);
@@ -81,15 +89,25 @@ public class Local_Data extends SQLiteOpenHelper {
         values.put(COL_7, email);
         values.put(COL_8, nik);
         values.put(COL_9, user_id);
-        values.put(COL_id, id);
+        values.put(COL_id,id);
+        values.put(COL_h, hash);
         db.insert(TABLE_NAME, null, values);
         //close();
     }
 
-    public void UpdateToken(String email,String newtoken){
+    public void UpdateToken(String email,String newtoken,String hash){
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(COL_9, newtoken);
+        values.put(COL_h, hash);
+        db.update(TABLE_NAME, values, "email=?", new String[]{email});
+        db.close();
+    }
+
+    public void UpdateImage(String email,String ImageName){
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put("image", ImageName);
         db.update(TABLE_NAME, values, "email=?", new String[]{email});
         db.close();
     }

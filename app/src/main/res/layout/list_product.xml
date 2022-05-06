@@ -35,7 +35,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/dp3">
-
                         <CheckBox
                             android:id="@+id/cb_product"
                             android:layout_width="wrap_content"

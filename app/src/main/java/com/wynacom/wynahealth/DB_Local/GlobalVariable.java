@@ -81,6 +81,17 @@ public class GlobalVariable extends Application {
         Toast.makeText(getApplicationContext(),"Clear List",Toast.LENGTH_SHORT).show();
     }
 
+    public String quarterWidth(Activity context){
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        context.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        double width = displayMetrics.widthPixels;
+        double WidthLess       = width-50;
+        double x = 0.25*(WidthLess);
+        int Q_width = (int)x;
+
+        return String.valueOf(Q_width);
+    }
+
     public String getWidth(Activity context){
         DisplayMetrics displayMetrics = new DisplayMetrics();
         context.getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
