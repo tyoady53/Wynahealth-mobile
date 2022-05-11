@@ -34,7 +34,8 @@
             android:label="Order" />
         <activity
             android:name=".RegisterActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.Wynahealth.NoActionBar" />
         <activity
             android:name=".Login_Activity"
             android:exported="true"

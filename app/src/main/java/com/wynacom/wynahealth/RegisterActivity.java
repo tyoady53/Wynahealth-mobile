@@ -60,7 +60,7 @@ public class RegisterActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
     final Calendar myCalendar= Calendar.getInstance();
 
-    Button btn_regis;
+    Button btn_regis,btn_login;
 
     CheckBox checkBoxsk;
 
@@ -111,6 +111,8 @@ public class RegisterActivity extends AppCompatActivity {
         sp_kelamin  = findViewById(R.id.regis_jeniskelamin);
         sp_kota     = findViewById(R.id.regis_kota);
 
+        btn_login   = findViewById(R.id.back_login);
+
         email       = findViewById(R.id.regis_email);
         name        = findViewById(R.id.regis_nama);
         ktp         = findViewById(R.id.regis_noktp);
@@ -125,8 +127,7 @@ public class RegisterActivity extends AppCompatActivity {
         checkBoxsk  = findViewById(R.id.regis_sk_chckbox);
 
         List<String> list = new ArrayList<>();
-        list.add("Mr. ");
-        list.add("Mrs. ");
+        list.add("");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item,list);
         dataAdapter.setDropDownViewResource(R.layout.spinner_item);
         sp_title.setAdapter(dataAdapter);
@@ -158,6 +159,14 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 new DatePickerDialog(RegisterActivity.this,date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+
+        btn_login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(RegisterActivity.this, Login_Activity.class);
+                startActivity(intent);
             }
         });
 
@@ -218,7 +227,7 @@ public class RegisterActivity extends AppCompatActivity {
         }else{
             stringjk = "F";
         }
-        namalengkap = sp_title.getSelectedItem().toString() + " " + name.getText().toString();
+        namalengkap = /*sp_title.getSelectedItem().toString() + " " + */name.getText().toString();
         stringemail = email.getText().toString();
         //stringjk    = sp_kelamin.getSelectedItem().toString();
         stringktp   = ktp.getText().toString();

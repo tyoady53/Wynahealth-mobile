@@ -433,14 +433,14 @@ public class OrderActivity extends AppCompatActivity {
     private void setdatalocal() {
         strView = "";
         TV_date.setText("Tanggal Datang : "+ET_order_date.getText());
-        TV_time.setText("Waktu DDatang : "+Sp_order_time.getSelectedItem().toString());
+        //TV_time.setText("Waktu DDatang : "+Sp_order_time.getSelectedItem().toString());
         TV_doctor.setText("Dokter : "+ET_order_doctor.getText());
         TV_address.setText("Alamat Pasien : "+ET_order_address.getText());
         getDataOrder();
     }
 
     private void getProduct(String s) {
-        Call<ResponseBody> listCall = ApiGetMethod.getProducts(bearer,s);
+        Call<ResponseBody> listCall = ApiGetMethod.getProducts(s);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -448,8 +448,8 @@ public class OrderActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            //JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
-                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
+                            JSONArray jsonArray = jsonObject.getJSONArray("data");
                             //                           JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
@@ -521,7 +521,7 @@ public class OrderActivity extends AppCompatActivity {
                                 String id            = c.getString("id");
                                 String nama          = c.getString("name");
                                 String handphone     = c.getString("handphone");
-                                String sex           = c.getString("sex");
+                                String sex           = globalVariable.setGender(c.getString("sex"));
                                 String dob           = c.getString("dob");
                                 String nik           = c.getString("nik");
                                 String city          = c.getString("city");
@@ -636,7 +636,13 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     public void PatientOrder(){
-        getProduct(orderGender.getText().toString());
+        String gender;
+        if(orderGender.getText().toString().equals("Perempuan")){
+            gender = "F";
+        }else{
+            gender = "M";
+        }
+        getProduct(gender);
         globalVariable.setPatient_id(patient_id);
     }
 }

@@ -53,12 +53,19 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
         holder.viewNomDisc  = nf.format(Double.parseDouble(state.getNomDiscount()));
         holder.viewSubTtl   = nf.format(Double.parseDouble(state.getSubtotal()));
 
+        double a = Double.parseDouble(state.getProduct_price());
+        double b = Double.parseDouble(state.getNomDiscount());
+        double d = a * (b/100);
+        double Double_subTotal  = a - d;
+
         holder.ViewProduct       .setText(state.getTitle());
         holder.ViewDescription   .setText(state.getDescription());
         holder.ViewName          .setText(holder.viewPrice);
-        holder.ViewDiscount      .setText("-"+holder.viewNomDisc);
+        holder.ViewDiscount      .setText("-"+nf.format(Double.parseDouble(state.getNomDiscount())));
         holder.ViewSubtotal      .setText(holder.viewSubTtl);
         holder.ViewCount         .setText(state.getView_discount()+"%");
+
+        //Toast.makeText(getContext(), String.valueOf(state.getNomDiscount()), Toast.LENGTH_SHORT).show();
 //        Locale localeID = new Locale("in", "ID");
 //        NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
 //        String c = nf.format(Integer.parseInt(state.getTotal()));
