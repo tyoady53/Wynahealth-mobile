@@ -291,9 +291,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_cart:
-                gotocart();
-                return true;
+//            case R.id.action_cart:
+//                gotocart();
+//                return true;
             case R.id.action_about:
                 return true;
             case R.id.action_settings:

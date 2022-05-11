@@ -60,6 +60,38 @@ public class GlobalVariable extends Application {
         this.patient_id = patientId;
     }
 
+    public String timestampToDate(String tanggal){
+        final String NEW_FORMAT = "dd-MMM-yyyy";
+        final String OLD_FORMAT = "yyyy-MM-ddHH:MM:ss";
+        String newDateString;
+        SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+        try {
+            d = sdf.parse(tanggal);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        sdf.applyPattern(NEW_FORMAT);
+        newDateString = sdf.format(d);
+
+        return newDateString;
+    }
+
+    public String getTimeTimeStamp(String tanggal){
+        final String NEW_FORMAT = "HH:MM:ss";
+        final String OLD_FORMAT = "yyyy-MM-dd HH:MM:ss";
+        String newDateString;
+        SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
+        try {
+            d = sdf.parse(tanggal);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        sdf.applyPattern(NEW_FORMAT);
+        newDateString = sdf.format(d);
+
+        return newDateString;
+    }
+
     public String dateformat(String tanggal){
         final String NEW_FORMAT = "dd-MMM-yyyy";
         final String OLD_FORMAT = "yyyy-MM-dd";
@@ -74,6 +106,44 @@ public class GlobalVariable extends Application {
         newDateString = sdf.format(d);
 
         return newDateString;
+    }
+
+    public String reversedateformat(String tanggal){
+        final String NEW_FORMAT = "dd-MMM-yyyy";
+        final String OLD_FORMAT = "yyyy-MM-dd";
+        String newDateString;
+        SimpleDateFormat sdf = new SimpleDateFormat(NEW_FORMAT);
+        try {
+            d = sdf.parse(tanggal);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        sdf.applyPattern(OLD_FORMAT);
+        newDateString = sdf.format(d);
+
+        return newDateString;
+    }
+
+    public String setGender(String gender){
+        String string_jk;
+        if (gender.equals("M")){
+            string_jk   = "Laki-laki";
+        }else{
+            string_jk   = "Perempuan";
+        }
+
+        return string_jk;
+    }
+
+    public String reverseGender(String gender){
+        String string_jk;
+        if (gender.equals("Perempuan")){
+            string_jk   = "F";
+        }else{
+            string_jk   = "M";
+        }
+
+        return string_jk;
     }
 
     public void clearList(){

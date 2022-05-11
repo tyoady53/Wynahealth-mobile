@@ -56,14 +56,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Diskon" />
+
                 <TextView
-                    android:layout_weight="1"
-                    android:textAlignment="textEnd"
+                    android:id="@+id/confirm_view_discount"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:id="@+id/confirm_view_discount"
+                    android:layout_gravity="end"
                     android:text="View Discount"
-                    android:layout_gravity="end" />
+                    android:textAlignment="textEnd" />
                 <TextView
                     android:layout_weight="1"
                     android:textAlignment="textEnd"

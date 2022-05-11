@@ -61,7 +61,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
             }else{
                 gender  = "Perempuan";
             }
-            holder.Vsex         .setText(gender);
+            holder.Vsex         .setText(state.getGender());
 
             holder.Vnama        .setText(state.getNama());
             holder.Vhandphone   .setText(state.getPhone());

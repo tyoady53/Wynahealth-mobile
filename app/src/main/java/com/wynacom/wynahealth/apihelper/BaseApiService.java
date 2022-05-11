@@ -93,9 +93,8 @@ public interface BaseApiService {
     @GET("web/categories")
     Call<ResponseBody> getcategories(@Header("Authorization") String token);
 
-    @GET("web/products/{gender}")
-    Call<ResponseBody> getProducts(@Header("Authorization") String token,
-                                   @Path("gender")          String gender);
+    @GET("web/products")
+    Call<ResponseBody> getProducts(@Query("gender")          String gender);
 
     @GET("web/carts")
     Call<ResponseBody> getcarts(@Header("Authorization") String token);

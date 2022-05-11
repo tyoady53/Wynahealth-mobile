@@ -98,6 +98,8 @@ public class HomeFragment extends Fragment {
     private Adapter_Data_Patient dataAdapter = null;
     private ArrayList<adapter_patient> List;
 
+    GlobalVariable globalVariable;
+
     SwipeMenuListView listView;
     private BaseApiService mApiService,ApiGetMethod;
     ArrayList<String> names = new ArrayList<String>();
@@ -148,6 +150,7 @@ public class HomeFragment extends Fragment {
         local_data  = new Local_Data(getContext());
         List = new ArrayList<adapter_patient>();
         ma = this;
+        globalVariable = (GlobalVariable) getContext().getApplicationContext();
 
 //        progress = new ProgressBar(getContext());
 ////        progress.setCanc(false); // disable dismiss by tapping outside of the dialog
@@ -162,20 +165,16 @@ public class HomeFragment extends Fragment {
             id_pelanggan    = cursor.getString(0);
             string_nama     = cursor.getString(1);
             string_umur     = cursor.getString(7);
-            //string_jk       = cursor.getString(6);
+            string_jk       = cursor.getString(6);
             string_hp       = cursor.getString(2);
             string_ktp      = cursor.getString(9);
             string_kota     = cursor.getString(5);
             string_kodepos  = cursor.getString(3);
             string_email    = cursor.getString(8);
             string_hash     = cursor.getString(13);
-            if (cursor.getString(6).equals("M")){
-                string_jk   = "Laki-laki";
-            }else{
-                string_jk   = "Perempuan";
-            }
+
         }
-        token           = ((GlobalVariable) getContext().getApplicationContext()).getToken();
+        token           = globalVariable.getToken();
         bearer          = "Bearer "+token;
         int_last_page   = 0;
         homeViewModel   = new ViewModelProvider(this, new ViewModelProvider.NewInstanceFactory()).get(HomeViewModel.class);
@@ -225,7 +224,7 @@ public class HomeFragment extends Fragment {
                 IdPelanggan .setText(id_pelanggan);
                 TV_Nama     .setText(string_nama);
                 TV_umur     .setText(tampilumur);
-                TV_gender   .setText(string_jk);
+                TV_gender   .setText(globalVariable.setGender(string_jk));
                 TV_hp       .setText(string_hp);
                 TV_KTP      .setText(string_ktp);
                 TV_Kota     .setText(string_kota);
@@ -337,7 +336,7 @@ public class HomeFragment extends Fragment {
 // set creator
         listView.setMenuCreator(creator);
 
-        generateQR();
+        //generateQR();
 
         return root;
     }
@@ -406,13 +405,13 @@ public class HomeFragment extends Fragment {
                                 String id            = c.getString("id");
                                 String nama          = c.getString("name");
                                 String handphone     = c.getString("handphone");
-                                String sex           = c.getString("sex");
+                                String sex           = globalVariable.setGender(c.getString("sex"));
                                 String dob           = c.getString("dob");
                                 String nik           = c.getString("nik");
                                 String city          = c.getString("city");
                                 String email         = c.getString("email");
                                 String postal_code   = c.getString("postal_code");
-                                String tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
+                                String tampiltanggal = globalVariable.dateformat(dob);
                                 index_loop           = String.valueOf(i);
 //                                JSONObject jsonObjectPatient = c.getJSONObject("patient");
 //                                String patientMain  = jsonObjectPatient.getString("email");
@@ -504,12 +503,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void datapatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob) {
-        String gender;
-        if(fgender.equals("Laki-laki")){
-            gender   = "M";
-        }else {
-            gender   = "F";
-        }
+        String gender = globalVariable.reverseGender(fgender);
         mApiService.datapatient(token,fnama,femail,fphone,fkota,fpostal,gender,fdob,fktp)
             .enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -548,13 +542,8 @@ public class HomeFragment extends Fragment {
     }
 
     private void editPatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob) {
-        String gender;
-        if(fgender.equals("Laki-laki")){
-            gender   = "M";
-        }else {
-            gender   = "F";
-        }
-        mApiService.PatchPatient(editID,token,fnama,femail,fphone,fkota,fpostal,gender,fdob,fktp)
+        String gender = globalVariable.reverseGender(fgender);
+        mApiService.PatchPatient(editID,token,fnama,femail,fphone,fkota,fpostal,gender,globalVariable.reversedateformat(fdob),fktp)
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -677,7 +666,7 @@ public class HomeFragment extends Fragment {
             }else{
                 begin = 4;
             }
-            name.setText(edit_name.substring(begin));
+            name.setText(edit_name);
             ktp.setText(edit_nik);
             phone.setText(edit_handphone);
             email.setText(edit_email);
@@ -735,7 +724,7 @@ public class HomeFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int id) {
-                        final String fsnama     = sp_title.getSelectedItem().toString()+name.getText().toString();
+                        final String fsnama     = /*sp_title.getSelectedItem().toString()+*/name.getText().toString();
                         final String fsemail    = email.getText().toString();
                         final String fsgender   = sp_kelamin.getSelectedItem().toString();
                         final String fsktp      = ktp.getText().toString();
@@ -769,7 +758,7 @@ public class HomeFragment extends Fragment {
                                 age.requestFocus();
                                 Toast.makeText(getContext(), "Harap Masukkan Tanggal Lahir", Toast.LENGTH_SHORT).show();
                             }else{
-                                editPatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,fsdob);
+                                editPatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,age.getText().toString());
                             }
                         }else {
                             if (!stringname(fsnama)) {

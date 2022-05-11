@@ -56,6 +56,7 @@ public class OrderQRActivity extends AppCompatActivity {
     QRGEncoder qrgEncoder;
     private BaseApiService mApiService,ApiGetMethod;
 
+    GlobalVariable globalVariable;
     private ArrayList<adapter_order> List;
 
     @Override
@@ -66,8 +67,10 @@ public class OrderQRActivity extends AppCompatActivity {
         mApiService     = UtilsApi.getAPI();
         ApiGetMethod    = UtilsApi.getMethod();
 
+        globalVariable  = (GlobalVariable) getApplicationContext();
+
         snap            = getIntent().getStringExtra("snap_token");
-        token           = ((GlobalVariable) getApplicationContext()).getToken();
+        token           = globalVariable.getToken();
         bearer          = "Bearer "+token;
 
         List            = new ArrayList<adapter_order>();
@@ -114,29 +117,24 @@ public class OrderQRActivity extends AppCompatActivity {
                                 generateQR("http://wynacom.com/"+invoice_response);
                                 String order_stts   = jsonObject.getString("status");
                                 String tanggal      = jsonObject.getString("created_at");
-                                String DisplayDate  = tanggal.substring(0,9);
-                                String jam          = tanggal.substring(11,19);
                                 String sex          = jsonDataPatient.getString("sex");
                                 String dob          = jsonDataPatient.getString("dob");
+                                //Toast.makeText(getApplicationContext(),tanggal,Toast.LENGTH_SHORT).show();
                                 if(order_stts.equals("pending")){
                                    Bt_Payment.setVisibility(View.VISIBLE);
                                 }else{
                                     Bt_Payment.setVisibility(View.GONE);
                                 }
-                                if(sex.equals("M")){
-                                    strGender = "Laki-laki";
-                                }else{
-                                    strGender = "Perempuan";
-                                }
+                                strGender = globalVariable.setGender(sex);
                                 TV_status       .setText(order_stts);
                                 TV_invNo        .setText("Booking Number : "+jsonObject.getString("booked"));
                                 TV_inv_patient  .setText(jsonDataPatient.getString("name"));
-                                TV_inv_date     .setText(((GlobalVariable) getApplicationContext()).dateformat(DisplayDate));
-                                TV_inv_time     .setText(jam);
+                                TV_inv_date     .setText(globalVariable.dateformat(tanggal));
+                                TV_inv_time     .setText(globalVariable.getTimeTimeStamp(tanggal));
                                 TV_inv_gender   .setText(strGender);
-                                TV_inv_dob      .setText(((GlobalVariable) getApplicationContext()).dateformat(dob));
+                                TV_inv_dob      .setText(globalVariable.dateformat(dob));
                                 TV_inv_address  .setText(jsonDataPatient.getString("city"));
-                                String GrandTtl = ((GlobalVariable) getApplicationContext()).toCurrency(jsonObject.getString("grand_total"));
+                                String GrandTtl = globalVariable.toCurrency(jsonObject.getString("grand_total"));
                                 TV_inv_total    .setText(GrandTtl);
                                 TV_inv_total.setTextSize(2,20);
                                 TV_inv_total.setTypeface(TV_inv_total.getTypeface(), Typeface.BOLD);
@@ -238,6 +236,12 @@ public class OrderQRActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        Intent i = new Intent(OrderQRActivity.this, MainActivity.class);
+        i.putExtra("from", "invoice_show");
+        startActivity(i);
+    }
+
+    public void gotohome(View view) {
         Intent i = new Intent(OrderQRActivity.this, MainActivity.class);
         i.putExtra("from", "invoice_show");
         startActivity(i);
