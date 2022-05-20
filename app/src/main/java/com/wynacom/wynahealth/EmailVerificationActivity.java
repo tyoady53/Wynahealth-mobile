@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -24,7 +25,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Map;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -90,7 +93,12 @@ public class EmailVerificationActivity extends AppCompatActivity {
     }
 
     private void checkEmail() {
-        mApiService.login(email, password).enqueue(new Callback<ResponseBody>() {
+        Map<String, Object> jsonParams = new ArrayMap<>();
+        jsonParams.put("email", email);
+        jsonParams.put("password", password);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+        Call<ResponseBody> listCall = mApiService.login(body);
+        listCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                     if (response.isSuccessful()){
@@ -116,10 +124,7 @@ public class EmailVerificationActivity extends AppCompatActivity {
                                 AlertDialog alertDialog = builder.create();
                                 alertDialog.show();
                             }
-                        } catch (JSONException e) {
-                            nDialog.dismiss();
-                            e.printStackTrace();
-                        } catch (IOException e) {
+                        } catch (JSONException | IOException e) {
                             nDialog.dismiss();
                             e.printStackTrace();
                         }

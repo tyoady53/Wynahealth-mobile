@@ -1,6 +1,5 @@
 package com.wynacom.wynahealth;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -69,7 +68,7 @@ public class OrderQRActivity extends AppCompatActivity {
 
         globalVariable  = (GlobalVariable) getApplicationContext();
 
-        snap            = getIntent().getStringExtra("snap_token");
+        snap            = getIntent().getStringExtra("booked");
         token           = globalVariable.getToken();
         bearer          = "Bearer "+token;
 
@@ -125,7 +124,7 @@ public class OrderQRActivity extends AppCompatActivity {
                                 }else{
                                     Bt_Payment.setVisibility(View.GONE);
                                 }
-                                strGender = globalVariable.setGender(sex);
+                                strGender = globalVariable.setGenerateGender(sex);
                                 TV_status       .setText(order_stts);
                                 TV_invNo        .setText("Booking Number : "+jsonObject.getString("booked"));
                                 TV_inv_patient  .setText(jsonDataPatient.getString("name"));
@@ -151,6 +150,7 @@ public class OrderQRActivity extends AppCompatActivity {
                                     description     = Data_OrderProduct.getString("description");
                                     product_price   = Data_OrderProduct.getString("price");
                                     discount        = Data_OrderProduct.getString("discount");
+                                    String product_id = Data_OrderProduct.getString("ol_product_id");
 
                                     double a = Double.parseDouble(product_price);
                                     double b = Double.parseDouble(discount);
@@ -158,24 +158,24 @@ public class OrderQRActivity extends AppCompatActivity {
                                     double Double_subTotal  = a - d;
                                     String String_subTotal  = String.valueOf(Double_subTotal);
                                     String nomDiscount      = String.valueOf(d);
-                                    adapter_order _states   = new adapter_order(id,qty,String_subTotal,image,title,slug,description,product_price,discount,nomDiscount);
+                                    adapter_order _states   = new adapter_order(id,qty,String_subTotal,image,title,slug,description,product_price,discount,nomDiscount,product_id);
                                     List.add(_states);
                                 }
                             }setListView();
-                        } else {
-                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
-                            builder.setMessage("Data Patient Kosong.");
-                            builder.setTitle("List Patient");
-                            builder.setCancelable(true);
-                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            android.app.AlertDialog alertDialog = builder.create();
-                            alertDialog.show();
-                        }
+                       } //else {
+//                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+//                            builder.setMessage("Data Patient Kosong.");
+//                            builder.setTitle("List Patient");
+//                            builder.setCancelable(true);
+//                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+//                                @Override
+//                                public void onClick(DialogInterface dialog, int which) {
+//                                    dialog.dismiss();
+//                                }
+//                            });
+//                            android.app.AlertDialog alertDialog = builder.create();
+//                            alertDialog.show();
+//                        }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }

@@ -8,6 +8,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.Menu;
@@ -17,7 +18,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -32,12 +32,15 @@ import com.wynacom.wynahealth.DB_Local.Order_Data;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.ActivityMainBinding;
+import com.wynacom.wynahealth.transaction.CartsActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Map;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -220,10 +223,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void relogin(String email,String password) {
         if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password) ){
-            mApiService.login(
-                email,
-                password)
-                .enqueue(new Callback<ResponseBody>() {
+            Map<String, Object> jsonParams = new ArrayMap<>();
+//put something inside the map, could be null
+            jsonParams.put("email", email);
+            jsonParams.put("password", password);
+            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+            //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+            Call<ResponseBody> listCall = mApiService.login(body);
+            listCall.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()){
@@ -249,9 +256,7 @@ public class MainActivity extends AppCompatActivity {
                                     android.app.AlertDialog alertDialog = builder.create();
                                     alertDialog.show();
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
+                            } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
                         } else {
@@ -291,9 +296,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-//            case R.id.action_cart:
-//                gotocart();
-//                return true;
+            case R.id.action_cart:
+                gotocart();
+                return true;
             case R.id.action_about:
                 return true;
             case R.id.action_settings:
@@ -305,7 +310,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void gotocart() {
-        Toast.makeText(getApplicationContext(),"Cart",Toast.LENGTH_SHORT).show();
+        Intent login = new Intent(getApplicationContext(), CartsActivity.class);
+        //login.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(login);
     }
 
     private void logoutdialog() {

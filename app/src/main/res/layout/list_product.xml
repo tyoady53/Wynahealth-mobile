@@ -19,8 +19,8 @@
             android:orientation="horizontal">
             <ImageView
                 android:layout_weight="1"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:id="@+id/product_image"/>
             <LinearLayout
                 android:layout_weight="4"
@@ -35,8 +35,9 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/dp3">
-                        <CheckBox
+                        <TextView
                             android:id="@+id/cb_product"
+                            android:text="this is product"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"/>
                         <TextView
@@ -62,6 +63,13 @@
                     android:layout_marginStart="@dimen/dp20"
                     android:textSize="5pt"
                     android:id="@+id/tv_product_desc"/>
+                <ImageButton
+                    android:layout_gravity="right"
+                    android:layout_width="@dimen/dp20"
+                    android:layout_height="@dimen/dp20"
+                    android:background="@color/green"
+                    android:src="@drawable/vector_add_box"
+                    android:id="@+id/order_add"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

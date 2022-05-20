@@ -10,4 +10,5 @@
     <dimen name="dp3">3dp</dimen>
 
     <dimen name="dpHigh">50dp</dimen>
+    <dimen name="fab_margin">16dp</dimen>
 </resources>

@@ -17,6 +17,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.cardview.widget.CardView
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/dp10"
             android:layout_weight="1"
             android:id="@+id/card_success"
@@ -66,6 +67,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/dp10"
             android:layout_weight="1"
             android:id="@+id/card_pending"
@@ -116,6 +118,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/dp10"
             android:layout_weight="1"
             android:id="@+id/card_failed"
@@ -166,6 +169,7 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
+            android:visibility="gone"
             app:cardCornerRadius="@dimen/dp10"
             android:layout_weight="1"
             android:id="@+id/card_expired"

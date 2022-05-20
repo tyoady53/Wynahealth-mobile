@@ -124,7 +124,6 @@
                         android:padding="@dimen/dp10">
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:visibility="gone"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
@@ -136,8 +135,7 @@
                             <Spinner
                                 android:id="@+id/regis_title"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textSize="@dimen/MoreTextSize"></Spinner>
+                                android:layout_height="wrap_content"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -150,8 +148,7 @@
                                 android:layout_height="wrap_content"
                                 android:hint="Nama Lengkap"
                                 android:inputType="text"
-                                android:maxLines="1"
-                                android:textSize="@dimen/MoreTextSize"></EditText>
+                                android:maxLines="1"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -167,8 +164,7 @@
                                 android:id="@+id/regis_jeniskelamin"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Jenis Kelamin"
-                                android:textSize="@dimen/MoreTextSize"></Spinner>
+                                android:hint="Jenis Kelamin"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -179,11 +175,9 @@
                                 android:id="@+id/regis_noktp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:ems="16"
                                 android:hint="No. KTP"
                                 android:inputType="number"
-                                android:maxLines="1"
-                                android:textSize="@dimen/MoreTextSize"></EditText>
+                                android:maxLines="1"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -200,8 +194,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Kota"
-                                android:maxLines="1"
-                                android:textSize="@dimen/MoreTextSize"></Spinner>
+                                android:maxLines="1"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -214,8 +207,7 @@
                                 android:layout_height="wrap_content"
                                 android:hint="Kode Pos"
                                 android:inputType="number"
-                                android:maxLines="1"
-                                android:textSize="@dimen/MoreTextSize"></EditText>
+                                android:maxLines="1"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -229,8 +221,7 @@
                                 android:hint="No. HP"
                                 android:inputType="phone"
                                 android:maxLines="1"
-                                android:minEms="10"
-                                android:textSize="@dimen/MoreTextSize"></EditText>
+                                android:minEms="10"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -245,8 +236,7 @@
                                 android:cursorVisible="false"
                                 android:focusable="false"
                                 android:focusableInTouchMode="false"
-                                android:hint="Tanggal Lahir"
-                                android:textSize="@dimen/MoreTextSize"></EditText>
+                                android:hint="Tanggal Lahir"/>
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

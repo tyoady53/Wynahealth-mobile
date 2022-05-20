@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -32,7 +33,7 @@ import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.DB_Local.Order_Data;
-import com.wynacom.wynahealth.OrderQRActivity;
+import com.wynacom.wynahealth.MainActivity;
 import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.adapter.patient.Adapter_Data_Patient;
 import com.wynacom.wynahealth.adapter.patient.adapter_patient;
@@ -53,7 +54,10 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,7 +66,6 @@ import retrofit2.Response;
 public class OrderActivity extends AppCompatActivity {
 
     StepsView stepsView;
-    //final String[] descriptionData = {"Pilih Pasien & Lokasi","Pilih Pemeriksaan","Konfirmasi"};
     final String[] descriptionData = {"","",""};
     int currentState=0;String strView = "";
 
@@ -78,7 +81,8 @@ public class OrderActivity extends AppCompatActivity {
     TextView TV_date,TV_time,TV_doctor,TV_address,TV_product;
     Button next,prev,process;
     int cartsStatus,fixed_index;
-    String token,bearer,strFixedPosition,patient_id,snap,strTotal,strDoctor,strCompany,id_user;
+    String token,bearer,strFixedPosition,patient_id,snap,strTotal,strDoctor,strCompany,id_user,gender,
+        booked,ol_patient_id,datapatient_id,ol_company_id,dokter,perusahaan,service_date,ol_invoice_id;
     Spinner spinner,Sp_order_city,Sp_order_time;
     EditText ET_order_date,ET_order_doctor,ET_order_address;
     LinearLayout lineDataPatient,step2,step3,detail_order;
@@ -276,20 +280,45 @@ public class OrderActivity extends AppCompatActivity {
             }
         });
 
-        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int day) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH,month);
-                myCalendar.set(Calendar.DAY_OF_MONTH,day);
-                updateLabel();
-            }
-        };
+//        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+//            @Override
+//            public void onDateSet(DatePicker view, int year, int month, int day) {
+//                myCalendar.set(Calendar.YEAR, year);
+//                myCalendar.set(Calendar.MONTH,month);
+//                myCalendar.set(Calendar.DAY_OF_MONTH,day);
+//                updateLabel();
+//            }
+//        };
 
         ET_order_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(OrderActivity.this,date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                final Calendar calendar = Calendar.getInstance();
+                //set time zone
+                calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(OrderActivity.this,
+                    new DatePickerDialog.OnDateSetListener() {
+                        public void onDateSet(DatePicker view, int year, int month, int day) {
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH,month);
+                            myCalendar.set(Calendar.DAY_OF_MONTH,day);
+                            updateLabel();
+                        }
+                    },myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH));
+
+                datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+
+                //Set Today date to calendar
+                final Calendar calendar2 = Calendar.getInstance();
+                //Set Minimum date of calendar
+                int tahun = Calendar.getInstance().get(Calendar.YEAR);
+                int bulan = Calendar.getInstance().get(Calendar.MONTH);
+                int tanggal = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                calendar2.set(tahun, bulan, tanggal);
+                datePickerDialog.getDatePicker().setMinDate(calendar2.getTimeInMillis());
+                datePickerDialog.setTitle("Select Date");
+                datePickerDialog.show();
             }
         });
 
@@ -317,7 +346,7 @@ public class OrderActivity extends AppCompatActivity {
                 qty             = "1";
                 price           = cursor2.getString(5);
                 ol_patient_id   = userID;
-                sendCarts(datapatient_id,ol_product_id,qty,price,ol_patient_id);
+                //sendCarts(datapatient_id,ol_product_id,qty,price,ol_patient_id);
                 if(i == cursor2.getCount()){
                     sendData();
                 }
@@ -326,43 +355,43 @@ public class OrderActivity extends AppCompatActivity {
         }
     }
 
-    private void sendCarts(String datapatient_id, String ol_product_id, String qty, String price, String ol_patient_id) {
-        mApiService.postCarts(token,ol_product_id,datapatient_id,qty,price,ol_patient_id)
-            .enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()){
-                        try {
-                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
-                            if (jsonRESULTS.getString("success").equals("true")){
-                                cartsStatus = 1;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
-                        builder.setMessage("Gagal Kirim Data "+ol_product_id);
-                        builder.setCancelable(true);
-                        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.e("debug", "onFailure: ERROR > " + t.toString());
-                }
-            });
-    }
+//    private void sendCarts(String datapatient_id, String ol_product_id, String qty, String price, String ol_patient_id) {
+//        mApiService.postCarts(bearer,ol_product_id,datapatient_id,qty,price,ol_patient_id)
+//            .enqueue(new Callback<ResponseBody>() {
+//                @Override
+//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                    if (response.isSuccessful()){
+//                        try {
+//                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+//                            if (jsonRESULTS.getString("success").equals("true")){
+//                                cartsStatus = 1;
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    } else {
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+//                        builder.setMessage("Gagal Kirim Data "+ol_product_id);
+//                        builder.setCancelable(true);
+//                        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        AlertDialog alertDialog = builder.create();
+//                        alertDialog.show();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+//                }
+//            });
+//    }
 
     private void sendData() {
         strTotal = this.getTotal();
@@ -376,64 +405,63 @@ public class OrderActivity extends AppCompatActivity {
         } else {
             strCompany = ET_order_address.getText().toString();
         }
-        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),Sp_order_city.getSelectedItem().toString(),strTotal,strDoctor,strCompany,ET_order_date.getText().toString())
-            .enqueue(new Callback<ResponseBody>() {
-                @Override
-                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()){
-                        try {
-                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
-                            if (jsonRESULTS.getString("success").equals("true")){
-                                JSONObject subObject = jsonRESULTS.getJSONObject("data");
-                                snap         = subObject.getString("snap_token");
-                                Intent intent = new Intent(OrderActivity.this, OrderQRActivity.class);
-                                intent.putExtra("snap_token", snap);
-                                startActivity(intent);
-                            } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
-                                builder.setMessage("Gagal Kirim data ."+orderName.getText().toString());
-                                builder.setCancelable(true);
-                                builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                                AlertDialog alertDialog = builder.create();
-                                alertDialog.show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
-                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
-                        builder.setTitle("Login Gagal");
-                        builder.setCancelable(true);
-                        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
-                    }
-                }
-
-                @Override
-                public void onFailure(Call<ResponseBody> call, Throwable t) {
-                    Log.e("debug", "onFailure: ERROR > " + t.toString());
-                }
-            });
+//        mApiService.checkout(token,patient_id,"1",orderName.getText().toString(),orderPhone.getText().toString(),Sp_order_city.getSelectedItem().toString(),strTotal,strDoctor,strCompany,ET_order_date.getText().toString())
+//            .enqueue(new Callback<ResponseBody>() {
+//                @Override
+//                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                    if (response.isSuccessful()){
+//                        try {
+//                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+//                            if (jsonRESULTS.getString("success").equals("true")){
+//                                JSONObject subObject = jsonRESULTS.getJSONObject("data");
+//                                snap         = subObject.getString("snap_token");
+//                                Intent intent = new Intent(OrderActivity.this, OrderQRActivity.class);
+//                                intent.putExtra("snap_token", snap);
+//                                startActivity(intent);
+//                            } else {
+//                                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+//                                builder.setMessage("Gagal Kirim data ."+orderName.getText().toString());
+//                                builder.setCancelable(true);
+//                                builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+//                                    @Override
+//                                    public void onClick(DialogInterface dialog, int which) {
+//                                        dialog.dismiss();
+//                                    }
+//                                });
+//                                AlertDialog alertDialog = builder.create();
+//                                alertDialog.show();
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    } else {
+//                        AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+//                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+//                        builder.setTitle("Login Gagal");
+//                        builder.setCancelable(true);
+//                        builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        AlertDialog alertDialog = builder.create();
+//                        alertDialog.show();
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(Call<ResponseBody> call, Throwable t) {
+//                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+//                }
+//            });
     }
 
     private void setdatalocal() {
         strView = "";
         TV_date.setText("Tanggal Datang : "+ET_order_date.getText());
-        //TV_time.setText("Waktu DDatang : "+Sp_order_time.getSelectedItem().toString());
         TV_doctor.setText("Dokter : "+ET_order_doctor.getText());
         TV_address.setText("Alamat Pasien : "+ET_order_address.getText());
         getDataOrder();
@@ -519,9 +547,10 @@ public class OrderActivity extends AppCompatActivity {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");
+                                String title         = c.getString("title");
                                 String nama          = c.getString("name");
                                 String handphone     = c.getString("handphone");
-                                String sex           = globalVariable.setGender(c.getString("sex"));
+                                String sex           = globalVariable.setGenerateGender(c.getString("sex"));
                                 String dob           = c.getString("dob");
                                 String nik           = c.getString("nik");
                                 String city          = c.getString("city");
@@ -529,7 +558,7 @@ public class OrderActivity extends AppCompatActivity {
                                 String postal_code   = c.getString("postal_code");
                                 String tampiltanggal = globalVariable.dateformat(dob);
 
-                                adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1),email);
+                                adapter_patient _states = new adapter_patient(id,title,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1),email);
                                 List.add(_states);
                                 setspinner();
                             }
@@ -552,8 +581,6 @@ public class OrderActivity extends AppCompatActivity {
 
     private void setspinner() {
         dataAdapter = new Adapter_Data_Patient(getApplicationContext(),R.layout.list_patient, List);
-//        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
-//        spinner.setAdapter(dataAdapter);
         int length = dataAdapter.getCount();
         List<String> list2 = new ArrayList<>();
         list2.add("Pilih");
@@ -636,13 +663,102 @@ public class OrderActivity extends AppCompatActivity {
     }
 
     public void PatientOrder(){
-        String gender;
-        if(orderGender.getText().toString().equals("Perempuan")){
-            gender = "F";
-        }else{
-            gender = "M";
+        if(ET_order_doctor.getText().toString().equals("")){
+            strDoctor = "-";
+        } else {
+            strDoctor = ET_order_doctor.getText().toString();
         }
-        getProduct(gender);
+        if(ET_order_address.getText().toString().equals("")){
+            strCompany = "-";
+        } else {
+            strCompany = ET_order_address.getText().toString();
+        }
+        Map<String, Object> jsonParams = new ArrayMap<>();
+//put something inside the map, could be null
+        jsonParams.put("datapatient_id" , patient_id);
+        jsonParams.put("ol_company_id"  , "1");
+        jsonParams.put("service_date"   , ET_order_date.getText().toString());
+        jsonParams.put("dokter"         , strDoctor);
+        jsonParams.put("perusahaan"     , strCompany);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+        //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+        Call<ResponseBody> listCall = mApiService.generateNew(bearer,body);
+        listCall.enqueue(new Callback<ResponseBody>() {
+             @Override
+             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                 if (response.isSuccessful()){
+                     try {
+                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                         if (jsonRESULTS.getString("success").equals("true")){
+                             JSONObject subObject = jsonRESULTS.getJSONObject("data");
+                             globalVariable.setBooked             (subObject.getString("booked"));
+                             globalVariable.setOl_patient_id      (subObject.getString("ol_patient_id"));
+                             globalVariable.setDatapatient_id     (subObject.getString("datapatient_id"));
+                             globalVariable.setOl_company_id      (subObject.getString("ol_company_id"));
+                             globalVariable.setDokter             (subObject.getString("dokter"));
+                             globalVariable.setPerusahaan         (subObject.getString("perusahaan"));
+                             globalVariable.setService_date       (subObject.getString("service_date"));
+                             globalVariable.setGender             (subObject.getString("gender"));
+                             globalVariable.setOl_invoice_id      (subObject.getString("id"));
+                             //Toast.makeText(getApplicationContext(), globalVariable.getGender(), Toast.LENGTH_SHORT).show();
+                             getProduct(globalVariable.getGender());
+                         } else {
+                             AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+                             builder.setMessage(jsonRESULTS.getString("message"));
+                             builder.setCancelable(true);
+                             builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                 @Override
+                                 public void onClick(DialogInterface dialog, int which) {
+                                     dialog.dismiss();
+                                     Intent intent = new Intent(OrderActivity.this, MainActivity.class);
+                                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                                     startActivity(intent);
+                                 }
+                             });
+                             AlertDialog alertDialog = builder.create();
+                             alertDialog.show();
+                         }
+                     } catch (JSONException | IOException e) {
+                         e.printStackTrace();
+                     }
+                 } else {
+                     AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+                     builder.setMessage("Tidak dapat terhubung ke server.\nApakah anda ingin mengulangi proses Login?");
+                     builder.setTitle("Login Gagal");
+                     builder.setCancelable(true);
+                     builder.setNegativeButton("Ya", new DialogInterface.OnClickListener() {
+                         @Override
+                         public void onClick(DialogInterface dialog, int which) {
+                             dialog.dismiss();
+                         }
+                     });
+                     builder.setPositiveButton("Tidak, dan Keluar", new DialogInterface.OnClickListener() {
+                         @Override
+                         public void onClick(DialogInterface dialog, int which) {
+                             dialog.dismiss();
+                             System.exit(0);
+                         }
+                     });
+                     AlertDialog alertDialog = builder.create();
+                     alertDialog.show();
+                 }
+             }
+             @Override
+             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                 Log.e("debug", "onFailure: ERROR > " + t.toString());
+                 AlertDialog.Builder builder = new AlertDialog.Builder(OrderActivity.this);
+                 builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                 builder.setTitle("Login Gagal");
+                 builder.setCancelable(true);
+                 builder.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                     @Override
+                     public void onClick(DialogInterface dialog, int which) {
+                         dialog.dismiss();
+                     }
+                 });
+                 AlertDialog alertDialog = builder.create();
+             }
+         });
         globalVariable.setPatient_id(patient_id);
     }
 }

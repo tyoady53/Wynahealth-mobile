@@ -1,5 +1,6 @@
 package com.wynacom.wynahealth.ui.dashboard;
 
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -61,6 +62,8 @@ public class DashboardFragment extends Fragment {
     String nama_pasien,handphone,sex,dob,nik,city,postal_code,tampiltanggal,patient_id;
     TextView TV_success,TV_pending,TV_failed,TV_expired;
 
+    GlobalVariable globalVariable;
+
     private Adapter_Data_Product dataAdapter = null;
     private ArrayList<adapter_product> List;
 
@@ -83,6 +86,7 @@ public class DashboardFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        globalVariable = (GlobalVariable) getContext().getApplicationContext();
         mApiService = UtilsApi.getAPI();
         ApiGetMethod= UtilsApi.getMethod();
         local_data  = new Local_Data(getContext());
@@ -124,11 +128,12 @@ public class DashboardFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                globalVariable.setList_view("view");
                 adapter_invoice state = orderList.get(position);
-                String snap=state.getSnap();
+                String snap=state.getInvoice();
                 //Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getContext(), OrderQRActivity.class);
-                intent.putExtra("snap_token", snap);
+                intent.putExtra("booked", snap);
                 startActivity(intent);
             }
         });
@@ -282,7 +287,7 @@ public class DashboardFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
-                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setMessage("Failed loading data. Do you want to retry?");
                 builder.setTitle("Error Load Data Order");
                 builder.setCancelable(true);

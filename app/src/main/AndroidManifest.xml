@@ -19,8 +19,27 @@
         android:theme="@style/Theme.Wynahealth"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".transaction.NewOrderActivity"
+            android:exported="false"
+            android:label="Pilih Pasien"/>
+        <activity
+            android:name=".CreateOrderActivity"
+            android:exported="false"
+            android:label="@string/title_activity_create_order"
+            android:theme="@style/Theme.Wynahealth.NoActionBar" />
+        <activity android:name=".DB_Local.CurrentOrder" />
+        <activity
+            android:name=".transaction.OrderConfirmationActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Wynahealth.NoActionBar" />
+        <activity
+            android:name=".transaction.SelectProductActivity"
+            android:exported="false"
+            android:label="Konfirmasi" />
+        <activity
             android:name=".EmailVerificationActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Pilih Pemeriksaan" />
         <activity
             android:name=".OrderQRActivity"
             android:exported="false"

@@ -9,7 +9,6 @@ public class adapter_product {
     String discount         = null;
     String slug             = null;
     String image            = null;
-
     boolean selected        = false;
 
     public adapter_product(String id, String title, String ol_category_id, String description, String price, String discount, String slug, String image, boolean selected) {
@@ -28,16 +27,16 @@ public class adapter_product {
     public String getID() {
         return id;
     }
-    public void setID(String id) {
-        this.id = id;
-    }
+//    public void setID(String id) {
+//        this.id = id;
+//    }
 
     public String getTitle() {
         return title;
     }
-    public void setTitle(String title) {
-        this.title = title;
-    }
+//    public void setTitle(String title) {
+//        this.title = title;
+//    }
 
     public String getCetegory() {
         return ol_category_id;

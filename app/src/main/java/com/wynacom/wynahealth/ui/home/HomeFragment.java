@@ -3,7 +3,6 @@ package com.wynacom.wynahealth.ui.home;
 import static android.content.Context.WINDOW_SERVICE;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -13,6 +12,7 @@ import android.graphics.Point;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Display;
 import android.view.Gravity;
@@ -60,7 +60,7 @@ import com.wynacom.wynahealth.adapter.patient.adapter_patient;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.FragmentHomeBinding;
-import com.wynacom.wynahealth.transaction.OrderActivity;
+import com.wynacom.wynahealth.transaction.NewOrderActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -72,9 +72,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -92,7 +94,7 @@ public class HomeFragment extends Fragment {
     protected Cursor cursor;
 
     String id_pelanggan, string_nama, string_umur,string_jk, string_hp, string_ktp, string_kota, string_kodepos,token,bearer,string_email,string_hash,
-        editID,edit_name, edit_email,edit_handphone,edit_city,edit_postalcode,edit_sex,edit_dob,edit_nik,index_loop;
+        editID,edit_name, edit_email,edit_handphone,edit_city,edit_postalcode,edit_sex,edit_dob,edit_nik,index_loop,edit_title;
 
     //private HomeFragment.MyCustomAdapter dataAdapter = null;
     private Adapter_Data_Patient dataAdapter = null;
@@ -224,7 +226,7 @@ public class HomeFragment extends Fragment {
                 IdPelanggan .setText(id_pelanggan);
                 TV_Nama     .setText(string_nama);
                 TV_umur     .setText(tampilumur);
-                TV_gender   .setText(globalVariable.setGender(string_jk));
+                TV_gender   .setText(globalVariable.setGenerateGender(string_jk));
                 TV_hp       .setText(string_hp);
                 TV_KTP      .setText(string_ktp);
                 TV_Kota     .setText(string_kota);
@@ -309,7 +311,7 @@ public class HomeFragment extends Fragment {
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
                 switch (index) {
                     case 0:
-                        Intent i = new Intent(getContext(), OrderActivity.class);
+                        Intent i = new Intent(getContext(), NewOrderActivity.class);
                         i.putExtra("index_position", String.valueOf(position+1));
                         startActivity(i);
                         //Cue.init().with(getContext()).setMessage("Pemeriksaan "+position).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
@@ -317,6 +319,7 @@ public class HomeFragment extends Fragment {
                     case 1:
                         adapter_patient state = List.get(position);
                         editID          = state.getID();
+                        edit_title      = state.getTitle();
                         edit_name       = state.getNama();
                         edit_email      = state.getEmail();
                         edit_handphone  = state.getPhone();
@@ -403,9 +406,10 @@ public class HomeFragment extends Fragment {
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");
+                                String title         = c.getString("title");
                                 String nama          = c.getString("name");
                                 String handphone     = c.getString("handphone");
-                                String sex           = globalVariable.setGender(c.getString("sex"));
+                                String sex           = globalVariable.setGenerateGender(c.getString("sex"));
                                 String dob           = c.getString("dob");
                                 String nik           = c.getString("nik");
                                 String city          = c.getString("city");
@@ -415,7 +419,7 @@ public class HomeFragment extends Fragment {
                                 index_loop           = String.valueOf(i);
 //                                JSONObject jsonObjectPatient = c.getJSONObject("patient");
 //                                String patientMain  = jsonObjectPatient.getString("email");
-                                    adapter_patient _states = new adapter_patient(id,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1),email);
+                                    adapter_patient _states = new adapter_patient(id,title,nama,handphone,sex,tampiltanggal,nik,city,postal_code,String.valueOf(i+1),email);
                                     List.add(_states);
                                     bindData();
                             }//setPaging(string_nowPage);
@@ -448,38 +452,6 @@ public class HomeFragment extends Fragment {
         });
     }
 
-//    private void setPaging(String string_nowPage) {
-//        lpb_buttonlist.setPageItemCount(int_last_page);
-//        int now = Integer.parseInt(string_nowPage);
-//        //lpb_buttonlist.addBottomPageButton(max_page,now);
-//        lpb_buttonlist.setOnPageSelectListener(new OnPageSelectListener() {
-//            //BeforeButton Click
-//            @Override
-//            public void onPageBefore(int now_page) {
-//                //lpb_buttonlist.addBottomPageButton(max_page,now_page);
-//                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
-//            }
-//
-//            @Override
-//            public void onPageCenter(int now_page) {
-//                //Toast.makeText(getContext(), "Page Number : "+now_page, Toast.LENGTH_SHORT).show();
-//                String nowPage = String.valueOf(now_page);
-//                if(dataAdapter.getCount()>0){
-//                    dataAdapter.clear();
-//                }
-//                refreshList(nowPage);
-//                //lpb_buttonlist.addBottomPageButton(max_page,now_page);
-//            }
-//
-//            //NextButton Click
-//            @Override
-//            public void onPageNext(int now_page) {
-//                //Toast.makeText(getContext(), ""+now_page, Toast.LENGTH_SHORT).show();
-//                //lpb_buttonlist.addBottomPageButton(max_page,now_page);
-//            }
-//        });
-//    }
-
     public void bindData() {
         String getReturn = ((GlobalVariable) getContext().getApplicationContext()).getWidth(getActivity());
         int height = Integer.parseInt(getReturn);
@@ -504,7 +476,17 @@ public class HomeFragment extends Fragment {
 
     private void datapatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob) {
         String gender = globalVariable.reverseGender(fgender);
-        mApiService.datapatient(token,fnama,femail,fphone,fkota,fpostal,gender,fdob,fktp)
+        Map<String, Object> jsonParams = new ArrayMap<>();
+        jsonParams.put("name",       fnama);
+        jsonParams.put("email",      femail);
+        jsonParams.put("handphone",  fphone);
+        jsonParams.put("city",       fkota);
+        jsonParams.put("postal_code",fpostal);
+        jsonParams.put("sex",        gender);
+        jsonParams.put("dob",        fdob);
+        jsonParams.put("nik",        fktp);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+        mApiService.datapatient(bearer,body)
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -543,7 +525,17 @@ public class HomeFragment extends Fragment {
 
     private void editPatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob) {
         String gender = globalVariable.reverseGender(fgender);
-        mApiService.PatchPatient(editID,token,fnama,femail,fphone,fkota,fpostal,gender,globalVariable.reversedateformat(fdob),fktp)
+        Map<String, Object> jsonParams = new ArrayMap<>();
+        jsonParams.put("name",       fnama);
+        jsonParams.put("email",      femail);
+        jsonParams.put("handphone",  fphone);
+        jsonParams.put("city",       fkota);
+        jsonParams.put("postal_code",fpostal);
+        jsonParams.put("sex",        gender);
+        jsonParams.put("dob",        globalVariable.reversedateformat(fdob));
+        jsonParams.put("nik",        fktp);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+        mApiService.PatchPatient(bearer,editID,body)
             .enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
@@ -580,62 +572,62 @@ public class HomeFragment extends Fragment {
             });
     }
 
-    private class MyCustomAdapter extends ArrayAdapter<adapter_patient>
-    {
-        private ArrayList<adapter_patient> stateList;
+//    private class MyCustomAdapter extends ArrayAdapter<adapter_patient>
+//    {
+//        private ArrayList<adapter_patient> stateList;
+//
+//        public MyCustomAdapter(Context context, int textViewResourceId,
+//                               ArrayList<adapter_patient> List) {
+//            super(context, textViewResourceId, List);
+//            this.stateList = new ArrayList<adapter_patient>();
+//            this.stateList.addAll(stateList);
+//        }
+//
+//        private class ViewHolder
+//        {
+//            TextView Vnama,Vhandphone,Vsex,Vdob,Vnik,Vcity,Vpostal;
+//        }
 
-        public MyCustomAdapter(Context context, int textViewResourceId,
-                               ArrayList<adapter_patient> List) {
-            super(context, textViewResourceId, List);
-            this.stateList = new ArrayList<adapter_patient>();
-            this.stateList.addAll(stateList);
-        }
-
-        private class ViewHolder
-        {
-            TextView Vnama,Vhandphone,Vsex,Vdob,Vnik,Vcity,Vpostal;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent)
-        {
-
-            ViewHolder holder = null;
-
-            Log.v("ConvertView", String.valueOf(position));
-
-            if (convertView == null)
-            {
-
-                LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
-                convertView = vi.inflate(R.layout.list_patient, null);
-
-                holder = new HomeFragment.MyCustomAdapter.ViewHolder();
-                holder.Vnama        = (TextView) convertView.findViewById(R.id.list_patient_name);
-                holder.Vhandphone   = (TextView) convertView.findViewById(R.id.list_patient_phone);
-                holder.Vsex         = (TextView) convertView.findViewById(R.id.list_patient_sex);
-                holder.Vdob         = (TextView) convertView.findViewById(R.id.list_patient_dob);
-                holder.Vnik         = (TextView) convertView.findViewById(R.id.list_patient_nik);
-                holder.Vcity        = (TextView) convertView.findViewById(R.id.list_patient_city);
-                holder.Vpostal      = (TextView) convertView.findViewById(R.id.list_patient_post);
-            } else {
-                holder = (HomeFragment.MyCustomAdapter.ViewHolder) convertView.getTag();
-            }
-
-            final adapter_patient state = List.get(position);
-
-            holder.Vnama        .setText(state.getNama());
-            holder.Vhandphone   .setText(state.getPhone());
-            holder.Vsex         .setText(state.getGender());
-            holder.Vdob         .setText(state.getDOB());
-            holder.Vnik         .setText(state.getNIK());
-            holder.Vcity        .setText(state.getCity());
-            holder.Vpostal      .setText(state.getPostal());
-
-            return convertView;
-        }
-    }
+//        @Override
+//        public View getView(int position, View convertView, ViewGroup parent)
+//        {
+//
+//            ViewHolder holder = null;
+//
+//            Log.v("ConvertView", String.valueOf(position));
+//
+//            if (convertView == null)
+//            {
+//
+//                LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//
+//                convertView = vi.inflate(R.layout.list_patient, null);
+//
+//                holder = new HomeFragment.MyCustomAdapter.ViewHolder();
+//                holder.Vnama        = (TextView) convertView.findViewById(R.id.list_patient_name);
+//                holder.Vhandphone   = (TextView) convertView.findViewById(R.id.list_patient_phone);
+//                holder.Vsex         = (TextView) convertView.findViewById(R.id.list_patient_sex);
+//                holder.Vdob         = (TextView) convertView.findViewById(R.id.list_patient_dob);
+//                holder.Vnik         = (TextView) convertView.findViewById(R.id.list_patient_nik);
+//                holder.Vcity        = (TextView) convertView.findViewById(R.id.list_patient_city);
+//                holder.Vpostal      = (TextView) convertView.findViewById(R.id.list_patient_post);
+//            } else {
+//                holder = (HomeFragment.MyCustomAdapter.ViewHolder) convertView.getTag();
+//            }
+//
+//            final adapter_patient state = List.get(position);
+//
+//            holder.Vnama        .setText(state.getNama());
+//            holder.Vhandphone   .setText(state.getPhone());
+//            holder.Vsex         .setText(state.getGender());
+//            holder.Vdob         .setText(state.getDOB());
+//            holder.Vnik         .setText(state.getNIK());
+//            holder.Vcity        .setText(state.getCity());
+//            holder.Vpostal      .setText(state.getPostal());
+//
+//            return convertView;
+//        }
+//    }
 
     private void tambahdata(String data_type) {
         String title = null;
@@ -661,11 +653,12 @@ public class HomeFragment extends Fragment {
 
         if(data_type.equals("edit")){
             int begin;
-            if(edit_name.substring(0,3).equals("Mrs")){
-                begin = 5;
+            if(edit_title.equals("TN.")){
+                begin = 1;
             }else{
-                begin = 4;
+                begin = 2;
             }
+            sp_title.setSelection(begin);
             name.setText(edit_name);
             ktp.setText(edit_nik);
             phone.setText(edit_handphone);
@@ -678,8 +671,8 @@ public class HomeFragment extends Fragment {
         }
 
         List<String> list = new ArrayList<>();
-        list.add("Mr. ");
-        list.add("Mrs. ");
+        list.add("TN.");
+        list.add("NY.");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list);
         dataAdapter.setDropDownViewResource(R.layout.spinner_item);
         sp_title.setAdapter(dataAdapter);

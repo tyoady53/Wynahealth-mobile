@@ -34,11 +34,15 @@
                 android:layout_height="200dp"
                 android:orientation="vertical"
                 android:padding="10dp">
-                <View
+                <RelativeLayout
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_gravity="top|right"
-                    android:background="@drawable/vector_wynahealth_logo" />
+                    android:layout_gravity="top|right">
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/vector_wynahealth_logo"/>
+                </RelativeLayout>
                 <TextView
                     android:visibility="gone"
                     android:layout_width="wrap_content"

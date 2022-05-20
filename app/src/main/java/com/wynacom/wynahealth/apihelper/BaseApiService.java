@@ -1,7 +1,9 @@
 package com.wynacom.wynahealth.apihelper;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -17,25 +19,28 @@ import retrofit2.http.Query;
 
 public interface BaseApiService {
 // API routes
-    @FormUrlEncoded
-    @POST("patient/login?")
-    Call<ResponseBody> login(
-            @Field("email")     String email,
-            @Field("password")  String password);
+//    @FormUrlEncoded
+//    @POST("patient/login?")
+//    Call<ResponseBody> login(
+//            @Field("email")     String email,
+//            @Field("password")  String password);
 
-    @FormUrlEncoded
+    @POST("patient/login/")
+    Call<ResponseBody> login(@Body RequestBody params);
+
+    //@FormUrlEncoded@Body RequestBody params);
     @POST("patient/register?")
-    Call<ResponseBody> register(
-        @Field("patient_name")  String patient_name,
-        @Field("email")         String email,
-        @Field("password")      String password,
-        @Field("handphone")     String handphone,
-        @Field("city")          String city,
-        @Field("postal_code")   String postal_code,
-        @Field("sex")           String sex,
-        @Field("age")           String age,
-        @Field("nik")           String nik,
-        @Field("password_confirmation") String password_confirmation);
+    Call<ResponseBody> register(@Body RequestBody params);
+//        @Field("patient_name")  String patient_name,
+//        @Field("email")         String email,
+//        @Field("password")      String password,
+//        @Field("handphone")     String handphone,
+//        @Field("city")          String city,
+//        @Field("postal_code")   String postal_code,
+//        @Field("sex")           String sex,
+//        @Field("age")           String age,
+//        @Field("nik")           String nik,
+//        @Field("password_confirmation") String password_confirmation);
 
     @FormUrlEncoded
     @POST("patient/logout?")
@@ -48,10 +53,14 @@ public interface BaseApiService {
     @GET("patient/invoices")
     Call<ResponseBody> getInvoices(@Header("Authorization") String token);
 
-    @GET("patient/invoices/{snap}")
+    @POST("patient/invoices/generate")
+    Call<ResponseBody> generateNew(@Header("Authorization") String token,
+                                   @Body                    RequestBody params);
+
+    @GET("patient/invoices/{booked}")
     Call<ResponseBody> getInvoicesBySnap(
         @Header("Authorization")   String token,
-        @Path("snap")              String snap);
+        @Path("booked")            String snap);
 
     @GET("patient/datapatient")
     Call<ResponseBody> getdatapatient(
@@ -62,32 +71,16 @@ public interface BaseApiService {
     Call<ResponseBody> getAllDataPatient(
         @Header("Authorization")String token);
 
-    @FormUrlEncoded
     @POST("patient/datapatient?")
     Call<ResponseBody> datapatient(
-        @Field("token")         String token,
-        @Field("name")          String patient_name,
-        @Field("email")         String email,
-        @Field("handphone")     String handphone,
-        @Field("city")          String city,
-        @Field("postal_code")   String postal_code,
-        @Field("sex")           String sex,
-        @Field("dob")           String age,
-        @Field("nik")           String nik);
+        @Header("Authorization")String token,
+        @Body                   RequestBody params);
 
-    @FormUrlEncoded
-    @PATCH("patient/datapatient/{id}?")
+    @PATCH("patient/datapatient/{id}/")
     Call<ResponseBody> PatchPatient(
+        @Header("Authorization")String token,
         @Path("id")             String id,
-        @Field("token")         String token,
-        @Field("name")          String patient_name,
-        @Field("email")         String email,
-        @Field("handphone")     String handphone,
-        @Field("city")          String city,
-        @Field("postal_code")   String postal_code,
-        @Field("sex")           String sex,
-        @Field("dob")           String age,
-        @Field("nik")           String nik);
+        @Body                   RequestBody params);
 
 //WEB routes
     @GET("web/categories")
@@ -99,27 +92,26 @@ public interface BaseApiService {
     @GET("web/carts")
     Call<ResponseBody> getcarts(@Header("Authorization") String token);
 
-    @FormUrlEncoded
+    //@FormUrlEncoded
     @POST("web/carts?")
     Call<ResponseBody> postCarts(
-        @Field("token")         String token,
-        @Field("ol_product_id") String ol_product_id,
-        @Field("datapatient_id")String datapatient_id,
-        @Field("qty")           String qty,
-        @Field("price")         String price,
-        @Field("ol_patient_id") String ol_patient_id);
+        @Header("Authorization")    String token,
+        @Body                       RequestBody params);
 
-    @FormUrlEncoded
+    //@FormUrlEncoded
+    @GET("web/carts/detail/{booked}")
+    Call<ResponseBody> getCartsDetail(
+        @Header ("Authorization") String token,
+        @Path   ("booked")        String booked);
+
+    @POST("web/carts/remove_item")
+    Call<ResponseBody> remove_itemCarts(
+        @Header("Authorization")    String token,
+        @Body                       RequestBody params);
+
+    //@FormUrlEncoded
     @POST("web/checkout?")
     Call<ResponseBody> checkout(
-        @Field("token")         String token,
-        @Field("datapatient_id")String datapatient_id,
-        @Field("ol_company_id") String ol_company_id,
-        @Field("name")          String name,
-        @Field("phone")         String phone,
-        @Field("address")       String address,
-        @Field("grand_total")   String grand_total,
-        @Field("dokter")        String dokter,
-        @Field("perusahaan")    String perusahaan,
-        @Field("service_date")  String service_date);
+        @Header("Authorization")    String token,
+        @Body                       RequestBody params);
 }

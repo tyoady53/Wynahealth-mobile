@@ -9,6 +9,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.TextView;
@@ -27,7 +28,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.Map;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -109,11 +112,16 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void relogin(String email,String password) {
+        Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
         if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password) ){
-            mApiService.login(
-                email,
-                password)
-                .enqueue(new Callback<ResponseBody>() {
+            Map<String, Object> jsonParams = new ArrayMap<>();
+//put something inside the map, could be null
+            jsonParams.put("email", email);
+            jsonParams.put("password", password);
+            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+            //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+            Call<ResponseBody> listCall = mApiService.login(body);
+            listCall.enqueue(new Callback<ResponseBody>() {
                     @Override
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         if (response.isSuccessful()){
@@ -142,9 +150,7 @@ public class SplashScreen extends AppCompatActivity {
                                     AlertDialog alertDialog = builder.create();
                                     alertDialog.show();
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
+                            } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                             }
                         } else {

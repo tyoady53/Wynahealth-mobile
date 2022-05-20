@@ -11,8 +11,9 @@ public class adapter_order {
     String product_price    = null;
     String view_discount    = null;
     String nom_discount     = null;
+    String product_id       = null;
 
-    public adapter_order(String id, String qty, String subtotal, String image, String title, String slug, String description, String product_price,String view_discount, String nom_discount) {
+    public adapter_order(String id, String qty, String subtotal, String image, String title, String slug, String description, String product_price,String view_discount, String nom_discount,String product_id) {
         super();
         this.id             = id;
         this.qty            = qty;
@@ -24,6 +25,7 @@ public class adapter_order {
         this.product_price  = product_price;
         this.view_discount  = view_discount;
         this.nom_discount   = nom_discount;
+        this.product_id     = product_id;
     }
 
     public String getID() {
@@ -94,5 +96,12 @@ public class adapter_order {
     }
     public void setView_discount(String view_discount) {
         this.view_discount = view_discount;
+    }
+
+    public String getProduct_id() {
+        return product_id;
+    }
+    public void setProduct_id(String product_id) {
+        this.product_id = product_id;
     }
 }//String id, String qty, String subtotal, String image, String title, String slug, String description, String product_price, String discount

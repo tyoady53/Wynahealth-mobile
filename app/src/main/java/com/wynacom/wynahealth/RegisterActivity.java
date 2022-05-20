@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -24,6 +25,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
@@ -40,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -59,6 +62,8 @@ public class RegisterActivity extends AppCompatActivity {
     private BaseApiService mApiService;
     private Handler mHandler = new Handler();
     final Calendar myCalendar= Calendar.getInstance();
+
+    GlobalVariable globalVariable;
 
     Button btn_regis,btn_login;
 
@@ -101,6 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         local_data  = new Local_Data(getApplicationContext());
         nDialog = new ProgressDialog( RegisterActivity.this);
+        globalVariable  = (GlobalVariable) getApplicationContext();
         mApiService = UtilsApi.getAPI();
 
         checkBox = findViewById(R.id.chckbox);
@@ -127,7 +133,8 @@ public class RegisterActivity extends AppCompatActivity {
         checkBoxsk  = findViewById(R.id.regis_sk_chckbox);
 
         List<String> list = new ArrayList<>();
-        list.add("");
+        list.add("TN.");
+        list.add("NY.");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item,list);
         dataAdapter.setDropDownViewResource(R.layout.spinner_item);
         sp_title.setAdapter(dataAdapter);
@@ -221,12 +228,14 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void RegisterRequest() {
-        String namalengkap,stringemail,stringjk,stringktp,stringkota,stringkodepos,stringhp,stringumur,passwd,passwdr;
-        if(sp_kelamin.getSelectedItem().toString().equals("Laki-laki")){
-            stringjk = "M";
-        }else{
-            stringjk = "F";
-        }
+        String namalengkap,stringemail,stringjk,stringktp,stringkota,stringkodepos,stringhp,stringumur,passwd,passwdr,stringTitle;
+//        if(sp_kelamin.getSelectedItem().toString().equals("Laki-laki")){
+//            stringjk = "M";
+//        }else{
+//            stringjk = "F";
+//        }
+        stringTitle = sp_title.getSelectedItem().toString();
+        stringjk    = globalVariable.reverseGender(sp_kelamin.getSelectedItem().toString());
         namalengkap = /*sp_title.getSelectedItem().toString() + " " + */name.getText().toString();
         stringemail = email.getText().toString();
         //stringjk    = sp_kelamin.getSelectedItem().toString();
@@ -237,8 +246,24 @@ public class RegisterActivity extends AppCompatActivity {
         stringumur  = age.getText().toString();
         passwd      = passwords.getText().toString();
         passwdr     = passwordsrep.getText().toString();
-        mApiService.register(namalengkap,stringemail,passwd,stringhp,stringkota,stringkodepos,stringjk,stringumur,stringktp,passwdr)
-            .enqueue(new Callback<ResponseBody>() {
+
+        Map<String, Object> jsonParams = new ArrayMap<>();
+//put something inside the map, could be null
+        jsonParams.put("title",             stringTitle);
+        jsonParams.put("patient_name",      namalengkap);
+        jsonParams.put("email",             stringemail);
+        jsonParams.put("password",          passwd);
+        jsonParams.put("handphone",         stringhp);
+        jsonParams.put("city",              stringkota);
+        jsonParams.put("postal_code",       stringkodepos);
+        jsonParams.put("sex",               stringjk);
+        jsonParams.put("age",               stringumur);
+        jsonParams.put("nik",               stringktp);
+        jsonParams.put("password_confirmation", passwdr);
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+        Call<ResponseBody> listCall = mApiService.register(body);
+        //mApiService.register(namalengkap,stringemail,passwd,stringhp,stringkota,stringkodepos,stringjk,stringumur,stringktp,passwdr)
+        listCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
                     if (response.isSuccessful()){

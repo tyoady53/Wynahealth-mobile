@@ -10,14 +10,17 @@ import android.widget.Toast;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 public class GlobalVariable extends Application {
-    private String token,patient_id,UserID;
+    private String token,patient_id,UserID,orderId,discountTotal,priceTotal,order_size,list_view;
+    String gender=null,booked=null,ol_patient_id=null,datapatient_id=null,ol_company_id=null,dokter=null,perusahaan=null,service_date=null,ol_invoice_id=null;
     Date d;
     private List<String> globalArrayList;
+    ArrayList<String> selected = new ArrayList<>();
     double cardWidth = 0;
     protected Cursor cursor;
 
@@ -26,9 +29,110 @@ public class GlobalVariable extends Application {
     public List<String> getGlobalArrayList() {
         return globalArrayList;
     }
-
     public void setGlobalArrayList(List<String> globalArrayList) {
         this.globalArrayList = globalArrayList;
+    }
+
+    public void setSelected(ArrayList<String> selected) {
+        this.selected = selected;
+    }
+
+    public String getList_view() {
+        return list_view;
+    }
+    public void setList_view(String list_view) {
+        this.list_view = list_view;
+    }
+
+    public String getOrder_size() {
+        return order_size;
+    }
+    public void setOrder_size(String order_size) {
+        this.order_size = order_size;
+    }
+
+    public String getDiscountTotal() {
+        return discountTotal;
+    }
+    public void setDiscountTotal(String discountTotal) {
+        this.discountTotal = discountTotal;
+    }
+
+    public String getPriceTotal() {
+        return priceTotal;
+    }
+    public void setPriceTotal(String priceTotal) {
+        this.priceTotal = priceTotal;
+    }
+
+    public void setOrderId(String orderId) {
+        this.orderId = orderId;
+    }
+    public String getOrderId() {
+        return orderId;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public String getBooked() {
+        return booked;
+    }
+    public void setBooked(String booked) {
+        this.booked = booked;
+    }
+
+    public String getOl_patient_id() {
+        return ol_patient_id;
+    }
+    public void setOl_patient_id(String ol_patient_id) {
+        this.ol_patient_id = ol_patient_id;
+    }
+
+    public String getDatapatient_id() {
+        return datapatient_id;
+    }
+    public void setDatapatient_id(String datapatient_id) {
+        this.datapatient_id = datapatient_id;
+    }
+
+    public String getOl_company_id() {
+        return ol_company_id;
+    }
+    public void setOl_company_id(String ol_company_id) {
+        this.ol_company_id = ol_company_id;
+    }
+
+    public String getDokter() {
+        return dokter;
+    }
+    public void setDokter(String dokter) {
+        this.dokter = dokter;
+    }
+
+    public String getPerusahaan() {
+        return perusahaan;
+    }
+    public void setPerusahaan(String perusahaan) {
+        this.perusahaan = perusahaan;
+    }
+
+    public String getService_date() {
+        return service_date;
+    }
+    public void setService_date(String service_date) {
+        this.service_date = service_date;
+    }
+
+    public String getOl_invoice_id() {
+        return ol_invoice_id;
+    }
+    public void setOl_invoice_id(String ol_invoice_id) {
+        this.ol_invoice_id = ol_invoice_id;
     }
 
     public String getUserID(){
@@ -124,7 +228,7 @@ public class GlobalVariable extends Application {
         return newDateString;
     }
 
-    public String setGender(String gender){
+    public String setGenerateGender(String gender){
         String string_jk;
         if (gender.equals("M")){
             string_jk   = "Laki-laki";
@@ -177,7 +281,7 @@ public class GlobalVariable extends Application {
     public String toCurrency(String number){
         Locale localeID = new Locale("in", "ID");
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
-        String c = nf.format(Integer.parseInt(number));
+        String c = nf.format(Double.parseDouble(number));
 
         return c;
     }

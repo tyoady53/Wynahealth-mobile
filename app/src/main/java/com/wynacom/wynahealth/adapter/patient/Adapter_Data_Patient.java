@@ -63,7 +63,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
             }
             holder.Vsex         .setText(state.getGender());
 
-            holder.Vnama        .setText(state.getNama());
+            holder.Vnama        .setText(state.getTitle()+" "+state.getNama());
             holder.Vhandphone   .setText(state.getPhone());
             holder.Vdob         .setText(state.getDOB());
             holder.Vnik         .setText(state.getNIK());
