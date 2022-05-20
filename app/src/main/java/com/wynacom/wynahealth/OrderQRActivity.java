@@ -1,5 +1,7 @@
 package com.wynacom.wynahealth;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
@@ -107,8 +109,8 @@ public class OrderQRActivity extends AppCompatActivity {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
                             JSONObject jsonObject           = jsonRESULTS.getJSONObject("data");
-                            String invoice_response         = jsonObject.getString("booked");
-                            String snap_response            = jsonObject.getString("snap_token");
+                            String invoice_response         = jsonObject.getString("invoice_no");
+                            String snap_response            = jsonObject.getString("booked");
                             //String invoice_response         = c.getString("invoice");
                             if(snap_response.equals(snap)){
                                 JSONObject jsonDataPatient      = jsonObject.getJSONObject("datapatient");
@@ -150,7 +152,7 @@ public class OrderQRActivity extends AppCompatActivity {
                                     description     = Data_OrderProduct.getString("description");
                                     product_price   = Data_OrderProduct.getString("price");
                                     discount        = Data_OrderProduct.getString("discount");
-                                    String product_id = Data_OrderProduct.getString("ol_product_id");
+                                    String product_id = c.getString("ol_product_id");
 
                                     double a = Double.parseDouble(product_price);
                                     double b = Double.parseDouble(discount);
@@ -162,20 +164,20 @@ public class OrderQRActivity extends AppCompatActivity {
                                     List.add(_states);
                                 }
                             }setListView();
-                       } //else {
-//                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
-//                            builder.setMessage("Data Patient Kosong.");
-//                            builder.setTitle("List Patient");
-//                            builder.setCancelable(true);
-//                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-//                                @Override
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    dialog.dismiss();
-//                                }
-//                            });
-//                            android.app.AlertDialog alertDialog = builder.create();
-//                            alertDialog.show();
-//                        }
+                       } else {
+                            AlertDialog.Builder builder = new android.app.AlertDialog.Builder(OrderQRActivity.this);
+                            builder.setMessage("Data Patient Kosong.");
+                            builder.setTitle("List Patient");
+                            builder.setCancelable(true);
+                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }
@@ -237,7 +239,7 @@ public class OrderQRActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent i = new Intent(OrderQRActivity.this, MainActivity.class);
-        i.putExtra("from", "invoice_show");
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
 

@@ -263,6 +263,7 @@
     <!--Button for creating a QR code-->
 
     <Button
+        android:visibility="gone"
         android:id="@+id/payment_gateway"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -280,8 +281,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/button_home"
-        android:text="home"
         android:onClick="gotohome"
+        android:text="home"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
@@ -297,11 +298,11 @@
         android:editable="false"
         android:hint="Input Text"
         android:inputType="text"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/home"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView" />
+        app:layout_constraintTop_toBottomOf="@+id/cardView"
+        app:layout_constraintVertical_bias="0.686" />
 
     <Button
         android:id="@+id/idBtnGenerateQR"

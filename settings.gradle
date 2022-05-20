@@ -9,3 +9,4 @@ dependencyResolutionManagement {
 rootProject.name = "Wynahealth"
 include ':app'
 include ':pagingbutton'
+include ':genericdialog2'

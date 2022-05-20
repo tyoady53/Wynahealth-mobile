@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
+import dev.jai.genericdialog2.GenericDialog;
+import dev.jai.genericdialog2.GenericDialogOnClickListener;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -96,38 +99,77 @@ public class OrderConfirmationActivity extends AppCompatActivity {
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Map<String, Object> jsonParams = new ArrayMap<>();
-////put something inside the map, could be null
-                jsonParams.put("invoice_id", globalVariable.getOl_invoice_id());
-                jsonParams.put("grand_total", TV_grand.getText().toString());
-                jsonParams.put("payment", "cod");
-                jsonParams.put("perusahaan", "-");
-                RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
-                //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
-                Call<ResponseBody> listCall = mApiService.checkout(bearer,body);
-                listCall.enqueue(new Callback<ResponseBody>() {
-
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        try {
-                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
-                            Toast.makeText(getApplicationContext(), jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
-                            startActivity(intent);
-                            Toast.makeText(OrderConfirmationActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                new GenericDialog.Builder(OrderConfirmationActivity.this)
+                    .setDialogTheme(R.style.GenericDialogTheme)
+                    .setIcon(R.drawable.vector_payments_1)
+                    .setTitle("Pilih Pembayaran").setTitleAppearance(R.color.colorPrimaryDark, 16)
+                    //.setMessage("Data Collected Successfully")
+                    .addNewButton(R.style.cod, new GenericDialogOnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            BayarDiTempat();
                         }
-                    }
+                    })
+                    .addNewButton(R.style.online, new GenericDialogOnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Toast.makeText(OrderConfirmationActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .setButtonOrientation(LinearLayout.VERTICAL)
+                    .setCancelable(true)
+                    .generate();
+//                final CharSequence[] dialogitem = {"Bayar Di Tempat", "Bayar Online"};
+//                AlertDialog.Builder builder = new AlertDialog.Builder(  OrderConfirmationActivity.this);
+//                builder.setTitle("Pilih Metode Pembayaran");
+//                builder.setItems(dialogitem, new DialogInterface.OnClickListener() {
+//                    public void onClick(DialogInterface dialog, int item) {
+//                        switch(item){
+//                            case 0 :
+//                                BayarDiTempat();
+//                                break;
+//
+//                            case 1 :
+//                                Toast.makeText(OrderConfirmationActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
+//                                break;
+//                        }
+//                    }
+//                });builder.create().show();
+            }
+        });
+    }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        Toast.makeText(getApplicationContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+    private void BayarDiTempat(){
+        Map<String, Object> jsonParams = new ArrayMap<>();
+////put something inside the map, could be null
+        jsonParams.put("invoice_id", globalVariable.getOl_invoice_id());
+        jsonParams.put("grand_total", TV_grand.getText().toString());
+        jsonParams.put("payment", "cod");
+        jsonParams.put("perusahaan", "-");
+        RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+        //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+        Call<ResponseBody> listCall = mApiService.checkout(bearer,body);
+        listCall.enqueue(new Callback<ResponseBody>() {
+
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                try {
+                    JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                    Toast.makeText(getApplicationContext(), jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                    startActivity(intent);
+                    Toast.makeText(OrderConfirmationActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getApplicationContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
             }
         });
     }

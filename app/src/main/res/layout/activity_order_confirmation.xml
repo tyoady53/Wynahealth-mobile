@@ -64,7 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:background="@drawable/button_oval_left"
-        android:paddingLeft="30dp"
+        android:paddingLeft="10dp"
         android:text="pilih \nproduk"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/next"
@@ -72,6 +72,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        android:visibility="gone"
         android:id="@+id/online"
         android:layout_width="100dp"
         android:layout_height="wrap_content"
@@ -85,11 +86,12 @@
 
     <Button
         android:id="@+id/next"
-        android:layout_width="100dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/button_check_verify"
-        android:text="Bayar DI Tempat"
+        android:background="@drawable/button_oval"
+        android:paddingRight="@dimen/dp20"
+        android:text="Checkout"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.948"
