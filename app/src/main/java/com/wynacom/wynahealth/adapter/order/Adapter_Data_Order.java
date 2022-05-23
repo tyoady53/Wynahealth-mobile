@@ -16,6 +16,7 @@ import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
+import com.wynacom.wynahealth.transaction.OrderConfirmationActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,6 +38,7 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
     String id_invoice,token,bearer;
     private BaseApiService mApiService;
     private final ArrayList<adapter_order> stateList;
+    OrderConfirmationActivity convirmationActivity;
     public Adapter_Data_Order(@NonNull Context context, int list_patient, ArrayList<adapter_order> list) {
         super(context, list_patient,list);
         this.stateList  = new ArrayList<adapter_order>();
@@ -98,6 +100,10 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                            if(jsonRESULTS.getString("success").equals("true")){
+                                convirmationActivity = new OrderConfirmationActivity();
+                                convirmationActivity.getProduct();
+                            }
                             Toast.makeText(getContext(), jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();

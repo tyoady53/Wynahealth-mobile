@@ -102,6 +102,14 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
         String bearer           = "Bearer "+token;
         String product_id       = state.getID();
 
+        if(state.isSelected()){
+            holder.btnAdd.setVisibility(View.GONE);
+        } else {
+            holder.btnAdd.setVisibility(View.VISIBLE);
+        }
+        //Toast.makeText(getContext(), "Data "+position+" with ID "+state.getID()+" is "+state.isSelected(), Toast.LENGTH_SHORT).show();
+
+        ViewHolder finalHolder = holder;
         holder.btnAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -127,6 +135,9 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
                     public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                            if(jsonRESULTS.getString("success").equals("true")){
+                                finalHolder.btnAdd.setVisibility(View.GONE);
+                            }
                             Toast.makeText(myAppClass, jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();

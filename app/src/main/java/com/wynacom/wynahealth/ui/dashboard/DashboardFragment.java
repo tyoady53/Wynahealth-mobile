@@ -252,10 +252,6 @@ public class DashboardFragment extends Fragment {
                                 postal_code   = c.getString("postal_code");
                                 String id_P   = c.getString("id");
                                 tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
-//                                do{
-//                                    adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status,grand_total,snap);
-//                                    orderList.add(_states);
-//                                }while(id_patient.equals(id_P));
                                 if(id_patient.equals(id_P)){
                                     adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status,grand_total,snap);
                                     orderList.add(_states);

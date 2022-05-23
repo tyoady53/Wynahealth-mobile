@@ -181,12 +181,13 @@ public class GlobalVariable extends Application {
     }
 
     public String getTimeTimeStamp(String tanggal){
-        final String NEW_FORMAT = "HH:MM:ss";
-        final String OLD_FORMAT = "yyyy-MM-dd HH:MM:ss";
+        String parseTgl = tanggal.replace("T",",");
+        final String NEW_FORMAT = "dd-MMM-yyyy, HH:MM";
+        final String OLD_FORMAT = "yyyy-MM-dd,HH:MM:ss";
         String newDateString;
         SimpleDateFormat sdf = new SimpleDateFormat(OLD_FORMAT);
         try {
-            d = sdf.parse(tanggal);
+            d = sdf.parse(parseTgl);
         } catch (ParseException e) {
             e.printStackTrace();
         }

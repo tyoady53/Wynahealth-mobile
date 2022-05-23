@@ -20,6 +20,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -474,9 +475,11 @@ public class HomeFragment extends Fragment {
         progress.setVisibility(View.GONE);
     }
 
-    private void datapatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob) {
+    private void datapatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob,String title) {
         String gender = globalVariable.reverseGender(fgender);
         Map<String, Object> jsonParams = new ArrayMap<>();
+        //Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
+        jsonParams.put("title",      title);
         jsonParams.put("name",       fnama);
         jsonParams.put("email",      femail);
         jsonParams.put("handphone",  fphone);
@@ -523,9 +526,11 @@ public class HomeFragment extends Fragment {
             });
     }
 
-    private void editPatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob) {
+    private void editPatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob,String title) {
         String gender = globalVariable.reverseGender(fgender);
         Map<String, Object> jsonParams = new ArrayMap<>();
+        //Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
+        jsonParams.put("title",      title);
         jsonParams.put("name",       fnama);
         jsonParams.put("email",      femail);
         jsonParams.put("handphone",  fphone);
@@ -572,63 +577,6 @@ public class HomeFragment extends Fragment {
             });
     }
 
-//    private class MyCustomAdapter extends ArrayAdapter<adapter_patient>
-//    {
-//        private ArrayList<adapter_patient> stateList;
-//
-//        public MyCustomAdapter(Context context, int textViewResourceId,
-//                               ArrayList<adapter_patient> List) {
-//            super(context, textViewResourceId, List);
-//            this.stateList = new ArrayList<adapter_patient>();
-//            this.stateList.addAll(stateList);
-//        }
-//
-//        private class ViewHolder
-//        {
-//            TextView Vnama,Vhandphone,Vsex,Vdob,Vnik,Vcity,Vpostal;
-//        }
-
-//        @Override
-//        public View getView(int position, View convertView, ViewGroup parent)
-//        {
-//
-//            ViewHolder holder = null;
-//
-//            Log.v("ConvertView", String.valueOf(position));
-//
-//            if (convertView == null)
-//            {
-//
-//                LayoutInflater vi = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//
-//                convertView = vi.inflate(R.layout.list_patient, null);
-//
-//                holder = new HomeFragment.MyCustomAdapter.ViewHolder();
-//                holder.Vnama        = (TextView) convertView.findViewById(R.id.list_patient_name);
-//                holder.Vhandphone   = (TextView) convertView.findViewById(R.id.list_patient_phone);
-//                holder.Vsex         = (TextView) convertView.findViewById(R.id.list_patient_sex);
-//                holder.Vdob         = (TextView) convertView.findViewById(R.id.list_patient_dob);
-//                holder.Vnik         = (TextView) convertView.findViewById(R.id.list_patient_nik);
-//                holder.Vcity        = (TextView) convertView.findViewById(R.id.list_patient_city);
-//                holder.Vpostal      = (TextView) convertView.findViewById(R.id.list_patient_post);
-//            } else {
-//                holder = (HomeFragment.MyCustomAdapter.ViewHolder) convertView.getTag();
-//            }
-//
-//            final adapter_patient state = List.get(position);
-//
-//            holder.Vnama        .setText(state.getNama());
-//            holder.Vhandphone   .setText(state.getPhone());
-//            holder.Vsex         .setText(state.getGender());
-//            holder.Vdob         .setText(state.getDOB());
-//            holder.Vnik         .setText(state.getNIK());
-//            holder.Vcity        .setText(state.getCity());
-//            holder.Vpostal      .setText(state.getPostal());
-//
-//            return convertView;
-//        }
-//    }
-
     private void tambahdata(String data_type) {
         String title = null;
         LayoutInflater li = LayoutInflater.from(getContext());
@@ -651,28 +599,9 @@ public class HomeFragment extends Fragment {
         final Spinner sp_kelamin  = promptsView.findViewById(R.id.prompt_jeniskelamin);
         final Spinner sp_kota     = promptsView.findViewById(R.id.prompt_kota);
 
-        if(data_type.equals("edit")){
-            int begin;
-            if(edit_title.equals("TN.")){
-                begin = 1;
-            }else{
-                begin = 2;
-            }
-            sp_title.setSelection(begin);
-            name.setText(edit_name);
-            ktp.setText(edit_nik);
-            phone.setText(edit_handphone);
-            email.setText(edit_email);
-            postal.setText(edit_postalcode);
-            age.setText(edit_dob);
-            title = "Edit Data Pasien.";
-        }else{
-            title = "Tambah Pasien";
-        }
-
-        List<String> list = new ArrayList<>();
-        list.add("TN.");
-        list.add("NY.");
+        java.util.List<String> list = new ArrayList<>();
+        list.add("Mr.");
+        list.add("Mrs.");
         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list);
         dataAdapter.setDropDownViewResource(R.layout.spinner_item);
         sp_title.setAdapter(dataAdapter);
@@ -690,6 +619,28 @@ public class HomeFragment extends Fragment {
         ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list3);
         dataAdapter3.setDropDownViewResource(R.layout.spinner_item);
         sp_kota.setAdapter(dataAdapter3);
+
+        if(data_type.equals("edit")){
+            String gender = globalVariable.reverseGender(edit_sex);
+            int begin;
+            if(gender.equals("M")){
+                begin = 0;
+            }else{
+                begin = 1;
+            }
+            //Toast.makeText(getContext(), "Gender : "+gender+" index : "+begin, Toast.LENGTH_SHORT).show();
+            sp_title.setSelection(begin);
+            sp_kelamin.setSelection(begin);
+            name.setText(edit_name);
+            ktp.setText(edit_nik);
+            phone.setText(edit_handphone);
+            email.setText(edit_email);
+            postal.setText(edit_postalcode);
+            age.setText(edit_dob);
+            title = "Edit Data Pasien.";
+        }else{
+            title = "Tambah Pasien";
+        }
 
         DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
             @Override
@@ -710,6 +661,30 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        sp_kelamin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sp_title.setSelection(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        sp_title.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sp_kelamin.setSelection(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         alertDialogBuilder
             .setTitle(title)
             .setCancelable(false)
@@ -717,6 +692,7 @@ public class HomeFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int id) {
+                        final String fstitle    = sp_title.getSelectedItem().toString();
                         final String fsnama     = /*sp_title.getSelectedItem().toString()+*/name.getText().toString();
                         final String fsemail    = email.getText().toString();
                         final String fsgender   = sp_kelamin.getSelectedItem().toString();
@@ -751,7 +727,7 @@ public class HomeFragment extends Fragment {
                                 age.requestFocus();
                                 Toast.makeText(getContext(), "Harap Masukkan Tanggal Lahir", Toast.LENGTH_SHORT).show();
                             }else{
-                                editPatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,age.getText().toString());
+                                editPatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,age.getText().toString(),fstitle);
                             }
                         }else {
                             if (!stringname(fsnama)) {
@@ -779,7 +755,8 @@ public class HomeFragment extends Fragment {
                                 age.requestFocus();
                                 Toast.makeText(getContext(), "Harap Masukkan Tanggal Lahir", Toast.LENGTH_SHORT).show();
                             }else{
-                                datapatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,fsdob);
+                                datapatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,fsdob,fstitle);
+                                Toast.makeText(getContext(), fstitle, Toast.LENGTH_SHORT).show();
                             }
                         }
                     }

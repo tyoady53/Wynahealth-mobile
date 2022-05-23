@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
+import com.wynacom.wynahealth.MainActivity;
 import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.adapter.order.Adapter_Data_Order;
 import com.wynacom.wynahealth.adapter.order.adapter_order;
@@ -86,6 +87,7 @@ public class SelectProductActivity extends AppCompatActivity {
                 Intent intent = new Intent(SelectProductActivity.this, OrderConfirmationActivity.class);
                 intent.putExtra("name",     Name);
                 intent.putExtra("booked",   booked);
+                intent.putExtra("gender",   gender);
                 startActivity(intent);
             }
         });
@@ -108,23 +110,45 @@ public class SelectProductActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            //JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
-                            JSONArray jsonArray     = jsonRESULTS.getJSONArray("data");
-                            JSONArray carts = null;
-//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject c = jsonArray.getJSONObject(i);
-                                carts = c.getJSONArray("carts");
+                            String product_id;
+                            JSONObject pass   = jsonRESULTS.getJSONObject("data");
+                            JSONObject jsonObject   = pass.getJSONObject("data");
+                            JSONArray carts =  jsonObject.getJSONArray("carts");
+                            for (int i = 0; i < carts.length(); i++) {
                                 if(carts.length()>0){
-                                    for (int j = 0; j < carts.length(); j++) {
-                                        JSONObject dataCarts = carts.getJSONObject(j);
-                                        String id           = dataCarts.getString("ol_product_id");
-                                        arrayListOfId.add(id);
-                                    }
+                                    JSONObject dataCarts = carts.getJSONObject(i);
+                                    product_id  = dataCarts.getString("ol_product_id");
+                                    arrayListOfId.add(product_id);
+                                    //Toast.makeText(SelectProductActivity.this, id, Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            //globalVariable.setOrder_size(String.valueOf(carts.length()));
-                            getProduct(gender);
+                            JSONArray jsonArray = pass.getJSONArray("product_available");
+                            //                           JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject c = jsonArray.getJSONObject(i);
+                                String id            = c.getString("id");
+                                String title         = c.getString("title");
+                                String ol_category_id= c.getString("ol_category_id");
+                                String description   = c.getString("description");
+                                String price         = c.getString("price");
+                                String stock         = c.getString("stock");
+                                String discount      = c.getString("discount");
+                                String slug          = c.getString("slug");
+                                String image         = c.getString("image");
+                                String id_product = null;
+                                checked = false;
+                                for (int j = 0; j < arrayListOfId.size(); j++) {
+                                    id_product = arrayListOfId.get(j);
+                                    if(id_product==id){
+                                        checked = true;
+                                    }
+                                }
+                                //Toast.makeText(SelectProductActivity.this, "data : "+id + " with ID : "+id_product+" is "+ String.valueOf(checked), Toast.LENGTH_SHORT).show();
+                                adapter_product _states = new adapter_product(id,title,ol_category_id,description,price,discount,slug,image,checked);
+                                list_product.add(_states);
+                                bindDataProduct();
+                            }
+                            //getProduct(gender);
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(SelectProductActivity.this);
                             builder.setMessage("Data Patient Kosong.");
@@ -176,13 +200,15 @@ public class SelectProductActivity extends AppCompatActivity {
                                 String discount      = c.getString("discount");
                                 String slug          = c.getString("slug");
                                 String image         = c.getString("image");
+                                String id_product = null;
                                 checked = false;
                                 for (int j = 0; j < arrayListOfId.size(); j++) {
-                                    String id_product = arrayListOfId.get(j);
+                                    id_product = arrayListOfId.get(j);
                                     if(id_product==id){
                                         checked = true;
                                     }
                                 }
+                                //Toast.makeText(SelectProductActivity.this, "data : "+id + " with ID : "+id_product+" is "+ String.valueOf(checked), Toast.LENGTH_SHORT).show();
                                 adapter_product _states = new adapter_product(id,title,ol_category_id,description,price,discount,slug,image,checked);
                                 list_product.add(_states);
                                 bindDataProduct();
@@ -212,7 +238,7 @@ public class SelectProductActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        Intent intent = new Intent(getApplicationContext(), NewOrderActivity.class);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         startActivity(intent);
     }

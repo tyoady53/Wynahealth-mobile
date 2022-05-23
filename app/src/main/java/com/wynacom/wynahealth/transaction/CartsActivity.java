@@ -9,7 +9,6 @@ import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -71,7 +70,7 @@ public class CartsActivity extends AppCompatActivity {
                 globalVariable.setGenerateGender(state.getGender());
                 globalVariable.setOl_invoice_id(state.getID());
                 globalVariable.setBooked(booked);
-                globalVariable.setList_view("view");
+                globalVariable.setList_view("confirm");
                 //Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), OrderConfirmationActivity.class);
                 intent.putExtra("type", "edit");
@@ -79,7 +78,7 @@ public class CartsActivity extends AppCompatActivity {
                 intent.putExtra("booked",           booked);
                 intent.putExtra("gender",           gender);
                 startActivity(intent);
-                Toast.makeText(CartsActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
+                //Toast.makeText(CartsActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
             }
         });
         refreshList();
