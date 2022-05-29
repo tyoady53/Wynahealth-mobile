@@ -397,13 +397,11 @@ public class HomeFragment extends Fragment {
                             String total            = jsonObject.getString("total");
                             last_page               = jsonObject.getString("last_page");
                             String now              = jsonObject.getString("current_page");
-                            //Toast.makeText(getContext(),"Page Now : "+now,Toast.LENGTH_SHORT).show();
                             NowPage                 = Integer.parseInt(now);
                             int_last_page           = Integer.parseInt(last_page);
                             max_page                = int_last_page;
                             lpb_buttonlist.addBottomPageButton(max_page,NowPage);
                             JSONArray jsonArray     = jsonObject.getJSONArray("data");
-//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");

@@ -44,7 +44,10 @@ public class Adapter_Data_Carts extends ArrayAdapter<adapter_carts> {
         final adapter_carts state = stateList.get(position);
 
         holder.name         .setText(state.getNames());
-        holder.Vphone       .setText(state.getTelephone());
+        holder.Vphone       .setText(state.getAddress()
+
+
+        );
         holder.Vaddress     .setText(state.getAddress());
         Locale localeID = new Locale("in", "ID");
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);

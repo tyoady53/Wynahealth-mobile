@@ -35,11 +35,12 @@
         <activity
             android:name=".transaction.SelectProductActivity"
             android:exported="false"
-            android:label="Konfirmasi" />
+            android:label="Pilih Pemeriksaan" />
         <activity
             android:name=".EmailVerificationActivity"
             android:exported="false"
-            android:label="Pilih Pemeriksaan" />
+            android:theme="@style/Theme.Wynahealth.NoActionBar"
+            />
         <activity
             android:name=".OrderQRActivity"
             android:exported="false"

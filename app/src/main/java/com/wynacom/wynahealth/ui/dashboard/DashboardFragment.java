@@ -38,7 +38,7 @@ import com.wynacom.wynahealth.adapter.product.adapter_product;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.FragmentDashboardBinding;
-import com.wynacom.wynahealth.transaction.OrderActivity;
+import com.wynacom.wynahealth.transaction.NewOrderActivity;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -174,11 +174,27 @@ public class DashboardFragment extends Fragment {
                                     String id            = c.getString("id");
                                     String invoice       = c.getString("booked");
                                     String status        = c.getString("status");
+                                    String payment       = c.getString("payment");
                                     String grand_total   = c.getString("grand_total");
                                     String snap          = c.getString("snap_token");
                                     patient_id           = c.getString("datapatient_id");
-
-                                    getDataPatient(id,invoice,status,grand_total,snap,patient_id);
+                                    String status_order;
+                                    if(status.equals("pending")){
+                                        status_order = "Waiting For Payment";
+                                    }else{
+                                        if(status.equals("success")){
+                                            status_order = "Order Paid";
+                                        }else if(status.equals("failed")){
+                                            if(payment.equals("canceled")){
+                                                status_order = "Order Canceled";
+                                            }else{
+                                                status_order = "Payment Failed";
+                                            }
+                                        }else{
+                                            status_order = "Transaction Expired";
+                                        }
+                                    }
+                                    getDataPatient(id,invoice,status_order,grand_total,snap,patient_id);
                                 }
                             }
                         } else {
@@ -251,7 +267,7 @@ public class DashboardFragment extends Fragment {
                                 city          = c.getString("city");
                                 postal_code   = c.getString("postal_code");
                                 String id_P   = c.getString("id");
-                                tampiltanggal = ((GlobalVariable) getContext().getApplicationContext()).dateformat(dob);
+                                tampiltanggal = globalVariable.dateformat(dob);
                                 if(id_patient.equals(id_P)){
                                     adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status,grand_total,snap);
                                     orderList.add(_states);
@@ -329,6 +345,8 @@ public class DashboardFragment extends Fragment {
             linearInfo.setVisibility(View.VISIBLE);
             linearLayout.setVisibility(View.GONE);
             dataOrder = new Adapter_Data_Invoice(getContext(), R.layout.list_order, orderList);
+
+
             listView.setAdapter(dataOrder);
         }else if (arrayCount == 0){
             linearInfo.setVisibility(View.VISIBLE);
@@ -337,7 +355,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void neworder() {
-        Intent i = new Intent(getContext(), OrderActivity.class);
+        Intent i = new Intent(getContext(), NewOrderActivity.class);
         i.putExtra("index_position", "");
         startActivity(i);
     }
@@ -368,7 +386,7 @@ public class DashboardFragment extends Fragment {
                             if(int_pending>0||int_failed>0||int_expired>0||int_success>0){
                                 listView.setVisibility(View.VISIBLE);
                                 linearLayout.setVisibility(View.GONE);
-                            }else {
+                            } else {
                                 listView.setVisibility(View.GONE);
                                 linearLayout.setVisibility(View.VISIBLE);
                                 progress.setVisibility(View.GONE);

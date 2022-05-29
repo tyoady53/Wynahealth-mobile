@@ -1,15 +1,24 @@
 package com.wynacom.wynahealth.transaction;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fxn.cue.Cue;
@@ -17,7 +26,6 @@ import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.MainActivity;
 import com.wynacom.wynahealth.R;
-import com.wynacom.wynahealth.adapter.carts.Adapter_Data_Carts;
 import com.wynacom.wynahealth.adapter.carts.adapter_carts;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
@@ -27,8 +35,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Map;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -43,7 +55,8 @@ public class CartsActivity extends AppCompatActivity {
 
     private BaseApiService mApiService,ApiGetMethod;
 
-    private Adapter_Data_Carts dataCarts = null;
+    //private Adapter_Data_Carts dataCarts = null;
+    private MyCustomAdapter dataCarts = null;
     private ArrayList<adapter_carts> list_carts;
 
     @Override
@@ -78,7 +91,6 @@ public class CartsActivity extends AppCompatActivity {
                 intent.putExtra("booked",           booked);
                 intent.putExtra("gender",           gender);
                 startActivity(intent);
-                //Toast.makeText(CartsActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
             }
         });
         refreshList();
@@ -104,7 +116,7 @@ public class CartsActivity extends AppCompatActivity {
                                 String handphone     = c.getString("handphone");
                                 String city          = c.getString("city");
                                 String invoiceNumber = c.getString("booked");
-                                String status        = c.getString("status");
+                                String status        = c.getString("service_date");
                                 String total         = c.getString("amount");
                                 String snap          = c.getString("snap_token");
                                 String gender        = c.getString("gender");
@@ -164,8 +176,92 @@ public class CartsActivity extends AppCompatActivity {
     }
 
     private void bindData() {
-        dataCarts = new Adapter_Data_Carts(getApplicationContext(),R.layout.list_carts, list_carts);
+        dataCarts = new MyCustomAdapter(this,R.layout.list_carts, list_carts);
         listView.setAdapter(dataCarts);
+    }
+
+    private class MyCustomAdapter extends ArrayAdapter<adapter_carts>{
+        private ArrayList<adapter_carts> stateList;
+        String titles;
+        public MyCustomAdapter(@NonNull Context context, int list_patient, ArrayList<adapter_carts> list) {
+            super(context, list_patient,list);
+            this.stateList  = new ArrayList<adapter_carts>();
+            this.stateList.addAll(list);
+        }
+
+        private class ViewHolder {
+            TextView name,Vphone,Vaddress,Vtotal;
+            View status_color;
+            ImageView delete;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent)
+        {
+            ViewHolder holder;
+
+            convertView =  LayoutInflater.from(getContext()).inflate(R.layout.list_carts, parent, false);
+
+            holder = new ViewHolder();
+            holder.name          = (TextView) convertView.findViewById(R.id.carts_name_list);
+            holder.Vphone        = (TextView) convertView.findViewById(R.id.carts_phone);
+            holder.Vaddress      = (TextView) convertView.findViewById(R.id.carts_address);
+            holder.Vtotal        = (TextView) convertView.findViewById(R.id.carts_total);
+            holder.delete        = (ImageView) convertView.findViewById(R.id.delete_order);
+
+            final adapter_carts state = stateList.get(position);
+
+            holder.delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Map<String, Object> jsonParams = new ArrayMap<>();
+////put something inside the map, could be null
+                    jsonParams.put("invoice_id", state.getID());
+                    RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+                    //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+                    Call<ResponseBody> listCall = mApiService.Cancel_order(bearer,body);
+                    listCall.enqueue(new Callback<ResponseBody>() {
+
+                        @Override
+                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                            try {
+                                JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                                if(jsonRESULTS.getString("success").equals("true")){
+                                    dataCarts.clear();
+                                    refreshList();
+                                }
+                                //Toast.makeText(OrderConfirmationActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                            Toast.makeText(getApplicationContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            });
+
+            if (state.getGender().equals("M")){
+                titles = "Mr. ";
+            } else {
+                titles = "Mrs. ";
+            }
+            holder.name         .setText(titles+state.getNames());
+            holder.Vphone       .setText(state.getTelephone());
+
+            holder.Vaddress     .setText(state.getStatus());
+            Locale localeID = new Locale("in", "ID");
+            NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
+            String c = nf.format(Integer.parseInt(state.getTotal()));
+            holder.Vtotal       .setText(c);
+
+            return convertView;
+        }
     }
 
     @Override

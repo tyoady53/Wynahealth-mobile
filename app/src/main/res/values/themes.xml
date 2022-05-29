@@ -55,7 +55,6 @@
 
     <style name="cod">
         <item name="android:text">Bayar di Tempat</item>
-        <item name="icon">@drawable/vector_home_icon</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:textColor">@color/purple_700</item>
         <item name="android:padding">8dp</item>
@@ -64,6 +63,24 @@
 
     <style name="online">
         <item name="android:text">Bayar Online</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/purple_700</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="back_home">
+        <item name="android:text">Bayar di Tempat</item>
+        <item name="icon">@drawable/vector_home_icon</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="select_product">
+        <item name="android:text">Bayar di Tempat</item>
+        <item name="icon">@drawable/vector_list_add</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:textColor">@color/purple_700</item>
         <item name="android:padding">8dp</item>

@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
+import com.lakue.pagingbutton.LakuePagingButton;
+import com.lakue.pagingbutton.OnPageSelectListener;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.MainActivity;
 import com.wynacom.wynahealth.R;
@@ -49,8 +51,10 @@ public class SelectProductActivity extends AppCompatActivity {
     private ArrayList<adapter_product> list_product;
     ListView listViewProduct;
     TextView TV_patient_name;
-    String Name,booked,orderType,gender,token,bearer;
+    String Name,booked,orderType,gender,token,bearer,last_page;
     Button next,prev;
+    int int_last_page,max_page,NowPage;
+    LakuePagingButton lpb_buttonlist;
 
     private Adapter_Data_Order dataOrder = null;
     private ArrayList<adapter_order> listOrder;
@@ -70,15 +74,43 @@ public class SelectProductActivity extends AppCompatActivity {
         list_product    = new ArrayList<adapter_product>();
         listOrder       = new ArrayList<adapter_order>();
         product_id      = new HashMap<String, String>();
+        int_last_page   = 0;
 
         listViewProduct = findViewById(R.id.list_product_order);
         TV_patient_name = findViewById(R.id.patient_order);
         next            = findViewById(R.id.next);
         prev            = findViewById(R.id.prev);
+        lpb_buttonlist  = findViewById(R.id.lpb_buttonList);
+
+        if(int_last_page==0){
+            int_last_page = 1;
+        }
 
         TV_patient_name.setText(Name);
 
-        getCarts();
+        String nowPage = String.valueOf(int_last_page);
+        getCarts(nowPage);
+
+        lpb_buttonlist.setOnPageSelectListener(new OnPageSelectListener() {
+            @Override
+            public void onPageBefore(int now_page) {
+                lpb_buttonlist.addBottomPageButton(max_page,now_page);
+            }
+
+            @Override
+            public void onPageCenter(int now_page) {
+                String nowPageStr = String.valueOf(now_page);
+                if(dataProduct.getCount()>0){
+                    dataProduct.clear();
+                }
+                getCarts(nowPageStr);
+            }
+
+            @Override
+            public void onPageNext(int now_page) {
+                lpb_buttonlist.addBottomPageButton(max_page,now_page);
+            }
+        });
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,10 +131,10 @@ public class SelectProductActivity extends AppCompatActivity {
         }
     }
 
-    private void getCarts() {
+    private void getCarts(String page) {
         token   = globalVariable.getToken();
         bearer  = "Bearer "+token;
-        Call<ResponseBody> listCall = ApiGetMethod.getCartsDetail(bearer,globalVariable.getBooked());
+        Call<ResponseBody> listCall = ApiGetMethod.getCartsDetail(bearer,globalVariable.getBooked(),page);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -119,11 +151,18 @@ public class SelectProductActivity extends AppCompatActivity {
                                     JSONObject dataCarts = carts.getJSONObject(i);
                                     product_id  = dataCarts.getString("ol_product_id");
                                     arrayListOfId.add(product_id);
-                                    //Toast.makeText(SelectProductActivity.this, id, Toast.LENGTH_SHORT).show();
                                 }
                             }
-                            JSONArray jsonArray = pass.getJSONArray("product_available");
+                            JSONObject product_object = pass.getJSONObject("product_available");
+                            JSONArray jsonArray = product_object.getJSONArray("data");
                             //                           JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            last_page               = product_object.getString("last_page");
+                            String now              = product_object.getString("current_page");
+                            NowPage                 = Integer.parseInt(now);
+                            int_last_page           = Integer.parseInt(last_page);
+                            max_page                = int_last_page;
+                            //Toast.makeText(SelectProductActivity.this, "Current Page : "+NowPage+"\nLast Page : "+int_last_page+"\nMax Page : "+max_page, Toast.LENGTH_SHORT).show();
+                            lpb_buttonlist.addBottomPageButton(max_page,NowPage);
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");
@@ -148,7 +187,8 @@ public class SelectProductActivity extends AppCompatActivity {
                                 list_product.add(_states);
                                 bindDataProduct();
                             }
-                            //getProduct(gender);
+
+
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(SelectProductActivity.this);
                             builder.setMessage("Data Patient Kosong.");

@@ -47,7 +47,7 @@ import retrofit2.Response;
 public class OrderQRActivity extends AppCompatActivity {
 
     String token,bearer,snap,strGender;
-    String id,qty,subtotal,image,title,slug,description,product_price,discount;
+    String id,qty,subtotal,image,title,slug,description,product_price,discount,payment,status_order;
     private ImageView qrCodeIV;
     private EditText dataEdt;
     private Button generateQrBtn,Bt_Payment;
@@ -122,13 +122,28 @@ public class OrderQRActivity extends AppCompatActivity {
                                 String dob          = jsonDataPatient.getString("dob");
                                 //Toast.makeText(getApplicationContext(),tanggal,Toast.LENGTH_SHORT).show();
                                 if(order_stts.equals("pending")){
-                                   Bt_Payment.setVisibility(View.VISIBLE);
+                                    status_order = "Waiting For Payment";
+                                   //Bt_Payment.setVisibility(View.VISIBLE);
                                 }else{
+                                    if(order_stts.equals("success")){
+                                        status_order = "Order Paid";
+                                    }else if(order_stts.equals("failed")){
+                                        status_order = "Payment Failed";
+                                    }else{
+                                        status_order = "Transaction Expired";
+                                    }
                                     Bt_Payment.setVisibility(View.GONE);
                                 }
+                                String paid_from = jsonObject.getString("payment");
                                 strGender = globalVariable.setGenerateGender(sex);
-                                TV_status       .setText(order_stts);
-                                TV_invNo        .setText("Booking Number : "+jsonObject.getString("booked"));
+                                if(paid_from.equals("cod")){
+                                    payment = "COD";
+                                }else if(paid_from.equals("online")){
+                                    payment = "E-Wallet";
+                                }
+
+                                TV_status       .setText(status_order);
+                                TV_invNo        .setText("Invoice Number : "+jsonObject.getString("invoice_no"));
                                 TV_inv_patient  .setText(jsonDataPatient.getString("name"));
                                 TV_inv_date     .setText(globalVariable.dateformat(tanggal));
                                 TV_inv_time     .setText(globalVariable.getTimeTimeStamp(tanggal));
@@ -143,6 +158,7 @@ public class OrderQRActivity extends AppCompatActivity {
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject c = jsonArray.getJSONObject(i);
                                     JSONObject Data_OrderProduct = c.getJSONObject("product");
+                                    String order_id = Data_OrderProduct.getString("id");
                                     subtotal        = c.getString("price");
                                     id              = c.getString("id");
                                     qty             = Data_OrderProduct.getString("title");
@@ -150,7 +166,7 @@ public class OrderQRActivity extends AppCompatActivity {
                                     title           = Data_OrderProduct.getString("title");
                                     slug            = Data_OrderProduct.getString("slug");
                                     description     = Data_OrderProduct.getString("description");
-                                    product_price   = Data_OrderProduct.getString("price");
+                                    product_price   = c.getString("price");
                                     discount        = Data_OrderProduct.getString("discount");
                                     String product_id = c.getString("ol_product_id");
 
@@ -160,7 +176,7 @@ public class OrderQRActivity extends AppCompatActivity {
                                     double Double_subTotal  = a - d;
                                     String String_subTotal  = String.valueOf(Double_subTotal);
                                     String nomDiscount      = String.valueOf(d);
-                                    adapter_order _states   = new adapter_order(id,qty,String_subTotal,image,title,slug,description,product_price,discount,nomDiscount,product_id);
+                                    adapter_order _states   = new adapter_order(order_id,id,qty,String_subTotal,image,title,slug,description,product_price,discount,nomDiscount,product_id);
                                     List.add(_states);
                                 }
                             }setListView();

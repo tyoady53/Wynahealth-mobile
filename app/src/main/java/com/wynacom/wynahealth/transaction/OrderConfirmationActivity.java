@@ -1,6 +1,8 @@
 package com.wynacom.wynahealth.transaction;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.ArrayMap;
@@ -24,6 +26,7 @@ import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.MainActivity;
+import com.wynacom.wynahealth.OrderQRActivity;
 import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.adapter.order.adapter_order;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
@@ -51,11 +54,12 @@ public class OrderConfirmationActivity extends AppCompatActivity {
 
     GlobalVariable globalVariable;
     private BaseApiService ApiGetMethod,mApiService;
+    int CartsLength;
 
-    TextView TV_patient_name,TV_total,TV_discount,TV_grand;
+    TextView TV_patient_name,TV_total,TV_discount,TV_grand,TV_service_date;
     String Name,token,bearer,booked,orderType,gender;
     Button next,prev;
-    double total_price = 0,total_disc = 0,grand = 0;
+    String total_price,total_disc,grand;
     //private Adapter_Data_Order dataOrder = null;
     private MyCustomAdapter dataOrder = null;
     private ArrayList<adapter_order> list_order;
@@ -84,6 +88,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
         TV_total        = findViewById(R.id.total);
         TV_discount     = findViewById(R.id.total_discount);
         TV_grand        = findViewById(R.id.total_orders);
+        TV_service_date = findViewById(R.id.order_show_time);
 
         prev            = findViewById(R.id.confirm_prev);
         next            = findViewById(R.id.next);
@@ -95,33 +100,28 @@ public class OrderConfirmationActivity extends AppCompatActivity {
         prev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(OrderConfirmationActivity.this, SelectProductActivity.class);
-                intent.putExtra("name",     Name);
-                intent.putExtra("booked",   booked);
-                intent.putExtra("gender",   gender);
-                intent.putExtra("type",     "new");
-                startActivity(intent);
-            }
-        });
-
-        next.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
                 new GenericDialog.Builder(OrderConfirmationActivity.this)
                     .setDialogTheme(R.style.GenericDialogTheme)
                     .setIcon(R.drawable.vector_payments_1)
                     .setTitle("Pilih Pembayaran").setTitleAppearance(R.color.colorPrimaryDark, 16)
                     //.setMessage("Data Collected Successfully")
-                    .addNewButton(R.style.cod, new GenericDialogOnClickListener() {
+                    .addNewButton(R.style.select_product, new GenericDialogOnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            BayarDiTempat();
+                            Intent intent = new Intent(OrderConfirmationActivity.this, SelectProductActivity.class);
+                            intent.putExtra("name",     Name);
+                            intent.putExtra("booked",   booked);
+                            intent.putExtra("gender",   gender);
+                            intent.putExtra("type",     "new");
+                            startActivity(intent);
                         }
                     })
-                    .addNewButton(R.style.online, new GenericDialogOnClickListener() {
+                    .addNewButton(R.style.back_home, new GenericDialogOnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            Toast.makeText(OrderConfirmationActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(OrderConfirmationActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
                         }
                     })
                     .setButtonOrientation(LinearLayout.VERTICAL)
@@ -129,13 +129,66 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                     .generate();
             }
         });
+
+        next.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(CartsLength >0){
+                    new GenericDialog.Builder(OrderConfirmationActivity.this)
+                        .setDialogTheme(R.style.GenericDialogTheme)
+                        .setIcon(R.drawable.vector_payments_1)
+                        .setTitle("Pilih Pembayaran").setTitleAppearance(R.color.colorPrimaryDark, 16)
+                        //.setMessage("Data Collected Successfully")
+                        .addNewButton(R.style.cod, new GenericDialogOnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                BayarDiTempat();
+                            }
+                        })
+                        .addNewButton(R.style.online, new GenericDialogOnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Toast.makeText(OrderConfirmationActivity.this, "Coming Soon", Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .setButtonOrientation(LinearLayout.VERTICAL)
+                        .setCancelable(true)
+                        .generate();
+                }else{
+                    AlertDialog.Builder builder = new AlertDialog.Builder(OrderConfirmationActivity.this);
+                    builder.setMessage("Silahkan Pilih Produk untuk Melakukan Checkout.");
+                    builder.setTitle("Gagal");
+                    builder.setCancelable(true);
+                    builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    builder.setPositiveButton("Pilih Produk", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(OrderConfirmationActivity.this, SelectProductActivity.class);
+                            intent.putExtra("name",     Name);
+                            intent.putExtra("booked",   booked);
+                            intent.putExtra("gender",   gender);
+                            intent.putExtra("type",     "new");
+                            startActivity(intent);
+                        }
+                    });
+                    android.app.AlertDialog alertDialog = builder.create();
+                    alertDialog.show();
+                }
+            }
+        });
     }
 
     private void BayarDiTempat(){
         Map<String, Object> jsonParams = new ArrayMap<>();
 ////put something inside the map, could be null
+        globalVariable.setList_view("view");
         jsonParams.put("invoice_id", globalVariable.getOl_invoice_id());
-        jsonParams.put("grand_total", TV_grand.getText().toString());
+        jsonParams.put("grand_total", grand);
         jsonParams.put("payment", "cod");
         jsonParams.put("perusahaan", "-");
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
@@ -148,8 +201,8 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                 try {
                     JSONObject jsonRESULTS = new JSONObject(response.body().string());
                     Toast.makeText(getApplicationContext(), jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+                    Intent intent = new Intent(getApplicationContext(), OrderQRActivity.class);
+                    intent.putExtra("booked",   booked);
                     startActivity(intent);
                     //Toast.makeText(OrderConfirmationActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
                 } catch (JSONException e) {
@@ -167,7 +220,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
     }
 
     public void getProduct() {
-        Call<ResponseBody> listCall = ApiGetMethod.getCartsDetail(bearer,booked);
+        Call<ResponseBody> listCall = ApiGetMethod.getCartsDetail(bearer,booked,"1");
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -175,23 +228,28 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            total_disc = 0;total_price = 0;grand = 0;
                             JSONObject pass = jsonRESULTS.getJSONObject("data");
                             JSONObject data = pass.getJSONObject("data");
                                 String invoice_id    = data.getString("id");
                                 JSONArray ArrayCarts = data.getJSONArray("carts");
+                                CartsLength = ArrayCarts.length();
                                 if(ArrayCarts.length() == 0){
                                     String total = null,disc = null,grandttl = null;
-                                    total       = globalVariable.toCurrency(String.valueOf(total_price));
-                                    disc        = globalVariable.toCurrency(String.valueOf(total_disc));
-                                    grandttl    = globalVariable.toCurrency(String.valueOf(grand));
+                                    total       = globalVariable.toCurrency("0");
+                                    disc        = globalVariable.toCurrency("0");
+                                    grandttl    = globalVariable.toCurrency("0");
                                     //Toast.makeText(OrderConfirmationActivity.this, total, Toast.LENGTH_SHORT).show();
                                     TV_total.setText((total));
                                     TV_discount.setText((disc));
                                     TV_grand.setText((grandttl));
+                                } else {
+                                    total_price = pass.getString("gross_amount");
+                                    total_disc = pass.getString("discount_total");
+                                    grand = pass.getString("grand_total");
                                 }
                                 for (int j = 0; j < ArrayCarts.length(); j++) {
                                     JSONObject Carts = ArrayCarts.getJSONObject(j);
+                                    String carts_id     = Carts.getString("id");
                                     String product_id   = Carts.getString("ol_product_id");
                                     String subtotal     = Carts.getString("price");
                                     String qty          = Carts.getString("qty");
@@ -205,10 +263,8 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                                     double a = Double.parseDouble(product_price);
                                     double b = Double.parseDouble(view_discount);
                                     double disc = a * (b/100);
-                                    total_price     += a;
-                                    total_disc      += disc;
                                     String nom_discount = String.valueOf(disc);
-                                    adapter_order _states = new adapter_order(invoice_id, qty, subtotal, image, title, slug, description, product_price, view_discount, nom_discount,product_id);
+                                    adapter_order _states = new adapter_order(carts_id, invoice_id, qty, subtotal, image, title, slug, description, product_price, view_discount, nom_discount,product_id);
                                     list_order.add(_states);
                                     // Toast.makeText(OrderConfirmationActivity.this, String.valueOf(total_disc), Toast.LENGTH_SHORT).show();
                                     bindDataProduct();
@@ -231,25 +287,15 @@ public class OrderConfirmationActivity extends AppCompatActivity {
     }
 
     private void bindDataProduct() {
-        grand   = total_price-total_disc;
-        String total = null,disc = null,grandttl = null;
-        if(total_price > 0){
-            total       = globalVariable.toCurrency(String.valueOf(total_price));
-            disc        = globalVariable.toCurrency(String.valueOf(total_disc));
-            grandttl    = globalVariable.toCurrency(String.valueOf(grand));
-        } else{
-            total = "0";TV_grand.setText(("0"));
-        }
         //Toast.makeText(OrderConfirmationActivity.this, total, Toast.LENGTH_SHORT).show();
-        TV_total.setText((total));
-        TV_discount.setText((disc));
-        TV_grand.setText((grandttl));
+        TV_total.setText(globalVariable.toCurrency(total_price));
+        TV_discount.setText("(" + globalVariable.toCurrency(total_disc) + ")");
+        TV_grand.setText(globalVariable.toCurrency(grand));
         dataOrder = new MyCustomAdapter(this,R.layout.list_product, list_order);
         listView.setAdapter(dataOrder);
     }
 
-    private class MyCustomAdapter extends ArrayAdapter<adapter_order>
-    {
+    private class MyCustomAdapter extends ArrayAdapter<adapter_order> {
         private ArrayList<adapter_order> stateList;
         public MyCustomAdapter(@NonNull Context context, int list_patient, ArrayList<adapter_order> list) {
             super(context, list_patient,list);
@@ -295,11 +341,12 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     Map<String, Object> jsonParams = new ArrayMap<>();
 ////put something inside the map, could be null
+                    jsonParams.put("cart_id",       state.getID());
                     jsonParams.put("ol_product_id", state.getProduct_id());
-                    jsonParams.put("ol_invoice_id", globalVariable.getOl_invoice_id());
+                    jsonParams.put("ol_invoice_id", state.getInvoice_id());
                     RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
                     //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
-                    Call<ResponseBody> listCall = mApiService.remove_itemCarts(bearer,body);
+                    Call<ResponseBody> listCall = mApiService.remove_CartsItem(bearer,body);
                     listCall.enqueue(new Callback<ResponseBody>() {
 
                         @Override
@@ -333,6 +380,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             holder.viewNomDisc  = nf.format(Double.parseDouble(state.getNomDiscount()));
             holder.viewSubTtl   = nf.format(Double.parseDouble(state.getSubtotal()));
 
+            //holder.ViewProduct       .setText(state.getTitle() + " / "+state.getID() + " / "+state.getInvoice_id());
             holder.ViewProduct       .setText(state.getTitle());
             holder.ViewDescription   .setText(state.getDescription());
             holder.ViewName          .setText(holder.viewPrice);

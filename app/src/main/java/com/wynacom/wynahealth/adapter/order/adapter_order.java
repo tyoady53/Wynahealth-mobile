@@ -2,6 +2,7 @@ package com.wynacom.wynahealth.adapter.order;
 
 public class adapter_order {
     String id               = null;
+    String invoice_id       = null;
     String qty              = null;
     String subtotal         = null;
     String image            = null;
@@ -13,9 +14,10 @@ public class adapter_order {
     String nom_discount     = null;
     String product_id       = null;
 
-    public adapter_order(String id, String qty, String subtotal, String image, String title, String slug, String description, String product_price,String view_discount, String nom_discount,String product_id) {
+    public adapter_order(String id,String invoice_id, String qty, String subtotal, String image, String title, String slug, String description, String product_price,String view_discount, String nom_discount,String product_id) {
         super();
         this.id             = id;
+        this.invoice_id     = invoice_id;
         this.qty            = qty;
         this.subtotal       = subtotal;
         this.image          = image;
@@ -33,6 +35,13 @@ public class adapter_order {
     }
     public void setID(String id) {
         this.id = id;
+    }
+
+    public String getInvoice_id() {
+        return invoice_id;
+    }
+    public void setInvoice_id(String invoice_id) {
+        this.invoice_id = invoice_id;
     }
 
     public String getQty() {

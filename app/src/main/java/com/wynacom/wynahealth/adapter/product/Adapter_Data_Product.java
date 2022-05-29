@@ -94,11 +94,13 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
         String c = nf.format(Integer.parseInt(state.getPrice()));
         String path     = state.getImage();
-        holder.Vprice       .setText(c);
+        //holder.Vprice       .setText(c);
+        holder.Vprice       .setText(globalVariable.toCurrency(state.getPrice()));
         holder.Vdesc        .setText(state.getDescription());
-        String id_patient       = ((GlobalVariable) getContext()).getUserID();
-        String id_invoice       = ((GlobalVariable) getContext()).getOl_invoice_id();
-        String token            = ((GlobalVariable) getContext()).getToken();
+        String id_patient       = globalVariable.getUserID();
+        String id_invoice       = globalVariable.getOl_invoice_id();
+        //String token            = ((GlobalVariable) getContext()).getToken();
+        String token            = globalVariable.getToken();
         String bearer           = "Bearer "+token;
         String product_id       = state.getID();
 
@@ -127,6 +129,7 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
                 jsonParams.put("qty", "1");
                 jsonParams.put("price", price);
                 jsonParams.put("ol_invoice_id", id_invoice);
+                jsonParams.put("discount", discount);
                 RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
                 //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
                 Call<ResponseBody> listCall = mApiService.postCarts(bearer,body);

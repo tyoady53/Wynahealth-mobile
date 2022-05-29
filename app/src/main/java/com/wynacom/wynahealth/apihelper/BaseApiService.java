@@ -57,7 +57,7 @@ public interface BaseApiService {
     Call<ResponseBody> generateNew(@Header("Authorization") String token,
                                    @Body                    RequestBody params);
 
-    @GET("patient/invoices/{booked}")
+    @GET("patient/invoices/{booked}?")
     Call<ResponseBody> getInvoicesBySnap(
         @Header("Authorization")   String token,
         @Path("booked")            String snap);
@@ -98,11 +98,21 @@ public interface BaseApiService {
         @Header("Authorization")    String token,
         @Body                       RequestBody params);
 
-    //@FormUrlEncoded
-    @GET("web/carts/detail/{booked}")
+    @POST("patient/invoices/cancel")
+    Call<ResponseBody> Cancel_order(
+        @Header("Authorization")    String token,
+        @Body                       RequestBody params);
+
+    @GET("web/carts/detail/{booked}?")
     Call<ResponseBody> getCartsDetail(
         @Header ("Authorization") String token,
-        @Path   ("booked")        String booked);
+        @Path   ("booked")        String booked,
+        @Query  ("page")          String page);
+
+    @POST("web/carts/remove")
+    Call<ResponseBody> remove_CartsItem(
+        @Header("Authorization")    String token,
+        @Body                       RequestBody params);
 
     @POST("web/carts/remove_item")
     Call<ResponseBody> remove_itemCarts(

@@ -297,6 +297,7 @@
         android:autofillHints=""
         android:editable="false"
         android:hint="Input Text"
+        android:visibility="gone"
         android:inputType="text"
         app:layout_constraintBottom_toTopOf="@+id/home"
         app:layout_constraintEnd_toEndOf="parent"

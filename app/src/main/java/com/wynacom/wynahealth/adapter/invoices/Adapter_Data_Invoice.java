@@ -58,11 +58,11 @@ public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
         String c = nf.format(Integer.parseInt(state.getTotal()));
         holder.Vtotal       .setText(c);
 
-        if (holder.Vstatus.getText().toString().equals("pending")) {
+        if (holder.Vstatus.getText().toString().equals("Waiting For Payment")) {
             holder.status_color.setBackgroundColor(ResourcesCompat.getColor(convertView.getResources(),R.color.yellow,null));
-        } else if (holder.Vstatus.getText().toString().equals("success")) {
+        } else if (holder.Vstatus.getText().toString().equals("Order Paid")) {
             holder.status_color.setBackgroundColor(ResourcesCompat.getColor(convertView.getResources(), R.color.green, null));
-        } else if (holder.Vstatus.getText().toString().equals("failed")) {
+        } else {
             holder.status_color.setBackgroundColor(ResourcesCompat.getColor(convertView.getResources(), R.color.red, null));
         }
 
