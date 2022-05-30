@@ -458,10 +458,6 @@ public class SelectProductActivity extends AppCompatActivity {
                                         try {
                                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                                             if(jsonRESULTS.getString("success").equals("true")){
-                                                //dataOrder.clear();
-//                                    listViewProduct.setAdapter(null);
-//                                    dataProduct.clear();
-//                                    getCarts(String.valueOf(NowPage));
                                                 finalHolder.btnAdd.setVisibility(View.VISIBLE);
                                                 finalHolder.btnDelete.setVisibility(View.GONE);
                                             } else {

@@ -1,0 +1,15 @@
+http://173.16.9.149:8000/api/patient/invoices?q={q}&page={page}
+
+# Headers
+@Authorization: {Authorization}
+q={q}&page={page}
+
+%%%
+# GET
+# http://173.16.9.149:8000/api/patient/invoices?q={q}&page={page}
+# Headers
+# @Authorization: {Authorization}
+# Body
+# q={q}&page={page}
+
+# Error: java.net.SocketTimeoutException: connect timed out
