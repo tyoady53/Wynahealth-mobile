@@ -19,8 +19,7 @@
     <!-- Sync Preferences -->
     <string name="sync_title">Sync email periodically</string>
     <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="add_new_patient">Add new patient</string>
     <string name="data_patient_empty">Data patient empty.</string>
@@ -35,4 +34,23 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_create_order">CreateOrderActivity</string>
+
+    <string-array name="filter">
+        <item>All Status</item>
+        <item>Order Paid</item>
+        <item>Waiting For Payment</item>
+        <item>Payment Failed</item>
+        <item>Transaction Expired</item>
+    </string-array>
+
+    <string name="gross_amount">Gross Amount</string>
+    <string name="discount_total">Total Discount</string>
+    <string name="total_net">Total</string>
+
+    <string name="all_data">All Status</string>
+    <string name="pending">Waiting For Payment</string>
+    <string name="success">Order Paid</string>
+    <string name="failed">Payment Failed</string>
+    <string name="expired">Transaction Expired</string>
+
 </resources>

@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -40,6 +41,8 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
+import dev.jai.genericdialog2.GenericDialog;
+import dev.jai.genericdialog2.GenericDialogOnClickListener;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -214,35 +217,53 @@ public class CartsActivity extends AppCompatActivity {
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Map<String, Object> jsonParams = new ArrayMap<>();
+                    new GenericDialog.Builder(getContext())
+                        .setDialogTheme(R.style.GenericDialogTheme)
+                        .setTitle("Hapus Data?").setTitleAppearance(R.color.colorPrimaryDark, 20)
+                        //.setMessage("Data Collected Successfully")
+                        .addNewButton(R.style.yes_option, new GenericDialogOnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Map<String, Object> jsonParams = new ArrayMap<>();
 ////put something inside the map, could be null
-                    jsonParams.put("invoice_id", state.getID());
-                    RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
-                    //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
-                    Call<ResponseBody> listCall = mApiService.Cancel_order(bearer,body);
-                    listCall.enqueue(new Callback<ResponseBody>() {
+                                jsonParams.put("invoice_id", state.getID());
+                                RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+                                //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+                                Call<ResponseBody> listCall = mApiService.Cancel_order(bearer,body);
+                                listCall.enqueue(new Callback<ResponseBody>() {
 
-                        @Override
-                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                            try {
-                                JSONObject jsonRESULTS = new JSONObject(response.body().string());
-                                if(jsonRESULTS.getString("success").equals("true")){
-                                    dataCarts.clear();
-                                    refreshList();
-                                }
-                                //Toast.makeText(OrderConfirmationActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            } catch (IOException e) {
-                                e.printStackTrace();
+                                    @Override
+                                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                        try {
+                                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                                            if(jsonRESULTS.getString("success").equals("true")){
+                                                dataCarts.clear();
+                                                refreshList();
+                                            }
+                                            //Toast.makeText(OrderConfirmationActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        } catch (IOException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                        Toast.makeText(getApplicationContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
+                                    }
+                                });
                             }
-                        }
+                        })
+                        .addNewButton(R.style.no_option, new GenericDialogOnClickListener() {
+                            @Override
+                            public void onClick(View view) {
 
-                        @Override
-                        public void onFailure(Call<ResponseBody> call, Throwable t) {
-                            Toast.makeText(getApplicationContext(), "Tidak dapat terhubung ke server.", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            }
+                        })
+                        .setButtonOrientation(LinearLayout.HORIZONTAL)
+                        .setCancelable(true)
+                        .generate();
                 }
             });
 

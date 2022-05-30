@@ -7,9 +7,6 @@
     android:padding="@dimen/dp20"
     tools:context=".OrderQRActivity">
 
-    <!--Edit text to enter text
-        for creating a QR code-->
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="0dp"
@@ -243,20 +240,56 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp10"
             android:layout_marginEnd="@dimen/dp10"
-            android:layout_marginRight="5dp">
-
-            <TextView
-                android:layout_width="wrap_content"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Total "
-                android:textAlignment="textStart"
-                android:textSize="@dimen/dp20" />
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/gross_amount"
+                    android:textAlignment="textStart" />
 
-            <TextView
-                android:id="@+id/inv_total"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/gross_amount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/discount_total"
+                    android:textAlignment="textStart" />
+
+                <TextView
+                    android:id="@+id/discount_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/total_net"
+                    android:textAlignment="textStart"
+                    android:textSize="@dimen/dp20" />
+
+                <TextView
+                    android:id="@+id/inv_total"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 

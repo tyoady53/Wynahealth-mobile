@@ -133,6 +133,7 @@
                                 android:text="Title" />
 
                             <Spinner
+                                android:background="@drawable/spinner_noborder"
                                 android:id="@+id/regis_title"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"/>
@@ -161,6 +162,7 @@
                                 android:text="Jenis Kelamin" />
 
                             <Spinner
+                                android:background="@drawable/spinner_noborder"
                                 android:id="@+id/regis_jeniskelamin"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
@@ -190,11 +192,12 @@
                                 android:text="Kota" />
 
                             <Spinner
+                                android:background="@drawable/spinner_noborder"
                                 android:id="@+id/regis_kota"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:hint="Kota"
-                                android:maxLines="1"/>
+                                android:maxLines="1" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout

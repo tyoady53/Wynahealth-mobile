@@ -1,6 +1,9 @@
 package com.wynacom.wynahealth.adapter.product;
 
 import android.content.Context;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StrikethroughSpan;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -57,9 +60,9 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
 
     static class ViewHolder
     {
-        TextView Vname,Vprice,Vdesc,cbProduct;
+        TextView Vname,Vprice,Vdesc,cbProduct,discount_view;
         ImageView ViewImage;
-        ImageButton btnAdd;
+        ImageButton btnAdd,btnDelete;
     }
 
     @Override
@@ -82,6 +85,8 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
             holder.cbProduct    = (TextView) convertView.findViewById(R.id.cb_product);
 
             holder.btnAdd       = (ImageButton) convertView.findViewById(R.id.order_add);
+            holder.btnDelete    = (ImageButton) convertView.findViewById(R.id.order_delete);
+            holder.discount_view= (TextView) convertView.findViewById(R.id.tv_discount_price);
 
             convertView.setTag(holder);
         } else {
@@ -94,8 +99,28 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
         String c = nf.format(Integer.parseInt(state.getPrice()));
         String path     = state.getImage();
+
         //holder.Vprice       .setText(c);
-        holder.Vprice       .setText(globalVariable.toCurrency(state.getPrice()));
+        StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        if(Integer.parseInt(state.getDiscount()) > 0){
+            double harga = Double.parseDouble(state.getPrice());
+            double diskon= Double.parseDouble(state.getDiscount());
+            double total = harga - (harga*(diskon/100));
+            ssb.append(globalVariable.toCurrency(state.getPrice()));
+            ssb.setSpan(
+                strikethroughSpan,
+                0,
+                ssb.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+            holder.Vprice       .setText(ssb,TextView.BufferType.NORMAL);
+            holder.discount_view.setVisibility(View.VISIBLE);
+            holder.discount_view.setText(globalVariable.toCurrency(String.valueOf(total)));
+        }else{
+            holder.Vprice       .setText(globalVariable.toCurrency(state.getPrice()));
+            holder.discount_view.setVisibility(View.GONE);
+        }
         holder.Vdesc        .setText(state.getDescription());
         String id_patient       = globalVariable.getUserID();
         String id_invoice       = globalVariable.getOl_invoice_id();
@@ -106,8 +131,10 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
 
         if(state.isSelected()){
             holder.btnAdd.setVisibility(View.GONE);
-        } else {
+            holder.btnDelete.setVisibility(View.VISIBLE);
+        }else{
             holder.btnAdd.setVisibility(View.VISIBLE);
+            holder.btnDelete.setVisibility(View.GONE);
         }
         //Toast.makeText(getContext(), "Data "+position+" with ID "+state.getID()+" is "+state.isSelected(), Toast.LENGTH_SHORT).show();
 
@@ -140,6 +167,10 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if(jsonRESULTS.getString("success").equals("true")){
                                 finalHolder.btnAdd.setVisibility(View.GONE);
+                                finalHolder.btnDelete.setVisibility(View.VISIBLE);
+                            }else{
+                                finalHolder.btnAdd.setVisibility(View.VISIBLE);
+                                finalHolder.btnDelete.setVisibility(View.GONE);
                             }
                             Toast.makeText(myAppClass, jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {

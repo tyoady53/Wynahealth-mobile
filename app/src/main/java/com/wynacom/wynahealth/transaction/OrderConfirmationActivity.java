@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StrikethroughSpan;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
@@ -102,8 +105,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new GenericDialog.Builder(OrderConfirmationActivity.this)
                     .setDialogTheme(R.style.GenericDialogTheme)
-                    .setIcon(R.drawable.vector_payments_1)
-                    .setTitle("Pilih Pembayaran").setTitleAppearance(R.color.colorPrimaryDark, 16)
+                    .setTitle("Kembali Ke").setTitleAppearance(R.color.colorPrimaryDark, 20)
                     //.setMessage("Data Collected Successfully")
                     .addNewButton(R.style.select_product, new GenericDialogOnClickListener() {
                         @Override
@@ -137,7 +139,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                     new GenericDialog.Builder(OrderConfirmationActivity.this)
                         .setDialogTheme(R.style.GenericDialogTheme)
                         .setIcon(R.drawable.vector_payments_1)
-                        .setTitle("Pilih Pembayaran").setTitleAppearance(R.color.colorPrimaryDark, 16)
+                        .setTitle("Pilih Pembayaran").setTitleAppearance(R.color.colorPrimaryDark, 20)
                         //.setMessage("Data Collected Successfully")
                         .addNewButton(R.style.cod, new GenericDialogOnClickListener() {
                             @Override
@@ -304,7 +306,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
         }
 
         private class ViewHolder {
-            TextView ViewName,ViewDiscount,ViewSubtotal,ViewCount,ViewProduct,ViewDescription;
+            TextView ViewName,ViewDiscount,ViewSubtotal,ViewCount,ViewProduct,ViewDescription,discounts;
             String viewPrice,viewNomDisc,viewSubTtl,list_type;
             ImageView remove;
             double subtotal;
@@ -325,16 +327,17 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             holder.ViewDiscount      = (TextView) convertView.findViewById(R.id.confirm_product_discount);
             holder.ViewSubtotal      = (TextView) convertView.findViewById(R.id.confirm_product_subtotal);
             holder.ViewCount         = (TextView) convertView.findViewById(R.id.confirm_view_discount);
+            holder.discounts         = (TextView) convertView.findViewById(R.id.confirm_discount_price);
 
             final adapter_order state = stateList.get(position);
             final int count           = stateList.size();
 
             holder.list_type = globalVariable.getList_view();
-            if(holder.list_type.equals("view")){
-                holder.remove.setVisibility(View.GONE);
-            }else{
-                holder.remove.setVisibility(View.VISIBLE);
-            }
+//            if(holder.list_type.equals("view")){
+//                holder.remove.setVisibility(View.GONE);
+//            }else{
+//                holder.remove.setVisibility(View.VISIBLE);
+//            }
 
             holder.remove.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -376,14 +379,36 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             Locale localeID = new Locale("in", "ID");
             NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
 
-            holder.viewPrice    = nf.format(Double.parseDouble(state.getProduct_price()));
-            holder.viewNomDisc  = nf.format(Double.parseDouble(state.getNomDiscount()));
-            holder.viewSubTtl   = nf.format(Double.parseDouble(state.getSubtotal()));
+            StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
+            SpannableStringBuilder ssb = new SpannableStringBuilder();
+            if(Double.parseDouble(state.getNomDiscount()) > 0){
+                double harga = Double.parseDouble(state.getProduct_price());
+                double diskon= Double.parseDouble(state.getNomDiscount());
+                double total = harga - diskon;
+                ssb.append(globalVariable.toCurrency(state.getProduct_price()));
+                ssb.setSpan(
+                    strikethroughSpan,
+                    0,
+                    ssb.length(),
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                );
+                holder.ViewName    .setText(ssb,TextView.BufferType.EDITABLE);
+                holder.ViewName    .setTextColor(getResources().getColor(R.color.red,null));
+                holder.discounts   .setVisibility(View.VISIBLE);
+                holder.discounts   .setText(globalVariable.toCurrency(String.valueOf(total)));
+            }else{
+                holder.ViewName    .setText(globalVariable.toCurrency(state.getProduct_price()));
+                holder.discounts   .setVisibility(View.GONE);
+            }
+
+//            holder.viewPrice    = nf.format(Double.parseDouble(state.getProduct_price()));
+//            holder.viewNomDisc  = nf.format(Double.parseDouble(state.getNomDiscount()));
+//            holder.viewSubTtl   = nf.format(Double.parseDouble(state.getSubtotal()));
 
             //holder.ViewProduct       .setText(state.getTitle() + " / "+state.getID() + " / "+state.getInvoice_id());
             holder.ViewProduct       .setText(state.getTitle());
             holder.ViewDescription   .setText(state.getDescription());
-            holder.ViewName          .setText(holder.viewPrice);
+            //holder.ViewName          .setText(holder.viewPrice);
             holder.ViewDiscount      .setText("-"+nf.format(Double.parseDouble(state.getNomDiscount())));
             holder.ViewSubtotal      .setText(holder.viewSubTtl);
             holder.ViewCount         .setText(state.getView_discount()+"%");

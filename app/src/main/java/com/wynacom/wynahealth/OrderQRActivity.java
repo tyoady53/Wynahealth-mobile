@@ -52,7 +52,7 @@ public class OrderQRActivity extends AppCompatActivity {
     private EditText dataEdt;
     private Button generateQrBtn,Bt_Payment;
     private ListView listView;
-    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total,TV_invNo,TV_status;
+    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total,TV_invNo,TV_status,TV_gross,TV_discount;
     Bitmap bitmap;
     QRGEncoder qrgEncoder;
     private BaseApiService mApiService,ApiGetMethod;
@@ -93,6 +93,8 @@ public class OrderQRActivity extends AppCompatActivity {
         TV_inv_total    = findViewById(R.id.inv_total);
         TV_invNo        = findViewById(R.id.inv_order_invNo);
         TV_status       = findViewById(R.id.inv_order_status);
+        TV_gross        = findViewById(R.id.gross_amount);
+        TV_discount     = findViewById(R.id.discount_total);
 
         getInvoices();
         // initializing onclick listener for button.
@@ -108,7 +110,8 @@ public class OrderQRActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            JSONObject jsonObject           = jsonRESULTS.getJSONObject("data");
+                            JSONObject jsonObject2          = jsonRESULTS.getJSONObject("data");
+                            JSONObject jsonObject           = jsonObject2.getJSONObject("data");
                             String invoice_response         = jsonObject.getString("invoice_no");
                             String snap_response            = jsonObject.getString("booked");
                             //String invoice_response         = c.getString("invoice");
@@ -150,8 +153,10 @@ public class OrderQRActivity extends AppCompatActivity {
                                 TV_inv_gender   .setText(strGender);
                                 TV_inv_dob      .setText(globalVariable.dateformat(dob));
                                 TV_inv_address  .setText(jsonDataPatient.getString("city"));
-                                String GrandTtl = globalVariable.toCurrency(jsonObject.getString("grand_total"));
+                                String GrandTtl = globalVariable.toCurrency(jsonObject2.getString("grand_total"));
                                 TV_inv_total    .setText(GrandTtl);
+                                TV_gross        .setText(globalVariable.toCurrency(jsonObject2.getString("gross_amount")));
+                                TV_discount     .setText("("+globalVariable.toCurrency(jsonObject2.getString("discount_total"))+")");
                                 TV_inv_total.setTextSize(2,20);
                                 TV_inv_total.setTypeface(TV_inv_total.getTypeface(), Typeface.BOLD);
                                 JSONArray jsonArray = jsonObject.getJSONArray("orders");
@@ -167,7 +172,7 @@ public class OrderQRActivity extends AppCompatActivity {
                                     slug            = Data_OrderProduct.getString("slug");
                                     description     = Data_OrderProduct.getString("description");
                                     product_price   = c.getString("price");
-                                    discount        = Data_OrderProduct.getString("discount");
+                                    discount        = c.getString("discount");
                                     String product_id = c.getString("ol_product_id");
 
                                     double a = Double.parseDouble(product_price);

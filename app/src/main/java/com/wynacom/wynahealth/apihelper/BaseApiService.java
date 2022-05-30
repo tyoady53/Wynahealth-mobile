@@ -26,11 +26,13 @@ public interface BaseApiService {
 //            @Field("password")  String password);
 
     @POST("patient/login/")
-    Call<ResponseBody> login(@Body RequestBody params);
+    Call<ResponseBody> login(
+        @Body RequestBody params);
 
     //@FormUrlEncoded@Body RequestBody params);
     @POST("patient/register?")
-    Call<ResponseBody> register(@Body RequestBody params);
+    Call<ResponseBody> register(
+        @Body RequestBody params);
 //        @Field("patient_name")  String patient_name,
 //        @Field("email")         String email,
 //        @Field("password")      String password,
@@ -48,14 +50,19 @@ public interface BaseApiService {
         @Field("token") String token);
 
     @GET("patient/dashboard")
-    Call<ResponseBody> getPosts(@Header("Authorization") String token);
+    Call<ResponseBody> getPosts(
+        @Header("Authorization") String token);
 
-    @GET("patient/invoices")
-    Call<ResponseBody> getInvoices(@Header("Authorization") String token);
+    @GET("patient/invoices?")
+    Call<ResponseBody> getInvoices(
+        @Header("Authorization") String token,
+        @Query("q")              String q,
+        @Query("page")           String page);
 
     @POST("patient/invoices/generate")
-    Call<ResponseBody> generateNew(@Header("Authorization") String token,
-                                   @Body                    RequestBody params);
+    Call<ResponseBody> generateNew(
+        @Header("Authorization") String token,
+        @Body                    RequestBody params);
 
     @GET("patient/invoices/{booked}?")
     Call<ResponseBody> getInvoicesBySnap(
@@ -84,13 +91,16 @@ public interface BaseApiService {
 
 //WEB routes
     @GET("web/categories")
-    Call<ResponseBody> getcategories(@Header("Authorization") String token);
+    Call<ResponseBody> getcategories(
+        @Header("Authorization") String token);
 
     @GET("web/products")
-    Call<ResponseBody> getProducts(@Query("gender")          String gender);
+    Call<ResponseBody> getProducts(
+        @Query("gender")          String gender);
 
     @GET("web/carts")
-    Call<ResponseBody> getcarts(@Header("Authorization") String token);
+    Call<ResponseBody> getcarts(
+        @Header("Authorization") String token);
 
     //@FormUrlEncoded
     @POST("web/carts?")

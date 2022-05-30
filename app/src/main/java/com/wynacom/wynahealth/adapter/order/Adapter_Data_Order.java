@@ -1,6 +1,9 @@
 package com.wynacom.wynahealth.adapter.order;
 
 import android.content.Context;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.StrikethroughSpan;
 import android.util.ArrayMap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -51,7 +54,7 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
     }
 
     private static class ViewHolder {
-        TextView ViewName,ViewDiscount,ViewSubtotal,ViewCount,ViewProduct,ViewDescription;
+        TextView ViewName,ViewDiscount,ViewSubtotal,ViewCount,ViewProduct,ViewDescription,discounts;
         String viewPrice,viewNomDisc,viewSubTtl,list_type;
         ImageView remove;
         double subtotal;
@@ -72,6 +75,7 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
         holder.ViewDiscount      = (TextView) convertView.findViewById(R.id.confirm_product_discount);
         holder.ViewSubtotal      = (TextView) convertView.findViewById(R.id.confirm_product_subtotal);
         holder.ViewCount         = (TextView) convertView.findViewById(R.id.confirm_view_discount);
+        holder.discounts         = (TextView) convertView.findViewById(R.id.confirm_discount_price);
 
         final adapter_order state = stateList.get(position);
         final int count           = stateList.size();
@@ -123,9 +127,31 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
         Locale localeID = new Locale("in", "ID");
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
 
-        holder.viewPrice    = nf.format(Double.parseDouble(state.getProduct_price()));
-        holder.viewNomDisc  = nf.format(Double.parseDouble(state.getNomDiscount()));
-        holder.viewSubTtl   = nf.format(Double.parseDouble(state.getSubtotal()));
+        StrikethroughSpan strikethroughSpan = new StrikethroughSpan();
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        if(Double.parseDouble(state.getNomDiscount()) > 0){
+            double harga = Double.parseDouble(state.getProduct_price());
+            double diskon= Double.parseDouble(state.getNomDiscount());
+            double total = harga - diskon;
+            ssb.append(globalVariable.toCurrency(state.getProduct_price()));
+            ssb.setSpan(
+                strikethroughSpan,
+                0,
+                ssb.length(),
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+            );
+            holder.ViewName    .setText(ssb,TextView.BufferType.EDITABLE);
+            holder.ViewName    .setTextColor(convertView.getResources().getColor(R.color.red,null));
+            holder.discounts   .setVisibility(View.VISIBLE);
+            holder.discounts   .setText(globalVariable.toCurrency(String.valueOf(total)));
+        }else{
+            holder.ViewName    .setText(globalVariable.toCurrency(state.getProduct_price()));
+            holder.discounts   .setVisibility(View.GONE);
+        }
+
+//        holder.viewPrice    = nf.format(Double.parseDouble(state.getProduct_price()));
+//        holder.viewNomDisc  = nf.format(Double.parseDouble(state.getNomDiscount()));
+//        holder.viewSubTtl   = nf.format(Double.parseDouble(state.getSubtotal()));
 
         double a = Double.parseDouble(state.getProduct_price());
         double b = Double.parseDouble(state.getNomDiscount());
@@ -134,7 +160,7 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
 
         holder.ViewProduct       .setText(state.getTitle());
         holder.ViewDescription   .setText(state.getDescription());
-        holder.ViewName          .setText(holder.viewPrice);
+        //holder.ViewName          .setText(holder.viewPrice);
         holder.ViewDiscount      .setText("-"+nf.format(Double.parseDouble(state.getNomDiscount())));
         holder.ViewSubtotal      .setText(holder.viewSubTtl);
         holder.ViewCount         .setText(state.getView_discount()+"%");
@@ -143,6 +169,7 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
             discTotal = discTotal+d;
             priceTotal= priceTotal+a;
         }
+        Toast.makeText(getContext(), "invoice", Toast.LENGTH_SHORT).show();
         ((GlobalVariable) getContext()).setDiscountTotal(String.valueOf(discTotal));
         ((GlobalVariable) getContext()).setPriceTotal(String.valueOf(priceTotal));
 

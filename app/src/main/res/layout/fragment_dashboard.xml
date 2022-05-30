@@ -7,6 +7,7 @@
     tools:context=".ui.dashboard.DashboardFragment">
 
     <LinearLayout
+        android:visibility="gone"
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,7 +18,6 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.cardview.widget.CardView
-            android:visibility="gone"
             app:cardCornerRadius="@dimen/dp10"
             android:layout_weight="1"
             android:id="@+id/card_success"
@@ -45,13 +45,6 @@
                     android:background="@color/black" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" : "
-                    android:textSize="16sp"
-                    android:visibility="gone" />
-
-                <TextView
                     android:id="@+id/tv_success"
                     android:textAlignment="center"
                     android:layout_width="match_parent"
@@ -67,7 +60,6 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:visibility="gone"
             app:cardCornerRadius="@dimen/dp10"
             android:layout_weight="1"
             android:id="@+id/card_pending"
@@ -96,13 +88,6 @@
                     android:background="@color/black" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" : "
-                    android:textSize="16sp"
-                    android:visibility="gone" />
-
-                <TextView
                     android:id="@+id/tv_pending"
                     android:textAlignment="center"
                     android:layout_width="match_parent"
@@ -118,7 +103,6 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:visibility="gone"
             app:cardCornerRadius="@dimen/dp10"
             android:layout_weight="1"
             android:id="@+id/card_failed"
@@ -169,7 +153,6 @@
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
-            android:visibility="gone"
             app:cardCornerRadius="@dimen/dp10"
             android:layout_weight="1"
             android:id="@+id/card_expired"
@@ -198,13 +181,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/white" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text=" : "
-                    android:textSize="16sp"
-                    android:visibility="gone" />
 
                 <TextView
                     android:id="@+id/tv_expired"
@@ -301,7 +277,28 @@
     </androidx.cardview.widget.CardView>
 
     <LinearLayout
-        android:layout_marginTop="@dimen/dp10"
+        android:padding="@dimen/dp10"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout10"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filter"/>
+        <Spinner
+            android:id="@+id/spinner_Filter"
+            android:minHeight="@dimen/dp20"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/spinner"
+            android:entries="@array/filter"/>
+    </LinearLayout>
+
+    <LinearLayout
         android:id="@+id/linearLayout3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -310,7 +307,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout10"
         app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
@@ -361,19 +358,19 @@
             android:orientation="vertical">
 
             <TextView
-                android:layout_marginTop="@dimen/dpHigh"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dpHigh"
                 android:layout_marginRight="@dimen/dp10"
                 android:text="No order yet."
                 android:textSize="@dimen/dp20" />
 
             <Button
-                android:padding="@dimen/dp10"
                 android:id="@+id/btn_new_order"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/button_two_tone"
+                android:padding="@dimen/dp10"
                 android:text="Create New Order" />
         </LinearLayout>
     </LinearLayout>

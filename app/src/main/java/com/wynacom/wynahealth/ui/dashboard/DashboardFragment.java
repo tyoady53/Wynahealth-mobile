@@ -15,9 +15,11 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -58,7 +60,7 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
     Local_Data local_data;
     protected Cursor cursor;
-    String string_pending, string_success,string_failed, string_expired, string_ktp, string_kota, string_kodepos,token,bearer;
+    String string_pending, string_success,string_failed, string_expired, string_ktp, string_kota, string_kodepos,token,bearer,filter,page;
     String nama_pasien,handphone,sex,dob,nik,city,postal_code,tampiltanggal,patient_id;
     TextView TV_success,TV_pending,TV_failed,TV_expired;
 
@@ -83,6 +85,8 @@ public class DashboardFragment extends Fragment {
     CardView CardSuccess,CarsPending,CardFailed,CardExpired;
 
     private BaseApiService mApiService,ApiGetMethod;
+
+    Spinner spinner_filter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -119,11 +123,24 @@ public class DashboardFragment extends Fragment {
 
         fab_add         = binding.fabOrder;
 
+        spinner_filter  = binding.spinnerFilter;
+
         progress        = binding.progressCircular;
         listView.setVisibility(View.GONE);
 
-        getDashboard();
-        refreshList();
+        page = "1"; filter = "";
+        //getDashboard();
+        //refreshList();
+
+//        java.util.List<String> listFilter = new ArrayList<>();
+//        listFilter.add(String.valueOf(R.string.all_data));
+//        listFilter.add(String.valueOf(R.string.success));
+//        listFilter.add(String.valueOf(R.string.pending));
+//        listFilter.add(String.valueOf(R.string.failed));
+//        listFilter.add(String.valueOf(R.string.expired));
+//        ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_border,listFilter);
+//        //dataAdapter3.setDropDownViewResource(R.layout.spinner_item_border);
+//        spinner_filter.setAdapter(dataAdapter3);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -135,6 +152,31 @@ public class DashboardFragment extends Fragment {
                 Intent intent = new Intent(getContext(), OrderQRActivity.class);
                 intent.putExtra("booked", snap);
                 startActivity(intent);
+            }
+        });
+
+        spinner_filter.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == 1) {
+                    filter = "success";
+                } else if (position == 2) {
+                    filter = "pending";
+                } else if (position == 3) {
+                    filter = "failed";
+                } else if (position == 4) {
+                    filter = "expired";
+                } else {
+                    filter = "";
+                }
+                orderList.clear();
+                listView.setAdapter(null);
+                refreshList();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -151,11 +193,17 @@ public class DashboardFragment extends Fragment {
                 neworder();
             }
         });
+
         return root;
     }
 
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+    }
+
     private void refreshList() {
-        Call<ResponseBody> listCall = ApiGetMethod.getInvoices(bearer);
+        Call<ResponseBody> listCall = ApiGetMethod.getInvoices(bearer,filter,page);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -171,6 +219,7 @@ public class DashboardFragment extends Fragment {
                             if(arrayCount>0){
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject c = jsonArray.getJSONObject(i);
+                                    JSONObject patient = c.getJSONObject("datapatient");
                                     String id            = c.getString("id");
                                     String invoice       = c.getString("booked");
                                     String status        = c.getString("status");
@@ -194,9 +243,21 @@ public class DashboardFragment extends Fragment {
                                             status_order = "Transaction Expired";
                                         }
                                     }
-                                    getDataPatient(id,invoice,status_order,grand_total,snap,patient_id);
+                                    String title  = patient.getString("title");
+                                    String name   = patient.getString("name");
+                                    handphone     = patient.getString("handphone");
+                                    sex           = patient.getString("sex");
+                                    dob           = patient.getString("dob");
+                                    nik           = patient.getString("nik");
+                                    city          = patient.getString("city");
+                                    postal_code   = patient.getString("postal_code");
+                                    tampiltanggal = globalVariable.dateformat(dob);
+                                    nama_pasien = title +" "+name;
+                                        adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status_order,grand_total,snap);
+                                        orderList.add(_states);
+                                    //getDataPatient(id,invoice,status_order,grand_total,snap,patient_id);
                                 }
-                            }
+                            }bindData();progress.setVisibility(View.GONE);
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");
@@ -274,7 +335,7 @@ public class DashboardFragment extends Fragment {
                                 }
                             }
                             progress.setVisibility(View.GONE);
-                            bindData();
+                            //bindData();
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");
@@ -345,12 +406,17 @@ public class DashboardFragment extends Fragment {
             linearInfo.setVisibility(View.VISIBLE);
             linearLayout.setVisibility(View.GONE);
             dataOrder = new Adapter_Data_Invoice(getContext(), R.layout.list_order, orderList);
-
-
             listView.setAdapter(dataOrder);
-        }else if (arrayCount == 0){
+        }else if (arrayCount == 0 && spinner_filter.getSelectedItemPosition() == 0){
             linearInfo.setVisibility(View.VISIBLE);
             linearLayout.setVisibility(View.VISIBLE);
+        }else{
+            progress.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            linearInfo.setVisibility(View.VISIBLE);
+            linearLayout.setVisibility(View.GONE);
+            dataOrder = new Adapter_Data_Invoice(getContext(), R.layout.list_order, orderList);
+            listView.setAdapter(dataOrder);
         }
     }
 
@@ -391,7 +457,6 @@ public class DashboardFragment extends Fragment {
                                 linearLayout.setVisibility(View.VISIBLE);
                                 progress.setVisibility(View.GONE);
                             }
-                            //Toast.makeText(getContext(), "Success : "+content, Toast.LENGTH_SHORT).show();
                         } else {
 
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
