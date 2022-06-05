@@ -27,7 +27,7 @@
                     android:layout_marginRight="@dimen/dp10"
                     android:id="@+id/prompt_title"
                     android:maxLines="1"
-                    android:hint="Title"
+                    android:entries="@array/titles"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                 </Spinner>
@@ -41,7 +41,7 @@
                     android:id="@+id/prompt_nama"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:hint="Nama Lengkap"
+                    android:hint="@string/full_name"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                     <requestFocus/>
@@ -56,7 +56,7 @@
                     android:id="@+id/prompt_email"
                     android:inputType="textEmailAddress"
                     android:maxLines="1"
-                    android:hint="Email"
+                    android:hint="@string/email_address"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                 </EditText>
@@ -70,13 +70,13 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Jenis Kelamin"/>
+                    android:text="@string/gender"/>
                 <Spinner
                     android:layout_marginLeft="@dimen/dp10"
                     android:layout_marginRight="@dimen/dp10"
                     android:id="@+id/prompt_jeniskelamin"
                     android:maxLines="1"
-                    android:hint="Jenis Kelamin"
+                    android:entries="@array/gender"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                 </Spinner>
@@ -91,31 +91,22 @@
                     android:inputType="number"
                     android:ems="16"
                     android:maxLines="1"
-                    android:hint="No. KTP"
+                    android:hint="@string/identity_number"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                 </EditText>
             </com.google.android.material.textfield.TextInputLayout>
-            <LinearLayout
-                android:orientation="vertical"
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="@dimen/dp10"
                 android:background="@drawable/edittextround"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent">
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kota"/>
-                <Spinner
-                    android:layout_marginLeft="@dimen/dp10"
-                    android:layout_marginRight="@dimen/dp10"
+                <EditText
                     android:id="@+id/prompt_kota"
-                    android:maxLines="1"
-                    android:hint="Kota"
+                    android:hint="@string/city"
                     android:layout_height="wrap_content"
-                    android:layout_width="match_parent">
-                </Spinner>
-            </LinearLayout>
+                    android:layout_width="match_parent"/>
+            </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="@dimen/dp10"
                 android:background="@drawable/edittextround"
@@ -123,13 +114,11 @@
                 android:layout_width="match_parent">
                 <EditText
                     android:id="@+id/prompt_postal"
-                    android:textSize="@dimen/MoreTextSize"
                     android:inputType="number"
                     android:maxLines="1"
-                    android:hint="Kode Pos"
+                    android:hint="@string/postal_code"
                     android:layout_height="wrap_content"
-                    android:layout_width="match_parent">
-                </EditText>
+                    android:layout_width="match_parent"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="@dimen/dp10"
@@ -141,7 +130,7 @@
                     android:inputType="phone"
                     android:maxLines="1"
                     android:minEms="10"
-                    android:hint="No. HP"
+                    android:hint="@string/handphone_number"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                 </EditText>
@@ -157,7 +146,7 @@
                     android:cursorVisible="false"
                     android:focusable="false"
                     android:focusableInTouchMode="false"
-                    android:hint="Tanggal Lahir"
+                    android:hint="@string/date_of_birth"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                 </EditText>

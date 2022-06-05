@@ -68,7 +68,7 @@
                                 android:id="@+id/regis_email"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Email"
+                                android:hint="@string/email_address"
                                 android:inputType="textEmailAddress"
                                 android:maxLines="1"
                                 android:textSize="@dimen/MoreTextSize">
@@ -87,10 +87,10 @@
                                 android:id="@+id/regis_password"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Password"
+                                android:hint="@string/password"
                                 android:inputType="textPassword"
                                 android:maxLines="1"
-                                android:textSize="@dimen/MoreTextSize"></EditText>
+                                android:textSize="@dimen/MoreTextSize"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -103,10 +103,10 @@
                                 android:id="@+id/regis_password_rep"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Repeat Password"
+                                android:hint="@string/password_confirmation"
                                 android:inputType="textPassword"
                                 android:maxLines="1"
-                                android:textSize="@dimen/MoreTextSize"></EditText>
+                                android:textSize="@dimen/MoreTextSize"/>
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -147,7 +147,7 @@
                                 android:id="@+id/regis_nama"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Nama Lengkap"
+                                android:hint="@string/full_name"
                                 android:inputType="text"
                                 android:maxLines="1"/>
                         </com.google.android.material.textfield.TextInputLayout>
@@ -159,14 +159,14 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Jenis Kelamin" />
+                                android:text="@string/gender" />
 
                             <Spinner
                                 android:background="@drawable/spinner_noborder"
                                 android:id="@+id/regis_jeniskelamin"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Jenis Kelamin"/>
+                                android:entries="@array/gender"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -177,7 +177,7 @@
                                 android:id="@+id/regis_noktp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="No. KTP"
+                                android:hint="@string/identity_number"
                                 android:inputType="number"
                                 android:maxLines="1"/>
                         </com.google.android.material.textfield.TextInputLayout>
@@ -189,7 +189,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Kota" />
+                                android:text="@string/city" />
 
                             <Spinner
                                 android:background="@drawable/spinner_noborder"
@@ -208,7 +208,7 @@
                                 android:id="@+id/regis_postal"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="Kode Pos"
+                                android:hint="@string/postal_code"
                                 android:inputType="number"
                                 android:maxLines="1"/>
                         </com.google.android.material.textfield.TextInputLayout>
@@ -221,7 +221,7 @@
                                 android:id="@+id/regis_nohp"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:hint="No. HP"
+                                android:hint="@string/handphone_number"
                                 android:inputType="phone"
                                 android:maxLines="1"
                                 android:minEms="10"/>
@@ -239,7 +239,7 @@
                                 android:cursorVisible="false"
                                 android:focusable="false"
                                 android:focusableInTouchMode="false"
-                                android:hint="Tanggal Lahir"/>
+                                android:hint="@string/date_of_birth"/>
                         </com.google.android.material.textfield.TextInputLayout>
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -257,7 +257,7 @@
                                 android:id="@+id/regis_sk_chckbox"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Saya menyetujui Syarat dan Ketentuan yang Berlaku"/>
+                                android:text="@string/privacy_policy"/>
 
                             <TextView
                                 android:visibility="gone"
@@ -310,7 +310,7 @@
                         android:background="@drawable/button_oval_left"
                         android:paddingLeft="20dp"
                         android:paddingRight="20dp"
-                        android:text="back"
+                        android:text="@string/back"
                         android:textColor="@color/black" />
                     <View
                         android:layout_width="wrap_content"
@@ -320,12 +320,11 @@
                         android:id="@+id/register_request"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
                         android:layout_marginRight="10dp"
                         android:background="@drawable/button_register_oval"
                         android:paddingLeft="20dp"
                         android:paddingRight="20dp"
-                        android:text=" register"
+                        android:text="@string/register"
                         android:textColor="@color/black" />
                 </LinearLayout>
             </LinearLayout>

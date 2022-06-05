@@ -24,7 +24,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
 
     private class ViewHolder
     {
-        TextView Vnama,Vhandphone,Vsex,Vdob,Vnik,Vcity,Vpostal,Vnumber;
+        TextView Vnama,Vhandphone,Vsex,Vdob,Vnik,Vcity,Vpostal,Vnumber,Vemail;
     }
 
     @Override
@@ -38,12 +38,14 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
 
             holder = new ViewHolder();
             holder.Vnama        = (TextView) convertView.findViewById(R.id.list_patient_name);
+            holder.Vemail       = (TextView) convertView.findViewById(R.id.list_patient_email);
             holder.Vhandphone   = (TextView) convertView.findViewById(R.id.list_patient_phone);
             holder.Vsex         = (TextView) convertView.findViewById(R.id.list_patient_sex);
             holder.Vdob         = (TextView) convertView.findViewById(R.id.list_patient_dob);
             holder.Vnik         = (TextView) convertView.findViewById(R.id.list_patient_nik);
             holder.Vcity        = (TextView) convertView.findViewById(R.id.list_patient_city);
-            holder.Vpostal      = (TextView) convertView.findViewById(R.id.list_patient_post);
+            holder.Vpostal      = (TextView) convertView.findViewById(R.id.list_patient_postal);
+            holder.Vnumber      = (TextView) convertView.findViewById(R.id.list_patient_number);
             holder.Vnumber      = (TextView) convertView.findViewById(R.id.list_patient_number);
 
             holder.Vnumber.setHeight(holder.Vnumber.getWidth());
@@ -62,7 +64,7 @@ public class Adapter_Data_Patient extends ArrayAdapter<adapter_patient> {
                 gender  = "Perempuan";
             }
             holder.Vsex         .setText(state.getGender());
-
+            holder.Vemail       .setText(state.getEmail());
             holder.Vnama        .setText(state.getTitle()+" "+state.getNama());
             holder.Vhandphone   .setText(state.getPhone());
             holder.Vdob         .setText(state.getDOB());

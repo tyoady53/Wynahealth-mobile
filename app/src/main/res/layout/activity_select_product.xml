@@ -45,7 +45,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Patient" />
+                    android:text="@string/patient" />
 
                 <TextView
                     android:id="@+id/patient_order"
@@ -97,7 +97,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="3"
             android:padding="5dp"
-            android:text="Pilih Produk"
+            android:text="@string/select_product"
             android:textSize="20sp" />
 
         <com.lakue.pagingbutton.LakuePagingButton

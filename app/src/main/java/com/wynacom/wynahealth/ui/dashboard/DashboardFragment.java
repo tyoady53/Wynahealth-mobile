@@ -1,6 +1,5 @@
 package com.wynacom.wynahealth.ui.dashboard;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
@@ -129,18 +128,6 @@ public class DashboardFragment extends Fragment {
         listView.setVisibility(View.GONE);
 
         page = "1"; filter = "";
-        //getDashboard();
-        //refreshList();
-
-//        java.util.List<String> listFilter = new ArrayList<>();
-//        listFilter.add(String.valueOf(R.string.all_data));
-//        listFilter.add(String.valueOf(R.string.success));
-//        listFilter.add(String.valueOf(R.string.pending));
-//        listFilter.add(String.valueOf(R.string.failed));
-//        listFilter.add(String.valueOf(R.string.expired));
-//        ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item_border,listFilter);
-//        //dataAdapter3.setDropDownViewResource(R.layout.spinner_item_border);
-//        spinner_filter.setAdapter(dataAdapter3);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -229,18 +216,18 @@ public class DashboardFragment extends Fragment {
                                     patient_id           = c.getString("datapatient_id");
                                     String status_order;
                                     if(status.equals("pending")){
-                                        status_order = "Waiting For Payment";
+                                        status_order = getString(R.string.pending);
                                     }else{
                                         if(status.equals("success")){
-                                            status_order = "Order Paid";
+                                            status_order = getString(R.string.success);
                                         }else if(status.equals("failed")){
                                             if(payment.equals("canceled")){
-                                                status_order = "Order Canceled";
+                                                status_order = getString(R.string.cancel);
                                             }else{
-                                                status_order = "Payment Failed";
+                                                status_order = getString(R.string.failed);
                                             }
                                         }else{
-                                            status_order = "Transaction Expired";
+                                            status_order = getString(R.string.expired);
                                         }
                                     }
                                     String title  = patient.getString("title");
@@ -251,9 +238,10 @@ public class DashboardFragment extends Fragment {
                                     nik           = patient.getString("nik");
                                     city          = patient.getString("city");
                                     postal_code   = patient.getString("postal_code");
+                                    String date   = c.getString("service_date");
                                     tampiltanggal = globalVariable.dateformat(dob);
                                     nama_pasien = title +" "+name;
-                                        adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status_order,grand_total,snap);
+                                        adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status_order,grand_total,snap,payment,date);
                                         orderList.add(_states);
                                     //getDataPatient(id,invoice,status_order,grand_total,snap,patient_id);
                                 }
@@ -283,84 +271,6 @@ public class DashboardFragment extends Fragment {
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "onFailure: ERROR > refreshList" + t.toString());
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-                builder.setMessage("Failed loading data. Do you want to retry?");
-                builder.setTitle("Error Load Data Order");
-                builder.setCancelable(true);
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        refreshList();
-                    }
-                });
-                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                        System.exit(0);
-                    }
-                });
-                android.app.AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }
-        });
-    }
-
-    private void getDataPatient(String id, String invoice, String status, String grand_total, String snap,String id_patient) {
-        Call<ResponseBody> listCall = ApiGetMethod.getAllDataPatient(bearer);
-        listCall.enqueue(new Callback<ResponseBody>() {
-            @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                if (response.isSuccessful()){
-                    try {
-                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
-                        if (jsonRESULTS.getString("success").equals("true")){
-                            JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
-                            JSONArray jsonArray     = jsonObject.getJSONArray("data");
-//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject c = jsonArray.getJSONObject(i);
-                                nama_pasien   = c.getString("name");
-                                handphone     = c.getString("handphone");
-                                sex           = c.getString("sex");
-                                dob           = c.getString("dob");
-                                nik           = c.getString("nik");
-                                city          = c.getString("city");
-                                postal_code   = c.getString("postal_code");
-                                String id_P   = c.getString("id");
-                                tampiltanggal = globalVariable.dateformat(dob);
-                                if(id_patient.equals(id_P)){
-                                    adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status,grand_total,snap);
-                                    orderList.add(_states);
-                                }
-                            }
-                            progress.setVisibility(View.GONE);
-                            //bindData();
-                        } else {
-                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-                            builder.setMessage("Data Patient Kosong.");
-                            builder.setTitle("List Patient");
-                            builder.setCancelable(true);
-                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    dialog.dismiss();
-                                }
-                            });
-                            android.app.AlertDialog alertDialog = builder.create();
-                            alertDialog.show();
-                        }
-                    } catch (JSONException | IOException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-                    Cue.init().with(getContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
-                }
-            }
-            @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                 builder.setMessage("Failed loading data. Do you want to retry?");
                 builder.setTitle("Error Load Data Order");
                 builder.setCancelable(true);

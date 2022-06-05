@@ -208,7 +208,6 @@ public class SelectProductActivity extends AppCompatActivity {
                                 bindDataProduct();
                             }
 
-
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(SelectProductActivity.this);
                             builder.setMessage("Data Patient Kosong.");

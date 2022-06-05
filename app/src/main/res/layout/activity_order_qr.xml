@@ -54,7 +54,11 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Status Pesanan : "/>
+                    android:text="@string/order_status"/>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=" : "/>
                 <TextView
                     android:id="@+id/inv_order_status"
                     android:layout_width="match_parent"
@@ -80,7 +84,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tanggal Pemesanan" />
+                        android:text="@string/order_date" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -89,6 +93,26 @@
 
                     <TextView
                         android:id="@+id/inv_order_date"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/arrival_date" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" : " />
+
+                    <TextView
+                        android:id="@+id/inv_service_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content" />
                 </TableRow>
@@ -132,7 +156,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Nama Pasien" />
+                        android:text="@string/full_name" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -146,6 +170,27 @@
                 </TableRow>
 
                 <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/handphone_number" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=" : " />
+
+                    <TextView
+                        android:id="@+id/inv_order_phone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" />
+                </TableRow>
+
+                <TableRow
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -172,7 +217,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Tanggal Lahir" />
+                        android:text="@string/date_of_birth" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -192,7 +237,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Alamat" />
+                        android:text="@string/city" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -236,6 +281,7 @@
         app:layout_constraintWidth_percent="0.8">
 
         <LinearLayout
+            android:padding="@dimen/dp10"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/dp10"
@@ -249,7 +295,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/gross_amount"
+                    android:text="@string/total"
                     android:textAlignment="textStart" />
 
                 <TextView
@@ -265,7 +311,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/discount_total"
+                    android:text="@string/discount"
                     android:textAlignment="textStart" />
 
                 <TextView
@@ -281,7 +327,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/total_net"
+                    android:text="@string/grand_total"
                     android:textAlignment="textStart"
                     android:textSize="@dimen/dp20" />
 
@@ -307,7 +353,7 @@
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView"
-        app:layout_constraintVertical_bias="0.75" />
+        app:layout_constraintVertical_bias="0.918" />
 
     <Button
         android:id="@+id/home"
@@ -320,8 +366,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView2"
-        app:layout_constraintVertical_bias="0.898" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <EditText
         android:id="@+id/idEdt"

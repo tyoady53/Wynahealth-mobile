@@ -7,12 +7,12 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\Ady\.android\avd\S22_Ultra_API_30.avd" />
+            <value value="C:\Users\Ady\.android\avd\S22_Ultra_API_Tiramisu.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-05-27T02:11:16.019920200Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-06-05T19:00:37.787337900Z" />
     <targetsSelectedWithDialog>
       <Target>
         <type value="QUICK_BOOT_TARGET" />

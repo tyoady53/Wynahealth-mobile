@@ -92,4 +92,7 @@ dependencies {
     //implementation 'com.github.jaidevnaik5886:GenericDialog:2.2'
     //implementation 'com.github.jaidevnaik5886:GenericDialog:2.3'
     implementation project(path: ':genericdialog2')
+
+    implementation 'com.midtrans:uikit:1.28.0-SANDBOX'
+    implementation 'com.midtrans:uikit:1.28.0'
 }

@@ -118,7 +118,7 @@
                 android:id="@+id/order_show_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Tanggal Kedatangan" />
+                android:text="@string/arrival_date" />
 
             <TextView
                 android:id="@+id/order_show_time"
@@ -168,7 +168,7 @@
                             android:layout_marginRight="@dimen/dp20"
                             android:layout_weight="1"
                             android:gravity="start"
-                            android:text="Jumlah"
+                            android:text="@string/total"
                             android:textAlignment="textStart"
                             android:textSize="20sp" />
 
@@ -189,7 +189,7 @@
                             android:layout_marginRight="@dimen/dp20"
                             android:layout_weight="1"
                             android:gravity="start"
-                            android:text="Diskon"
+                            android:text="@string/discount"
                             android:textAlignment="textStart"
                             android:textSize="20sp" />
 
@@ -210,7 +210,7 @@
                             android:layout_marginRight="@dimen/dp20"
                             android:layout_weight="1"
                             android:gravity="start"
-                            android:text="TOTAL"
+                            android:text="@string/grand_total"
                             android:textAlignment="textStart"
                             android:textSize="20sp" />
 

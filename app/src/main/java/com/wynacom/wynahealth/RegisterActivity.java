@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -35,10 +34,8 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -132,26 +129,6 @@ public class RegisterActivity extends AppCompatActivity {
         btn_regis   = findViewById(R.id.register_request);
         checkBoxsk  = findViewById(R.id.regis_sk_chckbox);
 
-        List<String> list = new ArrayList<>();
-        list.add("TN.");
-        list.add("NY.");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(this, R.layout.spinner_item,list);
-        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
-        sp_title.setAdapter(dataAdapter);
-
-        List<String> list2 = new ArrayList<>();
-        list2.add("Laki-laki");
-        list2.add("Perempuan");
-        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, R.layout.spinner_item,list2);
-        dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
-        sp_kelamin.setAdapter(dataAdapter2);
-
-        List<String> list3 = new ArrayList<>();
-        list3.add("Jakarta");
-        list3.add("Bandung");
-        ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(this, R.layout.spinner_item,list3);
-        dataAdapter3.setDropDownViewResource(R.layout.spinner_item);
-        sp_kota.setAdapter(dataAdapter3);
 
         DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
             @Override

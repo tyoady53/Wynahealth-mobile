@@ -120,7 +120,7 @@
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
                                     android:textSize="10sp"
-                                    android:text="Telefon"/>
+                                    android:text="@string/handphone_number"/>
                                 <TextView
                                     android:id="@+id/tampil_nohp"
                                     android:layout_width="wrap_content"
@@ -137,7 +137,7 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="Jenis Kelamin"
+                                    android:text="@string/gender"
                                     android:textSize="10sp"/>
                                 <TextView
                                     android:id="@+id/tampil_gender"
@@ -160,7 +160,7 @@
                                 <TextView
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
-                                    android:text="Tanggal Lahir"
+                                    android:text="@string/date_of_birth"
                                     android:textSize="10sp"/>
                                 <TextView
                                     android:id="@+id/tampil_umurjk"
@@ -178,7 +178,7 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="Kota"
+                                    android:text="@string/city"
                                     android:textSize="10sp"/>
                                 <TextView
                                     android:id="@+id/tampil_kota"
@@ -438,7 +438,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="3"
                 android:padding="5dp"
-                android:text="Data Pasien"
+                android:text="@string/family_data"
                 android:textSize="20sp" />
             <com.lakue.pagingbutton.LakuePagingButton
                 android:visibility="gone"

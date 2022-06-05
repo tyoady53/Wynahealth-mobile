@@ -24,6 +24,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.google.zxing.WriterException;
+import com.midtrans.sdk.corekit.callback.TransactionFinishedCallback;
+import com.midtrans.sdk.corekit.core.MidtransSDK;
+import com.midtrans.sdk.corekit.core.TransactionRequest;
+import com.midtrans.sdk.corekit.core.themes.CustomColorTheme;
+import com.midtrans.sdk.corekit.models.snap.TransactionResult;
+import com.midtrans.sdk.uikit.SdkUIFlowBuilder;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.adapter.order.Adapter_Data_Order;
 import com.wynacom.wynahealth.adapter.order.adapter_order;
@@ -46,19 +52,20 @@ import retrofit2.Response;
 
 public class OrderQRActivity extends AppCompatActivity {
 
-    String token,bearer,snap,strGender;
-    String id,qty,subtotal,image,title,slug,description,product_price,discount,payment,status_order;
+    String token,bearer,snap,strGender,paid_show,BILL_INFO_KEY,BILL_INFO_VALUE;
+    String id,qty,subtotal,image,title,slug,description,product_price,discount,payment,status_order,snap_token;
     private ImageView qrCodeIV;
     private EditText dataEdt;
     private Button generateQrBtn,Bt_Payment;
     private ListView listView;
-    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total,TV_invNo,TV_status,TV_gross,TV_discount;
+    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total,TV_invNo,TV_status,TV_gross,TV_discount,TV_service_date,TV_phone;
     Bitmap bitmap;
     QRGEncoder qrgEncoder;
     private BaseApiService mApiService,ApiGetMethod;
 
     GlobalVariable globalVariable;
     private ArrayList<adapter_order> List;
+    TransactionRequest transactionRequest = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,10 +102,33 @@ public class OrderQRActivity extends AppCompatActivity {
         TV_status       = findViewById(R.id.inv_order_status);
         TV_gross        = findViewById(R.id.gross_amount);
         TV_discount     = findViewById(R.id.discount_total);
+        TV_service_date = findViewById(R.id.inv_service_date);
+        TV_phone        = findViewById(R.id.inv_order_phone);
+
+        SdkUIFlowBuilder.init()
+            .setClientKey("SB-Mid-client-vfcD9jB0fSaFu5AC") // client_key is mandatory
+            .setContext(OrderQRActivity.this) // context is mandatory
+            .setTransactionFinishedCallback(new TransactionFinishedCallback() {
+                @Override
+                public void onTransactionFinished(TransactionResult result) {
+                    // Handle finished transaction here.
+                }
+            }) // set transaction finish callback (sdk callback)
+            .setMerchantBaseUrl("http://172.169.149:8000") //set merchant url (required)
+            .setColorTheme(new CustomColorTheme("#FFE51255", "#B61548", "#FFE51255")) // set theme. it will replace theme on snap theme on MAP ( optional)
+            .setLanguage("en") //`en` for English and `id` for Bahasa
+            .buildSDK();
 
         getInvoices();
         // initializing onclick listener for button.
         dataEdt.setText(snap);
+
+        Bt_Payment.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MidtransSDK.getInstance().startPaymentUiFlow(OrderQRActivity.this, snap_token);
+            }
+        });
     }
 
     private void getInvoices() {
@@ -114,26 +144,32 @@ public class OrderQRActivity extends AppCompatActivity {
                             JSONObject jsonObject           = jsonObject2.getJSONObject("data");
                             String invoice_response         = jsonObject.getString("invoice_no");
                             String snap_response            = jsonObject.getString("booked");
+                            snap_token                      = jsonObject.getString("snap_token");
                             //String invoice_response         = c.getString("invoice");
                             if(snap_response.equals(snap)){
                                 JSONObject jsonDataPatient      = jsonObject.getJSONObject("datapatient");
                                 dataEdt.setText("http://wynacom.com/"+invoice_response);
                                 generateQR("http://wynacom.com/"+invoice_response);
+                                String payment      = jsonObject.getString("payment");
                                 String order_stts   = jsonObject.getString("status");
                                 String tanggal      = jsonObject.getString("created_at");
                                 String sex          = jsonDataPatient.getString("sex");
                                 String dob          = jsonDataPatient.getString("dob");
                                 //Toast.makeText(getApplicationContext(),tanggal,Toast.LENGTH_SHORT).show();
+                                BILL_INFO_KEY       = jsonObject.getString("booked");
+                                BILL_INFO_VALUE     = jsonObject2.getString("grand_total");
                                 if(order_stts.equals("pending")){
-                                    status_order = "Waiting For Payment";
-                                   //Bt_Payment.setVisibility(View.VISIBLE);
+                                    status_order = getString(R.string.pending);
+                                    if(payment.equals("online")){
+                                        Bt_Payment.setVisibility(View.VISIBLE);
+                                    }
                                 }else{
                                     if(order_stts.equals("success")){
-                                        status_order = "Order Paid";
+                                        status_order = getString(R.string.success);
                                     }else if(order_stts.equals("failed")){
-                                        status_order = "Payment Failed";
+                                        status_order = getString(R.string.failed);
                                     }else{
-                                        status_order = "Transaction Expired";
+                                        status_order = getString(R.string.expired);
                                     }
                                     Bt_Payment.setVisibility(View.GONE);
                                 }
@@ -141,11 +177,13 @@ public class OrderQRActivity extends AppCompatActivity {
                                 strGender = globalVariable.setGenerateGender(sex);
                                 if(paid_from.equals("cod")){
                                     payment = "COD";
+                                    paid_show = getString(R.string.cod);
                                 }else if(paid_from.equals("online")){
                                     payment = "E-Wallet";
+                                    paid_show = getString(R.string.online_pay);
                                 }
 
-                                TV_status       .setText(status_order);
+                                TV_status       .setText(status_order+ "\n" + paid_show);
                                 TV_invNo        .setText("Invoice Number : "+jsonObject.getString("invoice_no"));
                                 TV_inv_patient  .setText(jsonDataPatient.getString("name"));
                                 TV_inv_date     .setText(globalVariable.dateformat(tanggal));
@@ -154,7 +192,9 @@ public class OrderQRActivity extends AppCompatActivity {
                                 TV_inv_dob      .setText(globalVariable.dateformat(dob));
                                 TV_inv_address  .setText(jsonDataPatient.getString("city"));
                                 String GrandTtl = globalVariable.toCurrency(jsonObject2.getString("grand_total"));
+                                TV_service_date .setText(globalVariable.dateformat(jsonObject.getString("service_date")));
                                 TV_inv_total    .setText(GrandTtl);
+                                TV_phone        .setText(jsonDataPatient.getString("handphone"));
                                 TV_gross        .setText(globalVariable.toCurrency(jsonObject2.getString("gross_amount")));
                                 TV_discount     .setText("("+globalVariable.toCurrency(jsonObject2.getString("discount_total"))+")");
                                 TV_inv_total.setTextSize(2,20);
@@ -184,7 +224,13 @@ public class OrderQRActivity extends AppCompatActivity {
                                     adapter_order _states   = new adapter_order(order_id,id,qty,String_subTotal,image,title,slug,description,product_price,discount,nomDiscount,product_id);
                                     List.add(_states);
                                 }
-                            }setListView();
+                            }
+//                            BillInfoModel billInfoModel = new BillInfoModel(BILL_INFO_KEY, BILL_INFO_VALUE);
+//// Set the bill info on transaction details
+//                            transactionRequest.setBillInfoModel(billInfoModel);
+//                            MidtransSDK.getInstance().startPaymentUiFlow(OrderQRActivity.this, snap_token);
+//                            MidtransSDK.getInstance().setTransactionRequest(transactionRequest);
+                            setListView();
                        } else {
                             AlertDialog.Builder builder = new android.app.AlertDialog.Builder(OrderQRActivity.this);
                             builder.setMessage("Data Patient Kosong.");

@@ -25,4 +25,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="colorWhite">#FFFFFF</color>
+
+    <color name="pending">#FFC107</color>
+    <color name="expired">#636f83</color>
 </resources>

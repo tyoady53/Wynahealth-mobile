@@ -169,9 +169,8 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
             discTotal = discTotal+d;
             priceTotal= priceTotal+a;
         }
-        Toast.makeText(getContext(), "invoice", Toast.LENGTH_SHORT).show();
-        ((GlobalVariable) getContext()).setDiscountTotal(String.valueOf(discTotal));
-        ((GlobalVariable) getContext()).setPriceTotal(String.valueOf(priceTotal));
+        globalVariable.setDiscountTotal(String.valueOf(discTotal));
+        globalVariable.setPriceTotal(String.valueOf(priceTotal));
 
         return convertView;
     }

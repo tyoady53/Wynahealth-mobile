@@ -21,7 +21,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -71,7 +70,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -422,7 +420,7 @@ public class HomeFragment extends Fragment {
                                     List.add(_states);
                                     bindData();
                             }//setPaging(string_nowPage);
-                            textView_dataPatientTile.setText(getString(R.string.data_patient)+" ("+total+")");
+                            textView_dataPatientTile.setText(getString(R.string.family_data)+" ("+total+")");
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");
@@ -462,7 +460,7 @@ public class HomeFragment extends Fragment {
             linearCard.setVisibility(View.VISIBLE);
             listView.setVisibility(View.VISIBLE);
             linearLayout.setVisibility(View.GONE);
-            textView_dataPatientTile.setText(R.string.data_patient);
+            textView_dataPatientTile.setText(R.string.family_data);
             //Toast.makeText(getContext(), Integer.toString(i), Toast.LENGTH_SHORT).show();
             dataAdapter = new Adapter_Data_Patient(getContext(),R.layout.list_patient, List);
             listView.setAdapter(dataAdapter);
@@ -595,28 +593,7 @@ public class HomeFragment extends Fragment {
 
         final Spinner sp_title    = promptsView.findViewById(R.id.prompt_title);
         final Spinner sp_kelamin  = promptsView.findViewById(R.id.prompt_jeniskelamin);
-        final Spinner sp_kota     = promptsView.findViewById(R.id.prompt_kota);
-
-        java.util.List<String> list = new ArrayList<>();
-        list.add("Mr.");
-        list.add("Mrs.");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list);
-        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
-        sp_title.setAdapter(dataAdapter);
-
-        List<String> list2 = new ArrayList<>();
-        list2.add("Laki-laki");
-        list2.add("Perempuan");
-        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list2);
-        dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
-        sp_kelamin.setAdapter(dataAdapter2);
-
-        List<String> list3 = new ArrayList<>();
-        list3.add("Jakarta");
-        list3.add("Bandung");
-        ArrayAdapter<String> dataAdapter3 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list3);
-        dataAdapter3.setDropDownViewResource(R.layout.spinner_item);
-        sp_kota.setAdapter(dataAdapter3);
+        final EditText sp_kota    = promptsView.findViewById(R.id.prompt_kota);
 
         if(data_type.equals("edit")){
             String gender = globalVariable.reverseGender(edit_sex);
@@ -629,15 +606,16 @@ public class HomeFragment extends Fragment {
             //Toast.makeText(getContext(), "Gender : "+gender+" index : "+begin, Toast.LENGTH_SHORT).show();
             sp_title.setSelection(begin);
             sp_kelamin.setSelection(begin);
+            sp_kota.setText(edit_city);
             name.setText(edit_name);
             ktp.setText(edit_nik);
             phone.setText(edit_handphone);
             email.setText(edit_email);
             postal.setText(edit_postalcode);
             age.setText(edit_dob);
-            title = "Edit Data Pasien.";
+            title = getString(R.string.edit_patient);
         }else{
-            title = "Tambah Pasien";
+            title = getString(R.string.add_patient);
         }
 
         DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
@@ -686,7 +664,7 @@ public class HomeFragment extends Fragment {
         alertDialogBuilder
             .setTitle(title)
             .setCancelable(false)
-            .setPositiveButton("OK",
+            .setPositiveButton(getString(R.string.save),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int id) {
@@ -695,7 +673,7 @@ public class HomeFragment extends Fragment {
                         final String fsemail    = email.getText().toString();
                         final String fsgender   = sp_kelamin.getSelectedItem().toString();
                         final String fsktp      = ktp.getText().toString();
-                        final String fskota     = sp_kota.getSelectedItem().toString();
+                        final String fskota     = sp_kota.getText().toString();
                         final String fspostal   = postal.getText().toString();
                         final String fsphone    = phone.getText().toString();
                         final String fsdob      = age.getText().toString();
@@ -759,7 +737,7 @@ public class HomeFragment extends Fragment {
                         }
                     }
                 })
-            .setNegativeButton("Batal", null);
+            .setNegativeButton(getString(R.string.cancel_save), null);
 
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();

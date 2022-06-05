@@ -37,7 +37,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="3dp"
-                android:text="Pasien"
+                android:text="@string/choose_patient"
                 android:textSize="@dimen/dp15" />
 
             <LinearLayout
@@ -132,7 +132,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Jenis Kelamin" />
+                                android:text="@string/gender" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -156,7 +156,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Tanggal Lahir" />
+                                android:text="@string/date_of_birth" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -179,7 +179,7 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="NIK" />
+                                android:text="@string/identity_number" />
 
                             <TextView
                                 android:layout_width="wrap_content"
@@ -277,6 +277,7 @@
                 android:padding="@dimen/dp10">
 
                 <TextView
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Pilih Lokasi"
@@ -295,7 +296,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Kota" />
+                        android:text="@string/city" />
 
                     <Spinner
                         android:id="@+id/order_city_spinner"
@@ -323,7 +324,7 @@
                         android:cursorVisible="false"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:hint="Tanggal Datang" />
+                        android:hint="@string/arrival_date" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
@@ -365,7 +366,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/dp3"
-                        android:hint="Dokter"
+                        android:hint="@string/doctor_name"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -383,7 +384,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="@dimen/dp3"
-                        android:hint="Company"
+                        android:hint="@string/company_name"
                         android:inputType="text" />
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>

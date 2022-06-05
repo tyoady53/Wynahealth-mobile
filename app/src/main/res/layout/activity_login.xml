@@ -76,7 +76,7 @@
                     android:layout_marginTop="3dp"
                     android:layout_marginBottom="10dp"
                     android:fontFamily="sans-serif-black"
-                    android:text="Login Pelanggan"
+                    android:text="Login"
                     android:textAlignment="center"
                     android:textSize="22dp" />
 
@@ -88,7 +88,7 @@
                         android:id="@+id/username"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Username"
+                        android:hint="@string/email_address"
                         android:inputType="text"
                         android:maxLines="1"
                         android:textSize="@dimen/MoreTextSize">
@@ -107,10 +107,10 @@
                         android:id="@+id/password"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Password"
+                        android:hint="@string/password"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                        android:textSize="@dimen/MoreTextSize"></EditText>
+                        android:textSize="@dimen/MoreTextSize"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
@@ -131,7 +131,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/button_login_oval"
                             android:padding="10dp"
-                            android:text="Masuk" />
+                            android:text="@string/login" />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -147,7 +147,7 @@
                             android:layout_height="wrap_content"
                             android:background="@drawable/button_register_oval"
                             android:padding="10dp"
-                            android:text=" Registrasi" />
+                            android:text="@string/registration" />
                     </RelativeLayout>
                 </LinearLayout>
             </LinearLayout>

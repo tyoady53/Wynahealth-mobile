@@ -105,7 +105,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new GenericDialog.Builder(OrderConfirmationActivity.this)
                     .setDialogTheme(R.style.GenericDialogTheme)
-                    .setTitle("Kembali Ke").setTitleAppearance(R.color.colorPrimaryDark, 20)
+                    .setTitle(getString(R.string.back_to)).setTitleAppearance(R.color.colorPrimaryDark, 20)
                     //.setMessage("Data Collected Successfully")
                     .addNewButton(R.style.select_product, new GenericDialogOnClickListener() {
                         @Override
@@ -139,7 +139,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                     new GenericDialog.Builder(OrderConfirmationActivity.this)
                         .setDialogTheme(R.style.GenericDialogTheme)
                         .setIcon(R.drawable.vector_payments_1)
-                        .setTitle("Pilih Pembayaran").setTitleAppearance(R.color.colorPrimaryDark, 20)
+                        .setTitle(getString(R.string.select_payment_method)).setTitleAppearance(R.color.colorPrimaryDark, 20)
                         //.setMessage("Data Collected Successfully")
                         .addNewButton(R.style.cod, new GenericDialogOnClickListener() {
                             @Override

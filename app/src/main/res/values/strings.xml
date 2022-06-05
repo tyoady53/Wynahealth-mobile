@@ -3,7 +3,7 @@
     <string name="title_home">Informasi Pelanggan</string>
     <string name="title_dashboard">Pemesanan Kesehatan</string>
     <string name="title_notifications">Ganti Password</string>
-    <string name="home_title">Me</string>
+    <string name="home_title">Home</string>
     <string name="dashboard_title">Transaction</string>
     <string name="notifications_title">Utilities</string>
     <string name="title_activity_settings">SettingsActivity</string>
@@ -35,6 +35,16 @@
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_create_order">CreateOrderActivity</string>
 
+    <string-array name="titles">
+        <item>Mr.</item>
+        <item>Mrs.</item>
+    </string-array>
+
+    <string-array name="gender">
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+
     <string-array name="filter">
         <item>All Status</item>
         <item>Order Paid</item>
@@ -52,5 +62,50 @@
     <string name="success">Order Paid</string>
     <string name="failed">Payment Failed</string>
     <string name="expired">Transaction Expired</string>
+    <string name="cancel">Order Canceled</string>
+
+    <string name="cod">Onsite Payment</string>
+    <string name="online_pay">e-Wallet</string>
+    <string name="email_address">Email Address</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="registration">Registration</string>
+    <string name="password_confirmation">Password Confirmation</string>
+    <string name="full_name">Full Name</string>
+    <string name="gender">Gender</string>
+    <string name="city">City</string>
+    <string name="postal_code">Postal Code</string>
+    <string name="handphone_number">Handphone No.</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="privacy_policy">I accept the Privacy and Policy</string>
+    <string name="back">back</string>
+    <string name="register">register</string>
+    <string name="identity_number">Identity Number</string>
+    <string name="family_data">Family Data</string>
+
+    <string name="add_patient">Add New Family Data</string>
+    <string name="edit_patient">Edit Data Family</string>
+
+    <string name="cancel_save">Cancel</string>
+    <string name="save">Save</string>
+    <string name="choose_patient">Choose Patient</string>
+    <string name="arrival_date">Arrival Date</string>
+    <string name="doctor_name">Doctor Name</string>
+    <string name="company_name">Company Name</string>
+    <string name="select_product">Select Product</string>
+    <string name="patient">Patient</string>
+    <string name="total">Total</string>
+    <string name="discount">Discount</string>
+    <string name="grand_total">Grand Total</string>
+
+    <string name="choose_payment">Choose Payment Methode</string>
+    <string name="onsite">Onsite</string>
+    <string name="online">Online</string>
+
+    <string name="back_to">Back To</string>
+    <string name="home">Home</string>
+    <string name="other_product">Select Other Product</string>
+    <string name="order_date">Order Date</string>
+    <string name="order_status">Order Status</string>
 
 </resources>
