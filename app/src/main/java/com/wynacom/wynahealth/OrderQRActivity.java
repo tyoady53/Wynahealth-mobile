@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,9 +26,11 @@ import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.google.zxing.WriterException;
 import com.midtrans.sdk.corekit.callback.TransactionFinishedCallback;
-import com.midtrans.sdk.corekit.core.MidtransSDK;
 import com.midtrans.sdk.corekit.core.TransactionRequest;
 import com.midtrans.sdk.corekit.core.themes.CustomColorTheme;
+import com.midtrans.sdk.corekit.models.BillingAddress;
+import com.midtrans.sdk.corekit.models.CustomerDetails;
+import com.midtrans.sdk.corekit.models.ShippingAddress;
 import com.midtrans.sdk.corekit.models.snap.TransactionResult;
 import com.midtrans.sdk.uikit.SdkUIFlowBuilder;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
@@ -50,10 +53,10 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class OrderQRActivity extends AppCompatActivity {
+public class OrderQRActivity extends AppCompatActivity implements TransactionFinishedCallback {
 
-    String token,bearer,snap,strGender,paid_show,BILL_INFO_KEY,BILL_INFO_VALUE;
-    String id,qty,subtotal,image,title,slug,description,product_price,discount,payment,status_order,snap_token;
+    String token,bearer,snap,strGender,paid_show,BILL_INFO_KEY,BILL_INFO_VALUE,user_name,user_phone,user_firstName,user_lastName,user_email,user_address,user_postal;
+    String id,qty,subtotal,image,title,slug,description,product_price,discount,payment,status_order,snap_token,GrandTtl;
     private ImageView qrCodeIV;
     private EditText dataEdt;
     private Button generateQrBtn,Bt_Payment;
@@ -66,6 +69,7 @@ public class OrderQRActivity extends AppCompatActivity {
     GlobalVariable globalVariable;
     private ArrayList<adapter_order> List;
     TransactionRequest transactionRequest = null;
+    adapter_order _states;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,9 +130,55 @@ public class OrderQRActivity extends AppCompatActivity {
         Bt_Payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MidtransSDK.getInstance().startPaymentUiFlow(OrderQRActivity.this, snap_token);
+                Toast.makeText(OrderQRActivity.this, "On Developing", Toast.LENGTH_SHORT).show();
+//                TransactionRequest transactionRequest = new TransactionRequest("E-Registation Payment",Double.parseDouble(GrandTtl));
+//                ArrayList<ItemDetails> itemDetailsList = new ArrayList<>();
+//                for (int l = 0; l < List.size(); l++) {
+//                    String number = String.valueOf(l);
+//                    String name = String.valueOf(_states.getTitle());
+//                    Double price = Double.parseDouble(_states.getSubtotal());
+//                    ItemDetails itemDetails1 = new ItemDetails(number, price, 1, name);
+//                    itemDetailsList.add(itemDetails1);
+//                }
+//                CreditCard creditCardOptions = new CreditCard();
+//// Set to true if you want to save card to Snap
+//                creditCardOptions.setSaveCard(false);
+//// Set to true to save card token as `one click` token
+//// Set bank name when using MIGS channel
+//                creditCardOptions.setBank(BankType.BRI);
+//// Set MIGS channel (ONLY for BCA, BRI and Maybank Acquiring bank)
+//                creditCardOptions.setChannel(CreditCard.MIGS);
+//// Set Credit Card Options
+//                transactionRequest.setCreditCard(creditCardOptions);
+//
+//                uiKitDetails(transactionRequest);
+//                transactionRequest.setItemDetails(itemDetailsList);
+//                MidtransSDK.getInstance().setTransactionRequest(transactionRequest);
+//                MidtransSDK.getInstance().startPaymentUiFlow(OrderQRActivity.this,snap_token);
             }
         });
+    }
+
+    private void uiKitDetails(TransactionRequest transactionRequest) {
+        CustomerDetails customerDetails = new CustomerDetails();
+        customerDetails.setCustomerIdentifier(BILL_INFO_KEY);
+        customerDetails.setPhone(user_phone);
+        customerDetails.setFirstName(user_firstName);
+        customerDetails.setLastName(user_lastName);
+        customerDetails.setEmail(user_email);
+
+        ShippingAddress shippingAddress = new ShippingAddress();
+        shippingAddress.setAddress(user_address);
+        shippingAddress.setCity(user_address);
+        shippingAddress.setPostalCode(user_postal);
+        customerDetails.setShippingAddress(shippingAddress);
+
+        BillingAddress billingAddress = new BillingAddress();
+        billingAddress.setAddress(user_address);
+        billingAddress.setCity(user_address);
+        billingAddress.setPostalCode(user_postal);
+        customerDetails.setBillingAddress(billingAddress);
+        transactionRequest.setCustomerDetails(customerDetails);
     }
 
     private void getInvoices() {
@@ -142,6 +192,7 @@ public class OrderQRActivity extends AppCompatActivity {
                         if (jsonRESULTS.getString("success").equals("true")){
                             JSONObject jsonObject2          = jsonRESULTS.getJSONObject("data");
                             JSONObject jsonObject           = jsonObject2.getJSONObject("data");
+                            JSONObject jsonPatient          = jsonObject.getJSONObject("patient");
                             String invoice_response         = jsonObject.getString("invoice_no");
                             String snap_response            = jsonObject.getString("booked");
                             snap_token                      = jsonObject.getString("snap_token");
@@ -155,6 +206,14 @@ public class OrderQRActivity extends AppCompatActivity {
                                 String tanggal      = jsonObject.getString("created_at");
                                 String sex          = jsonDataPatient.getString("sex");
                                 String dob          = jsonDataPatient.getString("dob");
+
+                                user_firstName      = jsonPatient.getString("title");
+                                user_lastName       = jsonPatient.getString("patient_name");
+                                user_email          = jsonPatient.getString("email");
+                                user_phone          = jsonPatient.getString("handphone");
+                                user_address        = jsonPatient.getString("city");
+                                user_postal         = jsonPatient.getString("postal_code");
+
                                 //Toast.makeText(getApplicationContext(),tanggal,Toast.LENGTH_SHORT).show();
                                 BILL_INFO_KEY       = jsonObject.getString("booked");
                                 BILL_INFO_VALUE     = jsonObject2.getString("grand_total");
@@ -191,9 +250,9 @@ public class OrderQRActivity extends AppCompatActivity {
                                 TV_inv_gender   .setText(strGender);
                                 TV_inv_dob      .setText(globalVariable.dateformat(dob));
                                 TV_inv_address  .setText(jsonDataPatient.getString("city"));
-                                String GrandTtl = globalVariable.toCurrency(jsonObject2.getString("grand_total"));
+                                GrandTtl  = jsonObject2.getString("grand_total");
                                 TV_service_date .setText(globalVariable.dateformat(jsonObject.getString("service_date")));
-                                TV_inv_total    .setText(GrandTtl);
+                                TV_inv_total    .setText(globalVariable.toCurrency(GrandTtl));
                                 TV_phone        .setText(jsonDataPatient.getString("handphone"));
                                 TV_gross        .setText(globalVariable.toCurrency(jsonObject2.getString("gross_amount")));
                                 TV_discount     .setText("("+globalVariable.toCurrency(jsonObject2.getString("discount_total"))+")");
@@ -221,7 +280,7 @@ public class OrderQRActivity extends AppCompatActivity {
                                     double Double_subTotal  = a - d;
                                     String String_subTotal  = String.valueOf(Double_subTotal);
                                     String nomDiscount      = String.valueOf(d);
-                                    adapter_order _states   = new adapter_order(order_id,id,qty,String_subTotal,image,title,slug,description,product_price,discount,nomDiscount,product_id);
+                                    _states   = new adapter_order(order_id,id,qty,String_subTotal,image,title,slug,description,product_price,discount,nomDiscount,product_id);
                                     List.add(_states);
                                 }
                             }
@@ -257,6 +316,32 @@ public class OrderQRActivity extends AppCompatActivity {
                 Log.e("debug", "onFailure: ERROR > " + t.toString());
             }
         });
+    }
+
+    @Override
+    public void onTransactionFinished(TransactionResult result) {
+        if(result.getResponse() != null){
+            switch (result.getStatus()){
+                case TransactionResult.STATUS_SUCCESS:
+                    Toast.makeText(this, "Transaction Sukses " + result.getResponse().getTransactionId(), Toast.LENGTH_LONG).show();
+                    break;
+                case TransactionResult.STATUS_PENDING:
+                    Toast.makeText(this, "Transaction Pending " + result.getResponse().getTransactionId(), Toast.LENGTH_LONG).show();
+                    break;
+                case TransactionResult.STATUS_FAILED:
+                    Toast.makeText(this, "Transaction Failed" + result.getResponse().getTransactionId(), Toast.LENGTH_LONG).show();
+                    break;
+            }
+            result.getResponse().getValidationMessages();
+        }else if(result.isTransactionCanceled()){
+            Toast.makeText(this, "Transaction Failed", Toast.LENGTH_LONG).show();
+        }else{
+            if(result.getStatus().equalsIgnoreCase((TransactionResult.STATUS_INVALID))){
+                Toast.makeText(this, "Transaction Invalid" + result.getResponse().getTransactionId(), Toast.LENGTH_LONG).show();
+            }else{
+                Toast.makeText(this, "Something Wrong", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     private void setListView() {

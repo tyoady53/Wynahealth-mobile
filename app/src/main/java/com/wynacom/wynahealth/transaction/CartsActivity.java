@@ -54,7 +54,7 @@ public class CartsActivity extends AppCompatActivity {
     ListView listView;
     GlobalVariable globalVariable;
 
-    String token,bearer;
+    String token,bearer,booked,name,gender;
 
     private BaseApiService mApiService,ApiGetMethod;
 
@@ -80,23 +80,86 @@ public class CartsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 adapter_carts state = list_carts.get(position);
-                String booked   = state.getInvoice();
-                String name     = state.getNames();
-                String gender   = state.getGender();
+                booked   = state.getInvoice();
+                name     = state.getNames();
+                gender   = state.getGender();
                 globalVariable.setGenerateGender(state.getGender());
                 globalVariable.setOl_invoice_id(state.getID());
                 globalVariable.setBooked(booked);
                 globalVariable.setList_view("confirm");
                 //Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(getApplicationContext(), OrderConfirmationActivity.class);
-                intent.putExtra("type", "edit");
-                intent.putExtra("name",             name);
-                intent.putExtra("booked",           booked);
-                intent.putExtra("gender",           gender);
-                startActivity(intent);
+                getTotalProduct(gender);
             }
         });
         refreshList();
+    }
+
+    private void getTotalProduct(String gender) {
+        Call<ResponseBody> listCall = ApiGetMethod.getProducts(gender);
+        listCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                        if (jsonRESULTS.getString("success").equals("true")){
+                            JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
+                            //JSONArray jsonArray     = jsonObject.getJSONArray("data");
+//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            String count = jsonObject.getString("last_page"); //String.valueOf(jsonArray.length());
+                            Intent intent = new Intent(getApplicationContext(), OrderConfirmationActivity.class);
+                            intent.putExtra("type", "edit");
+                            intent.putExtra("name",             name);
+                            intent.putExtra("booked",           booked);
+                            intent.putExtra("gender",           gender);
+                            intent.putExtra("count",            count);
+                            startActivity(intent);
+                        } else {
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+                            builder.setMessage("Data Patient Kosong.");
+                            builder.setTitle("List Patient");
+                            builder.setCancelable(true);
+                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                builder.setMessage("Failed loading data. Do you want to retry?");
+                builder.setTitle("Error Load Data Order");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        refreshList();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                });
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
     }
 
     private void refreshList() {
@@ -196,6 +259,7 @@ public class CartsActivity extends AppCompatActivity {
             TextView name,Vphone,Vaddress,Vtotal;
             View status_color;
             ImageView delete;
+            String H_service_date;
         }
 
         @Override
@@ -219,7 +283,7 @@ public class CartsActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     new GenericDialog.Builder(getContext())
                         .setDialogTheme(R.style.GenericDialogTheme)
-                        .setTitle("Hapus Data?").setTitleAppearance(R.color.colorPrimaryDark, 20)
+                        .setTitle(getString(R.string.cancel_order)).setTitleAppearance(R.color.colorPrimaryDark, 20)
                         //.setMessage("Data Collected Successfully")
                         .addNewButton(R.style.yes_option, new GenericDialogOnClickListener() {
                             @Override
@@ -274,8 +338,8 @@ public class CartsActivity extends AppCompatActivity {
             }
             holder.name         .setText(titles+state.getNames());
             holder.Vphone       .setText(state.getTelephone());
-
-            holder.Vaddress     .setText(state.getStatus());
+            holder.H_service_date= globalVariable.dateformat(state.getStatus());
+            holder.Vaddress     .setText(holder.H_service_date);
             Locale localeID = new Locale("in", "ID");
             NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
             String c = nf.format(Integer.parseInt(state.getTotal()));

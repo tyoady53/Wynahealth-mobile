@@ -28,6 +28,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.fxn.cue.Cue;
+import com.fxn.cue.enums.Duration;
 import com.fxn.cue.enums.Type;
 import com.lakue.pagingbutton.LakuePagingButton;
 import com.lakue.pagingbutton.OnPageSelectListener;
@@ -70,7 +71,7 @@ public class SelectProductActivity extends AppCompatActivity {
     private ArrayList<adapter_product> list_product;
     ListView listViewProduct;
     TextView TV_patient_name;
-    String Name,booked,orderType,gender,token,bearer,last_page,string_now_page;
+    String Name,booked,orderType,gender,token,bearer,last_page,string_now_page,nowPage;
     Button next,prev;
     int int_last_page,max_page,NowPage;
     LakuePagingButton lpb_buttonlist;
@@ -89,6 +90,7 @@ public class SelectProductActivity extends AppCompatActivity {
         booked          = globalVariable.getBooked();
         orderType       = getIntent().getStringExtra("type");
         gender          = getIntent().getStringExtra("gender");
+        max_page        = Integer.parseInt(getIntent().getStringExtra("count"));
         ApiGetMethod    = UtilsApi.getMethod();
         list_product    = new ArrayList<adapter_product>();
         listOrder       = new ArrayList<adapter_order>();
@@ -101,15 +103,13 @@ public class SelectProductActivity extends AppCompatActivity {
         prev            = findViewById(R.id.prev);
         lpb_buttonlist  = findViewById(R.id.lpb_buttonList);
 
-        if(int_last_page==0){
-            int_last_page = 1;
-        }
-
         TV_patient_name.setText(Name);
 
-        String nowPage = String.valueOf(int_last_page);
-        getCarts(nowPage);
+        getCarts("1");
 
+        lpb_buttonlist.setPageItemCount(4);
+        lpb_buttonlist.addBottomPageButton(max_page,1);
+        Toast.makeText(SelectProductActivity.this, ""+max_page, Toast.LENGTH_SHORT).show();
         lpb_buttonlist.setOnPageSelectListener(new OnPageSelectListener() {
             @Override
             public void onPageBefore(int now_page) {
@@ -122,7 +122,6 @@ public class SelectProductActivity extends AppCompatActivity {
                 if(dataProduct.getCount()>0){
                     dataProduct.clear();
                 }
-                string_now_page = String.valueOf(now_page);
                 getCarts(nowPageStr);
             }
 
@@ -178,11 +177,11 @@ public class SelectProductActivity extends AppCompatActivity {
                             //                           JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             last_page               = product_object.getString("last_page");
                             String now              = product_object.getString("current_page");
-                            NowPage                 = Integer.parseInt(now);
+                            NowPage                 = Integer.parseInt(page);
                             int_last_page           = Integer.parseInt(last_page);
-                            max_page                = int_last_page;
-                            //Toast.makeText(SelectProductActivity.this, "Current Page : "+NowPage+"\nLast Page : "+int_last_page+"\nMax Page : "+max_page, Toast.LENGTH_SHORT).show();
-                            lpb_buttonlist.addBottomPageButton(max_page,NowPage);
+                            //max_page                = int_last_page;
+                            generatePagingButton();
+                            Toast.makeText(SelectProductActivity.this, "Current Page : "+NowPage+"\nLast Page : "+int_last_page+"\nMax Page : "+max_page, Toast.LENGTH_SHORT).show();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");
@@ -234,6 +233,9 @@ public class SelectProductActivity extends AppCompatActivity {
                 Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
             }
         });
+    }
+
+    private void generatePagingButton() {
     }
 
     private void getProduct(String s) {
@@ -414,11 +416,11 @@ public class SelectProductActivity extends AppCompatActivity {
                                 if(jsonRESULTS.getString("success").equals("true")){
                                     finalHolder.btnAdd.setVisibility(View.GONE);
                                     finalHolder.btnDelete.setVisibility(View.VISIBLE);
+                                    createToast(jsonRESULTS.getString("message"));
                                 }else{
                                     finalHolder.btnAdd.setVisibility(View.VISIBLE);
                                     finalHolder.btnDelete.setVisibility(View.GONE);
                                 }
-                                Toast.makeText(myAppClass, jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             } catch (IOException e) {
@@ -438,7 +440,7 @@ public class SelectProductActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     new GenericDialog.Builder(SelectProductActivity.this)
                         .setDialogTheme(R.style.GenericDialogTheme)
-                        .setTitle("Hapus Data?").setTitleAppearance(R.color.colorPrimaryDark, 20)
+                        .setTitle(getString(R.string.delete_from_carts)).setTitleAppearance(R.color.colorPrimaryDark, 20)
                         //.setMessage("Data Collected Successfully")
                         .addNewButton(R.style.yes_option, new GenericDialogOnClickListener() {
                             @Override
@@ -498,6 +500,15 @@ public class SelectProductActivity extends AppCompatActivity {
 
             return convertView;
         }
+    }
+
+    private void createToast(String rm) {
+        Cue.init().with(getApplicationContext())
+            .setMessage(rm)
+            .setGravity(Gravity.CENTER_VERTICAL)
+            .setTextSize(20).setType(Type.SUCCESS)
+            .setDuration(Duration.SHORT)
+            .show();
     }
 
     @Override

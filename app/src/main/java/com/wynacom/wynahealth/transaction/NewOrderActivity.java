@@ -153,7 +153,7 @@ public class NewOrderActivity extends AppCompatActivity {
                         }
                     },myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH));
 
-                datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+                //datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
 
                 //Set Today date to calendar
                 final Calendar calendar2 = Calendar.getInstance();
@@ -163,7 +163,7 @@ public class NewOrderActivity extends AppCompatActivity {
                 int tanggal = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
                 calendar2.set(tahun, bulan, tanggal);
                 datePickerDialog.getDatePicker().setMinDate(calendar2.getTimeInMillis());
-                datePickerDialog.setTitle("Select Date");
+                //datePickerDialog.setTitle("Select Date");
                 datePickerDialog.show();
             }
         });
@@ -204,11 +204,12 @@ public class NewOrderActivity extends AppCompatActivity {
         } else {
             strCompany = ET_order_address.getText().toString();
         }
+        String date = globalVariable.reversedateformat(ET_order_date.getText().toString());
         Map<String, Object> jsonParams = new ArrayMap<>();
 //put something inside the map, could be null
         jsonParams.put("datapatient_id" , patient_id);
         jsonParams.put("ol_company_id"  , "1");
-        jsonParams.put("service_date"   , ET_order_date.getText().toString());
+        jsonParams.put("service_date"   , date);
         jsonParams.put("dokter"         , strDoctor);
         jsonParams.put("perusahaan"     , strCompany);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
@@ -237,7 +238,7 @@ public class NewOrderActivity extends AppCompatActivity {
                             intent.putExtra("booked",   subObject.getString("booked"));
                             intent.putExtra("gender",   subObject.getString("gender"));
                             intent.putExtra("type",     "new");
-                            Toast.makeText(NewOrderActivity.this, "Gender = "+subObject.getString("gender"), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(NewOrderActivity.this, "Gender = "+subObject.getString("gender"), Toast.LENGTH_SHORT).show();
                             startActivity(intent);
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(NewOrderActivity.this);
@@ -299,7 +300,7 @@ public class NewOrderActivity extends AppCompatActivity {
     }
 
     private void updateLabel() {
-        String myFormat="yyyy-MM-dd";
+        String myFormat="dd-MMM-yyyy";
         SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
         ET_order_date.setText(dateFormat.format(myCalendar.getTime()));
     }

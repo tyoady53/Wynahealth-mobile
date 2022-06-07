@@ -112,7 +112,7 @@ public class SplashScreen extends AppCompatActivity {
     }
 
     private void relogin(String email,String password) {
-        Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(this, email, Toast.LENGTH_SHORT).show();
         if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password) ){
             Map<String, Object> jsonParams = new ArrayMap<>();
 //put something inside the map, could be null

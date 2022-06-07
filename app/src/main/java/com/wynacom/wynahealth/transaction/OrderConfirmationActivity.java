@@ -26,6 +26,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.fxn.cue.Cue;
+import com.fxn.cue.enums.Duration;
 import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.MainActivity;
@@ -62,7 +63,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
     TextView TV_patient_name,TV_total,TV_discount,TV_grand,TV_service_date;
     String Name,token,bearer,booked,orderType,gender;
     Button next,prev;
-    String total_price,total_disc,grand;
+    String total_price,total_disc,grand,count;
     //private Adapter_Data_Order dataOrder = null;
     private MyCustomAdapter dataOrder = null;
     private ArrayList<adapter_order> list_order;
@@ -81,6 +82,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
         booked          = getIntent().getStringExtra("booked");
         orderType       = getIntent().getStringExtra("type");
         gender          = getIntent().getStringExtra("gender");
+        count           = getIntent().getStringExtra("count");
         ApiGetMethod    = UtilsApi.getMethod();
         mApiService     = UtilsApi.getAPI();
         list_order      = new ArrayList<adapter_order>();
@@ -114,6 +116,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                             intent.putExtra("name",     Name);
                             intent.putExtra("booked",   booked);
                             intent.putExtra("gender",   gender);
+                            intent.putExtra("count",    count);
                             intent.putExtra("type",     "new");
                             startActivity(intent);
                         }
@@ -202,7 +205,8 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 try {
                     JSONObject jsonRESULTS = new JSONObject(response.body().string());
-                    Toast.makeText(getApplicationContext(), jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
+                    makeToast(jsonRESULTS.getString("message"));
+                    //Toast.makeText(getApplicationContext(), jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(getApplicationContext(), OrderQRActivity.class);
                     intent.putExtra("booked",   booked);
                     startActivity(intent);
@@ -360,7 +364,6 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                                     dataOrder.clear();
                                     getProduct();
                                 }
-                                //Toast.makeText(getContext(), jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             } catch (IOException e) {
@@ -401,11 +404,6 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                 holder.discounts   .setVisibility(View.GONE);
             }
 
-//            holder.viewPrice    = nf.format(Double.parseDouble(state.getProduct_price()));
-//            holder.viewNomDisc  = nf.format(Double.parseDouble(state.getNomDiscount()));
-//            holder.viewSubTtl   = nf.format(Double.parseDouble(state.getSubtotal()));
-
-            //holder.ViewProduct       .setText(state.getTitle() + " / "+state.getID() + " / "+state.getInvoice_id());
             holder.ViewProduct       .setText(state.getTitle());
             holder.ViewDescription   .setText(state.getDescription());
             //holder.ViewName          .setText(holder.viewPrice);
@@ -413,15 +411,17 @@ public class OrderConfirmationActivity extends AppCompatActivity {
             holder.ViewSubtotal      .setText(holder.viewSubTtl);
             holder.ViewCount         .setText(state.getView_discount()+"%");
 
-//            for (int i = 0; i < count; i++) {
-//                discTotal   += d;
-//                priceTotal  += a;
-//            }
-//            globalVariable.setDiscountTotal(String.valueOf(discTotal));
-//            globalVariable.setPriceTotal(String.valueOf(priceTotal));
-
             return convertView;
         }
+    }
+
+    private void makeToast(String string) {
+        Cue.init().with(getApplicationContext())
+            .setMessage(string)
+            .setGravity(Gravity.CENTER_VERTICAL)
+            .setTextSize(20).setType(Type.SUCCESS)
+            .setDuration(Duration.SHORT)
+            .show();
     }
 
     @Override

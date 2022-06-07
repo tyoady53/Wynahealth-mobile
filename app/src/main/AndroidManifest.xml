@@ -18,64 +18,60 @@
         android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Wynahealth"
+        android:theme="@style/Theme.Wynahealth.NoActionBar"
         android:usesCleartextTraffic="true"
         tools:replace="android:usesCleartextTraffic">
         <activity
             android:name=".transaction.NewOrderActivity"
             android:exported="false"
-            android:label="Pilih Pasien"/>
+            android:label="@string/label_choose_patient"
+            android:theme="@style/Theme.Wynahealth"/>
         <activity
             android:name=".CreateOrderActivity"
             android:exported="false"
-            android:label="@string/title_activity_create_order"
-            android:theme="@style/Theme.Wynahealth.NoActionBar" />
+            android:label="@string/title_activity_create_order" />
         <activity android:name=".DB_Local.CurrentOrder" />
         <activity
             android:name=".transaction.OrderConfirmationActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Wynahealth.NoActionBar" />
+            android:exported="false" />
         <activity
             android:name=".transaction.SelectProductActivity"
             android:exported="false"
-            android:label="Pilih Pemeriksaan" />
+            android:label="@string/label_choose_test"
+            android:theme="@style/Theme.Wynahealth"/>
         <activity
             android:name=".EmailVerificationActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Wynahealth.NoActionBar"
-            />
+            android:exported="false"/>
         <activity
             android:name=".OrderQRActivity"
-            android:exported="false"
-            android:label="Order" />
+            android:exported="false"/>
         <activity
             android:name=".transaction.CartsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/Theme.Wynahealth"/>
         <activity
             android:name=".transaction.OrderActivity"
             android:exported="false"
-            android:label="Order" />
+            android:label="Order"
+            android:theme="@style/Theme.Wynahealth"/>
         <activity
             android:name=".RegisterActivity"
-            android:exported="true"
-            android:theme="@style/Theme.Wynahealth.NoActionBar" />
+            android:exported="true"/>
         <activity
             android:name=".Login_Activity"
-            android:exported="true"
-            android:theme="@style/Theme.Wynahealth.NoActionBar" />
+            android:exported="true"/>
         <activity
             android:name=".LandingPage"
-            android:exported="true"
-            android:theme="@style/Theme.Wynahealth.NoActionBar" />
+            android:exported="true"/>
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="true"
+            android:theme="@style/Theme.Wynahealth"/>
         <activity
             android:name=".SplashScreen"
             android:exported="true"
             android:label="@string/app_name"
-            android:supportsRtl="true"
-            android:theme="@style/Theme.Wynahealth.NoActionBar">
+            android:supportsRtl="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -172,7 +172,7 @@ public class Adapter_Data_Product extends ArrayAdapter<adapter_product> {
                                 finalHolder.btnAdd.setVisibility(View.VISIBLE);
                                 finalHolder.btnDelete.setVisibility(View.GONE);
                             }
-                            Toast.makeText(myAppClass, jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(myAppClass, jsonRESULTS.getString("message"), Toast.LENGTH_SHORT).show();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         } catch (IOException e) {

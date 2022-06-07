@@ -29,7 +29,7 @@
     </style>
 
     <style name="PositiveButton">
-        <item name="android:text">Yes</item>
+        <item name="android:text">@string/yes</item>
         <item name="android:textColor">@color/colorPrimary</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:padding">8dp</item>
@@ -37,7 +37,7 @@
     </style>
 
     <style name="NegativeButton">
-        <item name="android:text">No</item>
+        <item name="android:text">@string/no</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:padding">8dp</item>
@@ -46,7 +46,7 @@
 
 
     <style name="CustomButton">
-        <item name="android:text">Remind Later</item>
+        <item name="android:text">@string/remind</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:textColor">@color/colorAccent</item>
         <item name="android:padding">8dp</item>
@@ -88,7 +88,7 @@
     </style>
 
     <style name="yes_option">
-        <item name="android:text">Yes</item>
+        <item name="android:text">@string/yes</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:textColor">@color/red</item>
         <item name="android:padding">8dp</item>
@@ -96,7 +96,7 @@
     </style>
 
     <style name="no_option">
-        <item name="android:text">No</item>
+        <item name="android:text">@string/no</item>
         <item name="android:background">?attr/selectableItemBackground</item>
         <item name="android:textColor">@color/purple_700</item>
         <item name="android:padding">8dp</item>

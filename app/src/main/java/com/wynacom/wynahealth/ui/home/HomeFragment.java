@@ -482,7 +482,7 @@ public class HomeFragment extends Fragment {
         jsonParams.put("city",       fkota);
         jsonParams.put("postal_code",fpostal);
         jsonParams.put("sex",        gender);
-        jsonParams.put("dob",        fdob);
+        jsonParams.put("dob",        globalVariable.reversedateformat(fdob));
         jsonParams.put("nik",        fktp);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
         mApiService.datapatient(bearer,body)
@@ -596,9 +596,8 @@ public class HomeFragment extends Fragment {
         final EditText sp_kota    = promptsView.findViewById(R.id.prompt_kota);
 
         if(data_type.equals("edit")){
-            String gender = globalVariable.reverseGender(edit_sex);
             int begin;
-            if(gender.equals("M")){
+            if(edit_sex.equals("M")){
                 begin = 0;
             }else{
                 begin = 1;
@@ -624,16 +623,36 @@ public class HomeFragment extends Fragment {
                 myCalendar.set(Calendar.YEAR, year);
                 myCalendar.set(Calendar.MONTH,month);
                 myCalendar.set(Calendar.DAY_OF_MONTH,day);
-                String myFormat="yyyy-MM-dd";
+                String myFormat="dd-MMM-yyyy";
                 SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
                 age.setText(dateFormat.format(myCalendar.getTime()));
+
+
             }
         };
 
         age.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(getContext(),date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                    new DatePickerDialog.OnDateSetListener() {
+                        public void onDateSet(DatePicker view, int year, int month, int day) {
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH,month);
+                            myCalendar.set(Calendar.DAY_OF_MONTH,day);
+                        }
+                    },myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH));
+                //,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                //Set Today date to calendar
+                final Calendar calendar2 = Calendar.getInstance();
+                //Set Minimum date of calendar
+                int tahun = Calendar.getInstance().get(Calendar.YEAR);
+                int bulan = Calendar.getInstance().get(Calendar.MONTH);
+                int tanggal = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                calendar2.set(tahun, bulan, tanggal);
+                datePickerDialog.getDatePicker().setMaxDate(calendar2.getTimeInMillis());
+                //datePickerDialog.setTitle("Select Date");
+                datePickerDialog.show();
             }
         });
 
@@ -668,15 +687,21 @@ public class HomeFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int id) {
+                        String fsgender = null;
                         final String fstitle    = sp_title.getSelectedItem().toString();
                         final String fsnama     = /*sp_title.getSelectedItem().toString()+*/name.getText().toString();
                         final String fsemail    = email.getText().toString();
-                        final String fsgender   = sp_kelamin.getSelectedItem().toString();
+                        final int gender   = sp_kelamin.getSelectedItemPosition();
                         final String fsktp      = ktp.getText().toString();
                         final String fskota     = sp_kota.getText().toString();
                         final String fspostal   = postal.getText().toString();
                         final String fsphone    = phone.getText().toString();
                         final String fsdob      = age.getText().toString();
+                        if(gender==1){
+                            fsgender = "M";
+                        } else if (gender==2){
+                            fsgender = "F";
+                        }
                         if(data_type.equals("edit")){
                             if (!stringname(fsnama)) {
                                 name.setText(edit_name);

@@ -1,16 +1,20 @@
 <resources>
     <string name="app_name">Wynahealth</string>
-    <string name="title_home">Informasi Pelanggan</string>
-    <string name="title_dashboard">Pemesanan Kesehatan</string>
-    <string name="title_notifications">Ganti Password</string>
+    <string name="title_home">User Information</string>
+    <string name="title_dashboard">My Orders</string>
+    <string name="title_notifications">Change Password</string>
     <string name="home_title">Home</string>
     <string name="dashboard_title">Transaction</string>
     <string name="notifications_title">Utilities</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings">Settings   Activity</string>
 
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
+
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="remind">Remind Later</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
@@ -23,8 +27,8 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="add_new_patient">Add new patient</string>
     <string name="data_patient_empty">Data patient empty.</string>
-    <string name="data_patient">Data Pasien</string>
-    <string name="title_activity_order_confirmation">OrderConfirmationActivity</string>
+    <string name="data_patient">Data Patient</string>
+    <string name="title_activity_order_confirmation">Order Confirmation Activity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>
     <string name="second_fragment_label">Second Fragment</string>
@@ -33,7 +37,7 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
-    <string name="title_activity_create_order">CreateOrderActivity</string>
+    <string name="title_activity_create_order">Create Order Activity</string>
 
     <string-array name="titles">
         <item>Mr.</item>
@@ -47,10 +51,11 @@
 
     <string-array name="filter">
         <item>All Status</item>
-        <item>Order Paid</item>
+        <item>Payment Success</item>
         <item>Waiting For Payment</item>
         <item>Payment Failed</item>
         <item>Transaction Expired</item>
+        <item>Order Canceled</item>
     </string-array>
 
     <string name="gross_amount">Gross Amount</string>
@@ -59,7 +64,7 @@
 
     <string name="all_data">All Status</string>
     <string name="pending">Waiting For Payment</string>
-    <string name="success">Order Paid</string>
+    <string name="success">Payment Success</string>
     <string name="failed">Payment Failed</string>
     <string name="expired">Transaction Expired</string>
     <string name="cancel">Order Canceled</string>
@@ -77,7 +82,7 @@
     <string name="postal_code">Postal Code</string>
     <string name="handphone_number">Handphone No.</string>
     <string name="date_of_birth">Date of Birth</string>
-    <string name="privacy_policy">I accept the Privacy and Policy</string>
+    <string name="privacy_policy">I am accept the Privacy and Policy</string>
     <string name="back">back</string>
     <string name="register">register</string>
     <string name="identity_number">Identity Number</string>
@@ -107,5 +112,9 @@
     <string name="other_product">Select Other Product</string>
     <string name="order_date">Order Date</string>
     <string name="order_status">Order Status</string>
+    <string name="delete_from_carts">Delete Test from Cart?</string>
+    <string name="cancel_order">Cancel Order?</string>
 
+    <string name="label_choose_patient">Choose Patient</string>
+    <string name="label_choose_test">Choose Test to Order</string>
 </resources>
