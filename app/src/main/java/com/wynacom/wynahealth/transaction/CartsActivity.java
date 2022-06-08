@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -62,6 +63,8 @@ public class CartsActivity extends AppCompatActivity {
     private MyCustomAdapter dataCarts = null;
     private ArrayList<adapter_carts> list_carts;
 
+    ProgressBar progressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +76,8 @@ public class CartsActivity extends AppCompatActivity {
         bearer          = "Bearer "+token;
         mApiService     = UtilsApi.getAPI();
         ApiGetMethod    = UtilsApi.getMethod();
+
+        progressBar     = findViewById(R.id.progress_bar_image);
 
         listView            = findViewById(R.id.carts_list);
 
@@ -88,6 +93,8 @@ public class CartsActivity extends AppCompatActivity {
                 globalVariable.setBooked(booked);
                 globalVariable.setList_view("confirm");
                 //Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
+                progressBar.setVisibility(View.VISIBLE);
+                progressBar.setIndeterminate(true);
                 getTotalProduct(gender);
             }
         });
@@ -163,6 +170,7 @@ public class CartsActivity extends AppCompatActivity {
     }
 
     private void refreshList() {
+        progressBar.setVisibility(View.VISIBLE);
         Call<ResponseBody> listCall = ApiGetMethod.getcarts(bearer);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -171,6 +179,7 @@ public class CartsActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
+                            progressBar.setVisibility(View.GONE);
                             //JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
                             JSONArray jsonArray     = jsonRESULTS.getJSONArray("data");
 //                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");

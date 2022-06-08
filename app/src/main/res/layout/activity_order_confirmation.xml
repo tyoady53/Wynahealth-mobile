@@ -111,114 +111,150 @@
             android:id="@+id/order_layout3"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="@dimen/dp20">
-
-            <TextView
-                android:id="@+id/order_show_date"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/arrival_date" />
-
-            <TextView
-                android:id="@+id/order_show_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/order_show_doctor"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/order_show_address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <TextView
-                android:id="@+id/order_show_product"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+            android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/detail_order"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/dp20">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/arrival_date"/>
+                <TextView
+                    android:layout_marginLeft="@dimen/dp20"
+                    android:id="@+id/order_show_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/arrival_date" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/order_show_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/order_show_doctor"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/outlet_choosen"/>
+                <TextView
+                    android:layout_marginLeft="@dimen/dp20"
+                    android:id="@+id/order_show_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:visibility="gone"
+                    android:id="@+id/order_show_product"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black"/>
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="fill_parent"
-                android:orientation="vertical">
-
-                <ListView
-                    android:id="@+id/list_order_confirmation"
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1" />
+                android:orientation="vertical"
+                android:padding="@dimen/dp20">
 
                 <LinearLayout
-                    android:layout_marginLeft="@dimen/dp20"
+                    android:id="@+id/detail_order"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <ListView
+                        android:id="@+id/list_order_confirmation"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
                     <LinearLayout
+                        android:layout_marginLeft="@dimen/dp20"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
+                        android:orientation="vertical">
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/dp20"
-                            android:layout_marginRight="@dimen/dp20"
-                            android:layout_weight="1"
-                            android:gravity="start"
-                            android:text="@string/total"
-                            android:textAlignment="textStart"
-                            android:textSize="20sp" />
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/dp20"
+                                android:layout_marginRight="@dimen/dp20"
+                                android:layout_weight="1"
+                                android:gravity="start"
+                                android:text="@string/total"
+                                android:textAlignment="textStart"
+                                android:textSize="20sp" />
 
-                        <TextView
-                            android:id="@+id/total"
-                            android:layout_width="wrap_content"
+                            <TextView
+                                android:id="@+id/total"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Harga" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Harga" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/dp20"
-                            android:layout_marginRight="@dimen/dp20"
-                            android:layout_weight="1"
-                            android:gravity="start"
-                            android:text="@string/discount"
-                            android:textAlignment="textStart"
-                            android:textSize="20sp" />
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/dp20"
+                                android:layout_marginRight="@dimen/dp20"
+                                android:layout_weight="1"
+                                android:gravity="start"
+                                android:text="@string/discount"
+                                android:textAlignment="textStart"
+                                android:textSize="20sp" />
 
-                        <TextView
-                            android:id="@+id/total_discount"
-                            android:layout_width="wrap_content"
+                            <TextView
+                                android:id="@+id/total_discount"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Harga" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Harga" />
-                    </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="@dimen/dp20"
-                            android:layout_marginRight="@dimen/dp20"
-                            android:layout_weight="1"
-                            android:gravity="start"
-                            android:text="@string/grand_total"
-                            android:textAlignment="textStart"
-                            android:textSize="20sp" />
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="@dimen/dp20"
+                                android:layout_marginRight="@dimen/dp20"
+                                android:layout_weight="1"
+                                android:gravity="start"
+                                android:text="@string/grand_total"
+                                android:textAlignment="textStart"
+                                android:textSize="20sp" />
 
-                        <TextView
-                            android:id="@+id/total_orders"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Harga" />
+                            <TextView
+                                android:id="@+id/total_orders"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Harga" />
+                        </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

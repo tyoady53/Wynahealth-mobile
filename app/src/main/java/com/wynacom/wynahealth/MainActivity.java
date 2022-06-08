@@ -16,6 +16,8 @@ import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -44,6 +46,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Map;
 
+import dev.jai.genericdialog2.GenericDialog;
+import dev.jai.genericdialog2.GenericDialogOnClickListener;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -187,7 +191,6 @@ public class MainActivity extends AppCompatActivity {
 
                                 //Toast.makeText(MainActivity.this, "Success : "+content, Toast.LENGTH_SHORT).show();
                             } else {
-
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                                 builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
                                 builder.setTitle("Login Gagal");
@@ -310,7 +313,8 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_about:
                 return true;
             case R.id.action_settings:
-                logoutdialog();
+                dialogBuilder();
+                //logoutdialog();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -392,6 +396,30 @@ public class MainActivity extends AppCompatActivity {
                     Cue.init().with(getApplicationContext()).setMessage("Tidak dapat terhubung ke server."+t.toString()).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
                 }
             });
+    }
+
+    private void dialogBuilder(){
+        new GenericDialog.Builder(MainActivity.this)
+            .setDialogTheme(R.style.GenericDialogTheme)
+            .setTitle(getString(R.string.logoutQuestion)).setTitleAppearance(R.color.colorPrimaryDark, 20)
+            //.setMessage("Data Collected Successfully")
+            .addNewButton(R.style.yes_option, new GenericDialogOnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    local_data.HapusData();
+                    ((GlobalVariable) getApplicationContext()).clearToken();
+                    logout();
+                }
+            })
+            .addNewButton(R.style.no_option, new GenericDialogOnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                }
+            })
+            .setButtonOrientation(LinearLayout.HORIZONTAL)
+            .setCancelable(true)
+            .generate();
     }
 
     @Override

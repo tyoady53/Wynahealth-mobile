@@ -228,21 +228,25 @@ public class OrderQRActivity extends AppCompatActivity implements TransactionFin
                                     }else if(order_stts.equals("failed")){
                                         status_order = getString(R.string.failed);
                                     }else{
-                                        status_order = getString(R.string.expired);
+                                        if(payment.equals("cancel")){
+                                            status_order = getString(R.string.cancel);
+                                        }else{
+                                            status_order = getString(R.string.expired);
+                                        }
                                     }
                                     Bt_Payment.setVisibility(View.GONE);
                                 }
                                 String paid_from = jsonObject.getString("payment");
                                 strGender = globalVariable.setGenerateGender(sex);
                                 if(paid_from.equals("cod")){
-                                    payment = "COD";
-                                    paid_show = getString(R.string.cod);
+                                    paid_show = status_order+ "(" +getString(R.string.cod) +")";
                                 }else if(paid_from.equals("online")){
-                                    payment = "E-Wallet";
-                                    paid_show = getString(R.string.online_pay);
+                                    paid_show = status_order+ "(" +getString(R.string.online_pay) +")";
+                                }else{
+                                    paid_show = "Order Canceled";
                                 }
 
-                                TV_status       .setText(status_order+ "\n" + paid_show);
+                                TV_status       .setText(paid_show);
                                 TV_invNo        .setText("Invoice Number : "+jsonObject.getString("invoice_no"));
                                 TV_inv_patient  .setText(jsonDataPatient.getString("name"));
                                 TV_inv_date     .setText(globalVariable.dateformat(tanggal));

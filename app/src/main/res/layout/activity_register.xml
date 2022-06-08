@@ -130,9 +130,10 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Title" />
+                                android:text="@string/string_title" />
 
                             <Spinner
+                                android:entries="@array/titles"
                                 android:background="@drawable/spinner_noborder"
                                 android:id="@+id/regis_title"
                                 android:layout_width="match_parent"
@@ -192,6 +193,7 @@
                                 android:text="@string/city" />
 
                             <Spinner
+                                android:entries="@array/array_city"
                                 android:background="@drawable/spinner_noborder"
                                 android:id="@+id/regis_kota"
                                 android:layout_width="match_parent"

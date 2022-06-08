@@ -6,19 +6,25 @@
     <string name="home_title">Home</string>
     <string name="dashboard_title">Transaction</string>
     <string name="notifications_title">Utilities</string>
-    <string name="title_activity_settings">Settings   Activity</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
+    <string name="title_activity_settings">Settings Activity</string>
 
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="remind">Remind Later</string>
+    <string name="home">Home</string>
+
+    <string name="onsite">Onsite</string>
+    <string name="online">Online</string>
+    <string name="other_product">Select Other Product</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
 
     <!-- Messages Preferences -->
     <string name="signature_title">Your signature</string>
     <string name="reply_title">Default reply action</string>
+
+    <string name="outlet_choosen">Outlet</string>
 
     <!-- Sync Preferences -->
     <string name="sync_title">Sync email periodically</string>
@@ -30,14 +36,14 @@
     <string name="data_patient">Data Patient</string>
     <string name="title_activity_order_confirmation">Order Confirmation Activity</string>
     <!-- Strings used for fragments for navigation -->
-    <string name="first_fragment_label">First Fragment</string>
-    <string name="second_fragment_label">Second Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_create_order">Create Order Activity</string>
+
+    <string name="logoutQuestion">Are you sure to logout?</string>
 
     <string-array name="titles">
         <item>Mr.</item>
@@ -47,6 +53,11 @@
     <string-array name="gender">
         <item>Male</item>
         <item>Female</item>
+    </string-array>
+
+    <string-array name="array_city">
+        <item>Jakarta</item>
+        <item>Bandung</item>
     </string-array>
 
     <string-array name="filter">
@@ -104,12 +115,9 @@
     <string name="grand_total">Grand Total</string>
 
     <string name="choose_payment">Choose Payment Methode</string>
-    <string name="onsite">Onsite</string>
-    <string name="online">Online</string>
 
     <string name="back_to">Back To</string>
-    <string name="home">Home</string>
-    <string name="other_product">Select Other Product</string>
+
     <string name="order_date">Order Date</string>
     <string name="order_status">Order Status</string>
     <string name="delete_from_carts">Delete Test from Cart?</string>
@@ -117,4 +125,5 @@
 
     <string name="label_choose_patient">Choose Patient</string>
     <string name="label_choose_test">Choose Test to Order</string>
+    <string name="string_title">Title</string>
 </resources>

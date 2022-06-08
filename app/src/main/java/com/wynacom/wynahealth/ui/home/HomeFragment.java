@@ -9,7 +9,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.Point;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.ArrayMap;
@@ -36,7 +35,6 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
-import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
@@ -283,7 +281,8 @@ public class HomeFragment extends Fragment {
                 SwipeMenuItem openItem = new SwipeMenuItem(
                     getContext());
                 // set item background
-                openItem.setBackground(new ColorDrawable(ContextCompat.getColor(getContext(),R.color.light_tosca)));
+                //openItem.setBackground(new ColorDrawable(ContextCompat.getColor(getContext(),R.color.light_tosca)));
+                openItem.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.swipe_background,null));
                 // set item width
                 openItem.setWidth(150);
                 // set item title font color
@@ -295,7 +294,8 @@ public class HomeFragment extends Fragment {
                 SwipeMenuItem deleteItem = new SwipeMenuItem(
                     getContext());
                 // set item background
-                deleteItem.setBackground(new ColorDrawable(ContextCompat.getColor(getContext(),R.color.dark25)));
+                //deleteItem.setBackground(new ColorDrawable(ContextCompat.getColor(getContext(),R.color.dark25)));
+                deleteItem.setBackground(ResourcesCompat.getDrawable(getResources(),R.drawable.swipe_background,null));
                 // set item width
                 deleteItem.setWidth(150);
                 // set a icon
@@ -313,7 +313,6 @@ public class HomeFragment extends Fragment {
                         Intent i = new Intent(getContext(), NewOrderActivity.class);
                         i.putExtra("index_position", String.valueOf(position+1));
                         startActivity(i);
-                        //Cue.init().with(getContext()).setMessage("Pemeriksaan "+position).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
                         break;
                     case 1:
                         adapter_patient state = List.get(position);
@@ -406,7 +405,7 @@ public class HomeFragment extends Fragment {
                                 String title         = c.getString("title");
                                 String nama          = c.getString("name");
                                 String handphone     = c.getString("handphone");
-                                String sex           = globalVariable.setGenerateGender(c.getString("sex"));
+                                String sex           = c.getString("sex");
                                 String dob           = c.getString("dob");
                                 String nik           = c.getString("nik");
                                 String city          = c.getString("city");
@@ -439,7 +438,7 @@ public class HomeFragment extends Fragment {
                         e.printStackTrace();
                     }
                 } else {
-                    Cue.init().with(getContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                    createToast("No Data Available",Type.DANGER);
                 }
             }
             @Override
@@ -497,11 +496,13 @@ public class HomeFragment extends Fragment {
                                     dataAdapter.clear();
                                     //listView.setAdapter(null);
                                 }
-                                Cue.init().with(getContext()).setMessage("Add data success").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.SUCCESS).show();
+                                createToast("Add data success",Type.SUCCESS);
+                                //Cue.init().with(getContext()).setMessage("Add data success").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.SUCCESS).show();
                                 //Toast.makeText(getContext(),"Add data success.", Toast.LENGTH_SHORT).show();
                                 refreshList("1");
                             } else {
-                                Cue.init().with(getContext()).setMessage("Can not add data").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
+                                createToast("Can not add data",Type.DANGER);
+                                //Cue.init().with(getContext()).setMessage("Can not add data").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
                                 //Toast.makeText(getContext(),"Can not add data.", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
@@ -510,7 +511,7 @@ public class HomeFragment extends Fragment {
                             e.printStackTrace();
                         }
                     } else {
-                        Cue.init().with(getContext()).setMessage("Add data FAILED!").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
+                        createToast("Add data FAILED!",Type.DANGER);
                         //Toast.makeText(getContext(), "Add data FAILED!", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -523,7 +524,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void editPatient(String fnama,String femail,String fgender,String fktp,String fkota,String fpostal,String fphone,String fdob,String title) {
-        String gender = globalVariable.reverseGender(fgender);
+        //String gender = globalVariable.reverseGender(fgender);
         Map<String, Object> jsonParams = new ArrayMap<>();
         //Toast.makeText(getContext(), title, Toast.LENGTH_SHORT).show();
         jsonParams.put("title",      title);
@@ -532,7 +533,7 @@ public class HomeFragment extends Fragment {
         jsonParams.put("handphone",  fphone);
         jsonParams.put("city",       fkota);
         jsonParams.put("postal_code",fpostal);
-        jsonParams.put("sex",        gender);
+        jsonParams.put("sex",        fgender);
         jsonParams.put("dob",        globalVariable.reversedateformat(fdob));
         jsonParams.put("nik",        fktp);
         RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
@@ -548,12 +549,10 @@ public class HomeFragment extends Fragment {
                                     dataAdapter.clear();
                                     //listView.setAdapter(null);
                                 }
-                                Cue.init().with(getContext()).setMessage("Edit data success").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.SUCCESS).show();
-                                //Toast.makeText(getContext(),"Add data success.", Toast.LENGTH_SHORT).show();
+                                createToast("Edit data success",Type.SUCCESS);
                                 refreshList("1");
                             } else {
-                                Cue.init().with(getContext()).setMessage("Can not edit data").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
-                                //Toast.makeText(getContext(),"Can not add data.", Toast.LENGTH_SHORT).show();
+                                createToast("Can not edit data",Type.DANGER);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -561,8 +560,7 @@ public class HomeFragment extends Fragment {
                             e.printStackTrace();
                         }
                     } else {
-                        Cue.init().with(getContext()).setMessage("Edit data FAILED!").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
-                        //Toast.makeText(getContext(), "Add data FAILED!", Toast.LENGTH_LONG).show();
+                        createToast("Edit data FAILED!",Type.DANGER);
                     }
                 }
 
@@ -697,9 +695,9 @@ public class HomeFragment extends Fragment {
                         final String fspostal   = postal.getText().toString();
                         final String fsphone    = phone.getText().toString();
                         final String fsdob      = age.getText().toString();
-                        if(gender==1){
+                        if(gender==0){
                             fsgender = "M";
-                        } else if (gender==2){
+                        } else if (gender==1){
                             fsgender = "F";
                         }
                         if(data_type.equals("edit")){
@@ -767,6 +765,15 @@ public class HomeFragment extends Fragment {
         AlertDialog alertDialog = alertDialogBuilder.create();
         alertDialog.show();
         //Cue.init().with(getContext()).setMessage("Button Tambah Pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+    }
+
+    private void createToast(String message, Type type) {
+        Cue.init().with(getContext())
+            .setMessage(message)
+            .setGravity(Gravity.CENTER_VERTICAL)
+            .setTextSize(20)
+            .setType(type)
+            .show();
     }
 
     @Override

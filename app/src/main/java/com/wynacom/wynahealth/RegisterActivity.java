@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.ArrayMap;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -24,6 +25,8 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.fxn.cue.Cue;
+import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
@@ -206,13 +209,13 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void RegisterRequest() {
         String namalengkap,stringemail,stringjk,stringktp,stringkota,stringkodepos,stringhp,stringumur,passwd,passwdr,stringTitle;
-//        if(sp_kelamin.getSelectedItem().toString().equals("Laki-laki")){
-//            stringjk = "M";
-//        }else{
-//            stringjk = "F";
-//        }
+        if(sp_kelamin.getSelectedItemPosition()==0){
+            stringjk = "M";
+        }else{
+            stringjk = "F";
+        }
         stringTitle = sp_title.getSelectedItem().toString();
-        stringjk    = globalVariable.reverseGender(sp_kelamin.getSelectedItem().toString());
+        //stringjk    = globalVariable.reverseGender(sp_kelamin.getSelectedItem().toString());
         namalengkap = /*sp_title.getSelectedItem().toString() + " " + */name.getText().toString();
         stringemail = email.getText().toString();
         //stringjk    = sp_kelamin.getSelectedItem().toString();
@@ -247,11 +250,11 @@ public class RegisterActivity extends AppCompatActivity {
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if (jsonRESULTS.getString("success").equals("true")){
-                                Toast.makeText(getApplicationContext(),"Registered Successfully.",Toast.LENGTH_SHORT).show();
+                                createToast(jsonRESULTS.getString("message"),Type.SUCCESS);
                                 Intent intent = new Intent(RegisterActivity.this, Login_Activity.class);
                                 startActivity(intent);
                             } else {
-                                Toast.makeText(getApplicationContext(),"Can not Create an Account! Error Connection.", Toast.LENGTH_SHORT).show();
+                                createToast("Can not Create an Account! Error Connection.",Type.DANGER);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -259,7 +262,7 @@ public class RegisterActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     } else {
-                        Toast.makeText(getApplicationContext(), "Can not Create an Account!", Toast.LENGTH_SHORT).show();
+                        createToast("Can not Create an Account!",Type.DANGER);
                     }
                 }
 
@@ -268,6 +271,15 @@ public class RegisterActivity extends AppCompatActivity {
                     Log.e("debug", "onFailure: ERROR > " + t.toString());
                 }
             });
+    }
+
+    private void createToast(String message, Type type) {
+        Cue.init().with(getApplicationContext())
+            .setMessage(message)
+            .setGravity(Gravity.CENTER_VERTICAL)
+            .setTextSize(20)
+            .setType(type)
+            .show();
     }
 
     protected  void handleSiteVerify(final String responseToken){

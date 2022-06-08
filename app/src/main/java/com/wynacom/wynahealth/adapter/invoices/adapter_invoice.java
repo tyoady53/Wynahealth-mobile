@@ -11,9 +11,10 @@ public class adapter_invoice {
     String address          = null;
     String snap             = null;
     String service_date     = null;
+    String booked           = null;
     boolean selected        = false;
 
-    public adapter_invoice(String id, String name, String invoiceNumber, String telephone, String address, String status, String total, String snap, String payment, String service_date) {
+    public adapter_invoice(String id, String name, String invoiceNumber, String telephone, String address, String status, String total, String snap, String payment, String service_date, String booked) {
         super();
         this.id             = id;
         this.name           = name;
@@ -25,6 +26,7 @@ public class adapter_invoice {
         this.snap           = snap;
         this.payment        = payment;
         this.service_date   = service_date;
+        this.booked         = booked;
     }
 
     public String getID() {
@@ -95,5 +97,12 @@ public class adapter_invoice {
     }
     public void setService_date(String service_date) {
         this.service_date = service_date;
+    }
+
+    public String getBooked() {
+        return booked;
+    }
+    public void setBooked(String booked) {
+        this.booked = booked;
     }
 }

@@ -60,7 +60,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
     private BaseApiService ApiGetMethod,mApiService;
     int CartsLength;
 
-    TextView TV_patient_name,TV_total,TV_discount,TV_grand,TV_service_date;
+    TextView TV_patient_name,TV_total,TV_discount,TV_grand,TV_service_date,TV_address;
     String Name,token,bearer,booked,orderType,gender;
     Button next,prev;
     String total_price,total_disc,grand,count;
@@ -93,7 +93,8 @@ public class OrderConfirmationActivity extends AppCompatActivity {
         TV_total        = findViewById(R.id.total);
         TV_discount     = findViewById(R.id.total_discount);
         TV_grand        = findViewById(R.id.total_orders);
-        TV_service_date = findViewById(R.id.order_show_time);
+        TV_service_date = findViewById(R.id.order_show_date);
+        TV_address      = findViewById(R.id.order_show_address);
 
         prev            = findViewById(R.id.confirm_prev);
         next            = findViewById(R.id.next);
@@ -234,8 +235,12 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            JSONObject pass = jsonRESULTS.getJSONObject("data");
-                            JSONObject data = pass.getJSONObject("data");
+                            JSONObject pass     = jsonRESULTS.getJSONObject("data");
+                            JSONObject data     = pass.getJSONObject("data");
+                            JSONObject company  = data.getJSONObject("company");
+                            TV_service_date.    setText(globalVariable.dateformat(data.getString("service_date")));
+                            TV_address .        setText(company.getString("address"));
+                            //Toast.makeText(OrderConfirmationActivity.this, data.getString("service_date"), Toast.LENGTH_SHORT).show();
                                 String invoice_id    = data.getString("id");
                                 JSONArray ArrayCarts = data.getJSONArray("carts");
                                 CartsLength = ArrayCarts.length();

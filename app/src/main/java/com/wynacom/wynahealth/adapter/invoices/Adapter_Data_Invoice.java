@@ -80,6 +80,7 @@ public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
             holder.status_color.setBackgroundColor(ResourcesCompat.getColor(convertView.getResources(), R.color.expired, null));
         } else {
             holder.status_color.setBackgroundColor(ResourcesCompat.getColor(convertView.getResources(), R.color.red, null));
+            holder.Vpayment.setVisibility(View.GONE);
         }
 
         return convertView;

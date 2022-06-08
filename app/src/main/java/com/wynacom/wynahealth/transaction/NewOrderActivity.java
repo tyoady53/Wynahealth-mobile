@@ -208,7 +208,7 @@ public class NewOrderActivity extends AppCompatActivity {
         Map<String, Object> jsonParams = new ArrayMap<>();
 //put something inside the map, could be null
         jsonParams.put("datapatient_id" , patient_id);
-        jsonParams.put("ol_company_id"  , "1");
+        jsonParams.put("ol_company_id"  , Sp_order_city.getSelectedItemPosition()+1);
         jsonParams.put("service_date"   , date);
         jsonParams.put("dokter"         , strDoctor);
         jsonParams.put("perusahaan"     , strCompany);
@@ -233,13 +233,14 @@ public class NewOrderActivity extends AppCompatActivity {
                             globalVariable.setGender             (subObject.getString("gender"));
                             globalVariable.setOl_invoice_id      (subObject.getString("id"));
                             globalVariable.setPatient_id(patient_id);
-                            Intent intent = new Intent(NewOrderActivity.this, SelectProductActivity.class);
-                            intent.putExtra("name",     spinner.getSelectedItem().toString());
-                            intent.putExtra("booked",   subObject.getString("booked"));
-                            intent.putExtra("gender",   subObject.getString("gender"));
-                            intent.putExtra("type",     "new");
-                            //Toast.makeText(NewOrderActivity.this, "Gender = "+subObject.getString("gender"), Toast.LENGTH_SHORT).show();
-                            startActivity(intent);
+                            getTotalProduct(subObject.getString("gender"));
+//                            Intent intent = new Intent(NewOrderActivity.this, SelectProductActivity.class);
+//                            intent.putExtra("name",     spinner.getSelectedItem().toString());
+//                            intent.putExtra("booked",   subObject.getString("booked"));
+//                            intent.putExtra("gender",   subObject.getString("gender"));
+//                            intent.putExtra("type",     "new");
+//                            //Toast.makeText(NewOrderActivity.this, "Gender = "+subObject.getString("gender"), Toast.LENGTH_SHORT).show();
+//                            startActivity(intent);
                         } else {
                             AlertDialog.Builder builder = new AlertDialog.Builder(NewOrderActivity.this);
                             builder.setMessage(jsonRESULTS.getString("message"));
@@ -295,6 +296,73 @@ public class NewOrderActivity extends AppCompatActivity {
                     }
                 });
                 AlertDialog alertDialog = builder.create();
+            }
+        });
+    }
+
+    private void getTotalProduct(String gender) {
+        Call<ResponseBody> listCall = ApiGetMethod.getProducts(gender);
+        listCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                        if (jsonRESULTS.getString("success").equals("true")){
+                            JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
+                            //JSONArray jsonArray     = jsonObject.getJSONArray("data");
+//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            String count = jsonObject.getString("last_page"); //String.valueOf(jsonArray.length());
+                            Intent intent = new Intent(NewOrderActivity.this, SelectProductActivity.class);
+                            intent.putExtra("type", "edit");
+                            intent.putExtra("name",             spinner.getSelectedItem().toString());
+                            intent.putExtra("booked",           booked);
+                            intent.putExtra("gender",           gender);
+                            intent.putExtra("count",            count);
+                            startActivity(intent);
+                        } else {
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+                            builder.setMessage("Data Patient Kosong.");
+                            builder.setTitle("List Patient");
+                            builder.setCancelable(true);
+                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                builder.setMessage("Failed loading data. Do you want to retry?");
+                builder.setTitle("Error Load Data Order");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                });
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
             }
         });
     }

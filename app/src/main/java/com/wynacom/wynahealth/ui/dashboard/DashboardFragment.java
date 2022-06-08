@@ -134,7 +134,7 @@ public class DashboardFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 globalVariable.setList_view("view");
                 adapter_invoice state = orderList.get(position);
-                String snap=state.getInvoice();
+                String snap=state.getBooked();
                 //Toast.makeText(getContext(), ids, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getContext(), OrderQRActivity.class);
                 intent.putExtra("booked", snap);
@@ -153,6 +153,8 @@ public class DashboardFragment extends Fragment {
                     filter = "failed";
                 } else if (position == 4) {
                     filter = "expired";
+                } else if (position == 5) {
+                    filter = "cancel";
                 } else {
                     filter = "";
                 }
@@ -208,7 +210,8 @@ public class DashboardFragment extends Fragment {
                                     JSONObject c = jsonArray.getJSONObject(i);
                                     JSONObject patient = c.getJSONObject("datapatient");
                                     String id            = c.getString("id");
-                                    String invoice       = c.getString("booked");
+                                    String invoice       = c.getString("invoice_no");
+                                    String booked        = c.getString("booked");
                                     String status        = c.getString("status");
                                     String payment       = c.getString("payment");
                                     String grand_total   = c.getString("grand_total");
@@ -221,13 +224,13 @@ public class DashboardFragment extends Fragment {
                                         if(status.equals("success")){
                                             status_order = getString(R.string.success);
                                         }else if(status.equals("failed")){
-                                            if(payment.equals("canceled")){
-                                                status_order = getString(R.string.cancel);
-                                            }else{
-                                                status_order = getString(R.string.failed);
-                                            }
+                                            status_order = getString(R.string.failed);
                                         }else{
-                                            status_order = getString(R.string.expired);
+                                            if(payment.equals("cancel")){
+                                                status_order = getString(R.string.cancel);
+                                            }else {
+                                                status_order = getString(R.string.expired);
+                                            }
                                         }
                                     }
                                     String title  = patient.getString("title");
@@ -241,7 +244,7 @@ public class DashboardFragment extends Fragment {
                                     String date   = c.getString("service_date");
                                     tampiltanggal = globalVariable.dateformat(dob);
                                     nama_pasien = title +" "+name;
-                                        adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status_order,grand_total,snap,payment,date);
+                                        adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status_order,grand_total,snap,payment,date,booked);
                                         orderList.add(_states);
                                     //getDataPatient(id,invoice,status_order,grand_total,snap,patient_id);
                                 }

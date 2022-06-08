@@ -28,7 +28,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.fxn.cue.Cue;
-import com.fxn.cue.enums.Duration;
 import com.fxn.cue.enums.Type;
 import com.lakue.pagingbutton.LakuePagingButton;
 import com.lakue.pagingbutton.OnPageSelectListener;
@@ -109,7 +108,6 @@ public class SelectProductActivity extends AppCompatActivity {
 
         lpb_buttonlist.setPageItemCount(4);
         lpb_buttonlist.addBottomPageButton(max_page,1);
-        Toast.makeText(SelectProductActivity.this, ""+max_page, Toast.LENGTH_SHORT).show();
         lpb_buttonlist.setOnPageSelectListener(new OnPageSelectListener() {
             @Override
             public void onPageBefore(int now_page) {
@@ -139,6 +137,7 @@ public class SelectProductActivity extends AppCompatActivity {
                 intent.putExtra("name",     Name);
                 intent.putExtra("booked",   booked);
                 intent.putExtra("gender",   gender);
+                intent.putExtra("count",    String.valueOf(max_page));
                 startActivity(intent);
             }
         });
@@ -180,8 +179,7 @@ public class SelectProductActivity extends AppCompatActivity {
                             NowPage                 = Integer.parseInt(page);
                             int_last_page           = Integer.parseInt(last_page);
                             //max_page                = int_last_page;
-                            generatePagingButton();
-                            Toast.makeText(SelectProductActivity.this, "Current Page : "+NowPage+"\nLast Page : "+int_last_page+"\nMax Page : "+max_page, Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(SelectProductActivity.this, "Current Page : "+NowPage+"\nLast Page : "+int_last_page+"\nMax Page : "+max_page, Toast.LENGTH_SHORT).show();
                             for (int i = 0; i < jsonArray.length(); i++) {
                                 JSONObject c = jsonArray.getJSONObject(i);
                                 String id            = c.getString("id");
@@ -233,9 +231,6 @@ public class SelectProductActivity extends AppCompatActivity {
                 Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
             }
         });
-    }
-
-    private void generatePagingButton() {
     }
 
     private void getProduct(String s) {
@@ -416,7 +411,7 @@ public class SelectProductActivity extends AppCompatActivity {
                                 if(jsonRESULTS.getString("success").equals("true")){
                                     finalHolder.btnAdd.setVisibility(View.GONE);
                                     finalHolder.btnDelete.setVisibility(View.VISIBLE);
-                                    createToast(jsonRESULTS.getString("message"));
+                                    createToast(jsonRESULTS.getString("message"),Type.SUCCESS);
                                 }else{
                                     finalHolder.btnAdd.setVisibility(View.VISIBLE);
                                     finalHolder.btnDelete.setVisibility(View.GONE);
@@ -502,12 +497,11 @@ public class SelectProductActivity extends AppCompatActivity {
         }
     }
 
-    private void createToast(String rm) {
+    private void createToast(String rm, Type type) {
         Cue.init().with(getApplicationContext())
             .setMessage(rm)
             .setGravity(Gravity.CENTER_VERTICAL)
-            .setTextSize(20).setType(Type.SUCCESS)
-            .setDuration(Duration.SHORT)
+            .setTextSize(20).setType(type)
             .show();
     }
 
