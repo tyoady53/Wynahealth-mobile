@@ -194,6 +194,7 @@ public class MainActivity extends AppCompatActivity {
         listCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+//                    if (response.isSuccessful()){
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if (jsonRESULTS.getString("success").equals("true")){
@@ -224,6 +225,20 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                             relogin(email,password);
                         }
+//                    } else {
+//                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+//                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+//                        builder.setTitle("Login Gagal");
+//                        builder.setCancelable(true);
+//                        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        android.app.AlertDialog alertDialog = builder.create();
+//                        alertDialog.show();
+//                    }
                 }
 
             @Override
