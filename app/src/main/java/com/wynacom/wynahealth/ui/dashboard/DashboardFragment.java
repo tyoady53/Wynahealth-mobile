@@ -192,6 +192,7 @@ public class DashboardFragment extends Fragment {
     }
 
     private void refreshList() {
+        globalVariable.setLast_open("transaction");
         Call<ResponseBody> listCall = ApiGetMethod.getInvoices(bearer,filter,page);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override

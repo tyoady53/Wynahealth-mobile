@@ -127,6 +127,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                         public void onClick(View view) {
                             Intent intent = new Intent(OrderConfirmationActivity.this, MainActivity.class);
                             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            globalVariable.setLast_open("home");
                             startActivity(intent);
                         }
                     })
@@ -239,7 +240,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                             JSONObject data     = pass.getJSONObject("data");
                             JSONObject company  = data.getJSONObject("company");
                             TV_service_date.    setText(globalVariable.dateformat(data.getString("service_date")));
-                            TV_address .        setText(company.getString("address"));
+                            TV_address .        setText(company.getString("company")+" "+company.getString("address"));
                             //Toast.makeText(OrderConfirmationActivity.this, data.getString("service_date"), Toast.LENGTH_SHORT).show();
                                 String invoice_id    = data.getString("id");
                                 JSONArray ArrayCarts = data.getJSONArray("carts");

@@ -7,11 +7,14 @@ public class adapter_carts {
     String invoiceNumber    = null;
     String telephone        = null;
     String total            = null;
+    String service_date     = null;
     String address          = null;
     String gender           = null;
     String snap             = null;
+    String company_name     = null;
+    String company_address  = null;
 
-    public adapter_carts(String id, String name, String invoiceNumber, String telephone, String address, String status, String total,String gender, String snap) {
+    public adapter_carts(String id, String name, String invoiceNumber, String telephone, String address, String status, String total,String gender, String snap,String service_date, String company_name, String company_city) {
         super();
         this.id             = id;
         this.name           = name;
@@ -22,6 +25,9 @@ public class adapter_carts {
         this.status         = status;
         this.gender         = gender;
         this.snap           = snap;
+        this.service_date   = service_date;
+        this.company_name   = company_name;
+        this.company_address= company_city;
     }
 
     public String getID() {
@@ -85,5 +91,26 @@ public class adapter_carts {
     }
     public void setSnap(String snap) {
         this.snap = snap;
+    }
+
+    public void setService_date(String service_date) {
+        this.service_date = service_date;
+    }
+    public String getService_date() {
+        return service_date;
+    }
+
+    public String getCompany_name() {
+        return company_name;
+    }
+    public void setCompany_name(String company_name) {
+        this.company_name = company_name;
+    }
+
+    public String getCompany_address() {
+        return company_address;
+    }
+    public void setCompany_address(String company_address) {
+        this.company_address = company_address;
     }
 }//String id, String qty, String subtotal, String image, String title, String slug, String description, String product_price, String discount

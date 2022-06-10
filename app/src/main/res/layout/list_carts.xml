@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="@dimen/dp3"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <androidx.cardview.widget.CardView
@@ -10,6 +11,7 @@
         android:layout_marginTop="@dimen/dp3"
         android:layout_marginLeft="@dimen/dp20"
         android:layout_marginRight="@dimen/dp20"
+        android:layout_marginBottom="@dimen/dp3"
         app:layout_constraintVertical_bias="0.0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,30 +35,89 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
-                <ImageView
-                    android:background="@color/red"
-                    android:id="@+id/delete_order"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:src="@drawable/vertor_icon_delete"
-                    android:layout_gravity="right" />
-                <TextView
-                    android:id="@+id/carts_name_list"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Name"/>
-                <TextView
-                    android:layout_weight="1"
-                    android:id="@+id/carts_phone"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Phone"/>
-                <TextView
-                    android:layout_weight="1"
-                    android:id="@+id/carts_address"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="address"/>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+                        <TableLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/patient_name"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=" : "/>
+
+                                <TextView
+                                    android:maxLines="2"
+                                    android:id="@+id/carts_name_list"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content" />
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/arrival_date"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=" : "/>
+                                <TextView
+                                    android:layout_weight="1"
+                                    android:id="@+id/carts_date"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="date"/>
+                            </TableRow>
+                            <TableRow
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content">
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="@string/outlet_city"/>
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text=" : "/>
+                                <TextView
+                                    android:layout_weight="1"
+                                    android:id="@+id/carts_address"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="address"/>
+                            </TableRow>
+                        </TableLayout>
+                        <TextView
+                            android:visibility="gone"
+                            android:layout_weight="1"
+                            android:id="@+id/carts_phone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Phone"/>
+                    </LinearLayout>
+                    <ImageView
+                        android:background="@color/red"
+                        android:id="@+id/delete_order"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:src="@drawable/vertor_icon_delete"
+                        android:layout_gravity="right" />
+                </LinearLayout>
                 <TextView
                     android:layout_gravity="end"
                     android:textSize="@dimen/dp20"

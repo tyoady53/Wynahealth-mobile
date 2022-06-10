@@ -57,7 +57,7 @@ public class SplashScreen extends AppCompatActivity {
         local_data  = new Local_Data(getApplicationContext());
         mApiService = UtilsApi.getAPI();
         globalVariable = (GlobalVariable)getApplicationContext();
-
+        globalVariable.setLast_open("home");
         try {
             String versionName = getApplicationContext().getPackageManager()
                 .getPackageInfo(getApplicationContext().getPackageName(), 0).versionName;

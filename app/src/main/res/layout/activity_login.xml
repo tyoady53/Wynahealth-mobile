@@ -25,7 +25,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="E-Registration"
+            android:text="@string/app_title"
             android:textAlignment="center"
             android:textSize="30sp" />
     </LinearLayout>
@@ -33,7 +33,7 @@
     <RelativeLayout
         android:layout_marginTop="@dimen/dp20"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:background="@drawable/top_round"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -110,7 +110,7 @@
                         android:hint="@string/password"
                         android:inputType="textPassword"
                         android:maxLines="1"
-                        android:textSize="@dimen/MoreTextSize"/>
+                        android:textSize="@dimen/MoreTextSize" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
@@ -120,6 +120,7 @@
                     android:orientation="horizontal">
 
                     <RelativeLayout
+                        android:padding="@dimen/dp3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
@@ -135,6 +136,7 @@
                     </RelativeLayout>
 
                     <RelativeLayout
+                        android:padding="@dimen/dp3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"

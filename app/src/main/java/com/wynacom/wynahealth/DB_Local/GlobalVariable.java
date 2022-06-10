@@ -17,7 +17,7 @@ import java.util.Locale;
 
 public class GlobalVariable extends Application {
     private String token,patient_id,UserID,orderId,discountTotal,priceTotal,order_size,list_view;
-    String gender=null,booked=null,ol_patient_id=null,datapatient_id=null,ol_company_id=null,dokter=null,perusahaan=null,service_date=null,ol_invoice_id=null;
+    String gender=null,booked=null,ol_patient_id=null,datapatient_id=null,ol_company_id=null,dokter=null,perusahaan=null,service_date=null,ol_invoice_id=null,last_open = null;
     Date d;
     private List<String> globalArrayList;
     ArrayList<String> selected = new ArrayList<>();
@@ -145,6 +145,13 @@ public class GlobalVariable extends Application {
             UserID = cursor.getString(0);
         }
         return UserID;
+    }
+
+    public void setLast_open(String last_open) {
+        this.last_open = last_open;
+    }
+    public String getLast_open() {
+        return last_open;
     }
 
     public String getToken(){

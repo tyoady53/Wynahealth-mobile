@@ -23,6 +23,7 @@
                     android:layout_height="wrap_content"
                     android:text="Title"/>
                 <Spinner
+                    android:background="@drawable/spinner_noborder"
                     android:layout_marginLeft="@dimen/dp10"
                     android:layout_marginRight="@dimen/dp10"
                     android:id="@+id/prompt_title"
@@ -72,6 +73,7 @@
                     android:layout_height="wrap_content"
                     android:text="@string/gender"/>
                 <Spinner
+                    android:background="@drawable/spinner_noborder"
                     android:layout_marginLeft="@dimen/dp10"
                     android:layout_marginRight="@dimen/dp10"
                     android:id="@+id/prompt_jeniskelamin"
