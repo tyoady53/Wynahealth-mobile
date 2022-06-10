@@ -38,7 +38,7 @@
             android:name=".transaction.SelectProductActivity"
             android:exported="false"
             android:label="@string/label_choose_test"
-            android:theme="@style/Theme.Wynahealth"/>
+            android:theme="@style/Theme.Wynahealth.NoActionBar"/>
         <activity
             android:name=".EmailVerificationActivity"
             android:exported="false"/>

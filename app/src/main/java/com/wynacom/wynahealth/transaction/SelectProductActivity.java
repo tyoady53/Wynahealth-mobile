@@ -69,8 +69,8 @@ public class SelectProductActivity extends AppCompatActivity {
     private MyCustomAdapter dataProduct = null;
     private ArrayList<adapter_product> list_product;
     ListView listViewProduct;
-    TextView TV_patient_name;
-    String Name,booked,orderType,gender,token,bearer,last_page,string_now_page,nowPage;
+    TextView TV_patient_name,TV_service_date,TV_address;
+    String Name,booked,orderType,gender,token,bearer,last_page,string_now_page,nowPage,description;
     Button next,prev;
     int int_last_page,max_page,NowPage;
     LakuePagingButton lpb_buttonlist;
@@ -98,11 +98,15 @@ public class SelectProductActivity extends AppCompatActivity {
 
         listViewProduct = findViewById(R.id.list_product_order);
         TV_patient_name = findViewById(R.id.patient_order);
+        TV_service_date = findViewById(R.id.select_show_date);
+        TV_address      = findViewById(R.id.select_show_address);
+
         next            = findViewById(R.id.next);
         prev            = findViewById(R.id.prev);
         lpb_buttonlist  = findViewById(R.id.lpb_buttonList);
 
         TV_patient_name.setText(Name);
+
 
         getCarts("1");
 
@@ -145,7 +149,7 @@ public class SelectProductActivity extends AppCompatActivity {
         if (orderType.equals("edit")){
             prev.setVisibility(View.GONE);
         } else {
-            prev.setVisibility(View.VISIBLE);
+            prev.setVisibility(View.GONE);
         }
     }
 
@@ -164,6 +168,9 @@ public class SelectProductActivity extends AppCompatActivity {
                             JSONObject pass   = jsonRESULTS.getJSONObject("data");
                             JSONObject jsonObject   = pass.getJSONObject("data");
                             JSONArray carts =  jsonObject.getJSONArray("carts");
+                            JSONObject company  = jsonObject.getJSONObject("company");
+                            TV_service_date .setText(globalVariable.dateformat(jsonObject.getString("service_date")));
+                            TV_address      .setText(company.getString("company")+" "+company.getString("address"));
                             for (int i = 0; i < carts.length(); i++) {
                                 if(carts.length()>0){
                                     JSONObject dataCarts = carts.getJSONObject(i);
@@ -185,7 +192,7 @@ public class SelectProductActivity extends AppCompatActivity {
                                 String id            = c.getString("id");
                                 String title         = c.getString("title");
                                 String ol_category_id= c.getString("ol_category_id");
-                                String description   = c.getString("description");
+                                String description1  = c.getString("description");
                                 String price         = c.getString("price");
                                 String stock         = c.getString("stock");
                                 String discount      = c.getString("discount");
@@ -198,6 +205,11 @@ public class SelectProductActivity extends AppCompatActivity {
                                     if(id_product==id){
                                         checked = true;
                                     }
+                                }
+                                if (description1.equals("null")){
+                                    description = "";
+                                } else {
+                                    description = description1;
                                 }
                                 //Toast.makeText(SelectProductActivity.this, "data : "+id + " with ID : "+id_product+" is "+ String.valueOf(checked), Toast.LENGTH_SHORT).show();
                                 adapter_product _states = new adapter_product(id,title,ol_category_id,description,price,discount,slug,image,checked);

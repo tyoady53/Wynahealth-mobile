@@ -9,6 +9,7 @@ import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -41,6 +42,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
@@ -109,8 +111,8 @@ public class RegisterActivity extends AppCompatActivity {
         globalVariable  = (GlobalVariable) getApplicationContext();
         mApiService = UtilsApi.getAPI();
 
-        checkBox = findViewById(R.id.chckbox);
-        cardcheck= findViewById(R.id.card_chck);
+        checkBox    = findViewById(R.id.chckbox);
+        cardcheck   = findViewById(R.id.card_chck);
         btn_captcha = findViewById(R.id.btn_captcha);
 
         sp_title    = findViewById(R.id.regis_title);
@@ -133,19 +135,69 @@ public class RegisterActivity extends AppCompatActivity {
         checkBoxsk  = findViewById(R.id.regis_sk_chckbox);
 
 
-        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int day) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH,month);
-                myCalendar.set(Calendar.DAY_OF_MONTH,day);
-                updateLabel();
-            }
-        };
+//        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
+//            @Override
+//            public void onDateSet(DatePicker view, int year, int month, int day) {
+//                myCalendar.set(Calendar.YEAR, year);
+//                myCalendar.set(Calendar.MONTH,month);
+//                myCalendar.set(Calendar.DAY_OF_MONTH,day);
+//                updateLabel();
+//            }
+//        };
         age.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(RegisterActivity.this,date,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+                final Calendar calendar = Calendar.getInstance();
+                //set time zone
+                calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(RegisterActivity.this,
+                    new DatePickerDialog.OnDateSetListener() {
+                        public void onDateSet(DatePicker view, int year, int month, int day) {
+                            myCalendar.set(Calendar.YEAR, year);
+                            myCalendar.set(Calendar.MONTH,month);
+                            myCalendar.set(Calendar.DAY_OF_MONTH,day);
+                            updateLabel();
+                        }
+                    },myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH));
+
+                //datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+
+                //Set Today date to calendar
+                final Calendar calendar2 = Calendar.getInstance();
+                //Set Minimum date of calendar
+                int tahun = Calendar.getInstance().get(Calendar.YEAR);
+                int bulan = Calendar.getInstance().get(Calendar.MONTH);
+                int tanggal = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+                calendar2.set(tahun, bulan, tanggal);
+                datePickerDialog.getDatePicker().setMaxDate(calendar2.getTimeInMillis());
+                //datePickerDialog.setTitle("Select Date");
+                datePickerDialog.show();
+            }
+        });
+
+        sp_title.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sp_kelamin.setSelection(position);
+                sp_kelamin.setEnabled(false);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        sp_kelamin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sp_title.setSelection(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -202,7 +254,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void updateLabel(){
-        String myFormat="yyyy-MM-dd";
+        String myFormat="dd-MMM-yyyy";
         SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
         age.setText(dateFormat.format(myCalendar.getTime()));
     }
@@ -223,12 +275,11 @@ public class RegisterActivity extends AppCompatActivity {
         stringkota  = sp_kota.getSelectedItem().toString();
         stringkodepos = postal.getText().toString();
         stringhp    = phone.getText().toString();
-        stringumur  = age.getText().toString();
+        stringumur  = globalVariable.reversedateformat(age.getText().toString());
         passwd      = passwords.getText().toString();
         passwdr     = passwordsrep.getText().toString();
 
         Map<String, Object> jsonParams = new ArrayMap<>();
-//put something inside the map, could be null
         jsonParams.put("title",             stringTitle);
         jsonParams.put("patient_name",      namalengkap);
         jsonParams.put("email",             stringemail);

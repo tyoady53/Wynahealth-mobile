@@ -24,7 +24,7 @@ public class Adapter_Data_Carts extends ArrayAdapter<adapter_carts> {
     }
 
     private static class ViewHolder {
-        TextView name,Vphone,Vaddress,Vtotal;
+        TextView name,Vphone,Vaddress,Vdate,Vtotal;
         View status_color;
     }
 
@@ -39,16 +39,15 @@ public class Adapter_Data_Carts extends ArrayAdapter<adapter_carts> {
         holder.name          = (TextView) convertView.findViewById(R.id.carts_name_list);
         holder.Vphone        = (TextView) convertView.findViewById(R.id.carts_phone);
         holder.Vaddress      = (TextView) convertView.findViewById(R.id.carts_address);
+        holder.Vdate         = (TextView) convertView.findViewById(R.id.carts_date);
         holder.Vtotal        = (TextView) convertView.findViewById(R.id.carts_total);
 
         final adapter_carts state = stateList.get(position);
 
         holder.name         .setText(state.getNames());
-        holder.Vphone       .setText(state.getAddress()
-
-
-        );
-        holder.Vaddress     .setText(state.getAddress());
+        holder.Vphone       .setText(state.getCompany_name()+" "+state.getCompany_address());
+        holder.Vaddress     .setText(state.getCompany_name()+" "+state.getCompany_address());//
+        holder.Vtotal       .setText(state.getService_date());
         Locale localeID = new Locale("in", "ID");
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
         String c = nf.format(Integer.parseInt(state.getTotal()));

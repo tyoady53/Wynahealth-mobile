@@ -60,6 +60,22 @@
         <item>Bandung</item>
     </string-array>
 
+    <string-array name="outlet_city">
+        <item>Please Select</item>
+        <item>Hermina Jakarta</item>
+        <item>Hermina Bandung</item>
+    </string-array>
+
+    <string-array name="hermina_jakarta">
+        <item>Jatinegara</item>
+        <item>Daan Mogot</item>
+    </string-array>
+
+    <string-array name="hermina_bandung">
+        <item>Arcamanik</item>
+        <item>Pasteur </item>
+    </string-array>
+
     <string-array name="filter">
         <item>All Status</item>
         <item>Payment Success</item>
@@ -126,4 +142,10 @@
     <string name="label_choose_patient">Choose Patient</string>
     <string name="label_choose_test">Choose Test to Order</string>
     <string name="string_title">Title</string>
+    <string name="patient_name">Patient Name</string>
+    <string name="app_title">E-Registration</string>
+
+    <string name="choose_patient_first">Please Choose Patient</string>
+    <string name="choose_date_first">Please Choose Date</string>
+    <string name="outlet_city">Outlet City</string>
 </resources>

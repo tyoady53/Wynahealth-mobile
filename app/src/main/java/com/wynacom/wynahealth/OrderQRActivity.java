@@ -400,6 +400,7 @@ public class OrderQRActivity extends AppCompatActivity implements TransactionFin
     }
 
     public void gotohome(View view) {
+        globalVariable.setLast_open("home");
         Intent i = new Intent(OrderQRActivity.this, MainActivity.class);
         i.putExtra("from", "invoice_show");
         startActivity(i);

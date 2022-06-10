@@ -54,7 +54,6 @@
                     android:id="@+id/spinner_patient_order"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Title"
                     android:maxLines="1"
                     android:padding="@dimen/dp3" />
             </LinearLayout>
@@ -299,12 +298,37 @@
                         android:text="@string/city" />
 
                     <Spinner
+                        android:background="@drawable/spinner_noborder"
+                        android:entries="@array/outlet_city"
                         android:id="@+id/order_city_spinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginBottom="@dimen/dp3"
-                        android:hint="Title"
-                        android:maxLines="1" />
+                        android:layout_marginBottom="@dimen/dp3" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layout_outlet"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp10"
+                    android:layout_marginTop="@dimen/dp10"
+                    android:layout_marginRight="@dimen/dp10"
+                    android:background="@drawable/edittextround"
+                    android:orientation="vertical"
+                    android:padding="@dimen/dp3">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/city" />
+
+                    <Spinner
+                        android:background="@drawable/spinner_noborder"
+                        android:id="@+id/order_outlet_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="@dimen/dp3" />
                 </LinearLayout>
 
                 <com.google.android.material.textfield.TextInputLayout

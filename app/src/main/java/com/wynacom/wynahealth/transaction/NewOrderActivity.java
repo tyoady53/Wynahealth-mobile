@@ -17,7 +17,6 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -55,13 +54,16 @@ public class NewOrderActivity extends AppCompatActivity {
     private ArrayList<adapter_patient> List;
     String token,bearer,strFixedPosition,patient_id,snap,strTotal,strDoctor,strCompany,id_user,gender,
         booked,ol_patient_id,datapatient_id,ol_company_id,dokter,perusahaan,service_date,ol_invoice_id;
-    Spinner Sp_order_city,Sp_order_time,spinner;
+    Spinner Sp_order_city,Sp_order_time,spinner,Sp_order_outlet;
     EditText ET_order_date,ET_order_doctor,ET_order_address;
     GlobalVariable globalVariable;
     TextView orderName,orderPhone,orderGender,orderDOB,orderNIK,orderCity,TV_total_orders;
     Button next1,next,prev;
-    LinearLayout step1,step2,lineDataPatient;
+    LinearLayout step1,step2,lineDataPatient,layout_outlet;
     int cartsStatus,fixed_index;
+
+    ArrayAdapter<CharSequence> hermina_jakarta;
+    ArrayAdapter<CharSequence> hermina_bandung;
 
     final Calendar myCalendar= Calendar.getInstance();
 
@@ -91,6 +93,8 @@ public class NewOrderActivity extends AppCompatActivity {
         lineDataPatient = findViewById(R.id.order_data_patient);
         lineDataPatient.setVisibility(View.GONE);
 
+        layout_outlet   = findViewById(R.id.layout_outlet);
+
         orderName       = findViewById(R.id.order_patient_name);
         orderPhone      = findViewById(R.id.order_patient_phone);
         orderGender     = findViewById(R.id.order_patient_sex);
@@ -99,18 +103,17 @@ public class NewOrderActivity extends AppCompatActivity {
         orderCity       = findViewById(R.id.order_patient_city);
 
         Sp_order_city   = findViewById(R.id.order_city_spinner);
+        Sp_order_outlet = findViewById(R.id.order_outlet_spinner);
         Sp_order_time   = findViewById(R.id.order_time_spinner);
 
         ET_order_date   = findViewById(R.id.order_date_et);
         ET_order_doctor = findViewById(R.id.order_doctor_et);
         ET_order_address= findViewById(R.id.order_address_et);
 
-        java.util.List<String> list = new ArrayList<>();
-        list.add("Jakarta");
-        list.add("Bandung");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.spinner_item,list);
-        dataAdapter.setDropDownViewResource(R.layout.spinner_item);
-        Sp_order_city.setAdapter(dataAdapter);
+        hermina_jakarta = ArrayAdapter.createFromResource(this, R.array.hermina_jakarta, android.R.layout.simple_spinner_item);
+        hermina_bandung = ArrayAdapter.createFromResource(this, R.array.hermina_bandung, android.R.layout.simple_spinner_item);
+        hermina_jakarta.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        hermina_bandung.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         List<String> list2 = new ArrayList<>();
         list2.add("08.00 - 10.00");
@@ -125,14 +128,35 @@ public class NewOrderActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String ed_text = ET_order_date.getText().toString().trim();
-                if(spinner.getSelectedItem().toString().equals("Pilih")){
-                    Toast.makeText(getApplicationContext(),"Silahkan Pilih Pasien",Toast.LENGTH_SHORT).show();
+                if(spinner.getSelectedItemPosition()==0){
+                    createToast("Please choose patient!",Type.DANGER);
                 }else if(ed_text.isEmpty()){
-                    Toast.makeText(getApplicationContext(),"Silahkan Pilih Tanggal Datang",Toast.LENGTH_SHORT).show();
+                    createToast("Please select arrival date!",Type.DANGER);
                 }else{
                     globalVariable.setOrderId(patient_id);
                     generateBooking();
                 }
+            }
+        });
+
+        Sp_order_city.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position>0){
+                    layout_outlet.setVisibility(View.VISIBLE);
+                    if(position==1){
+                        Sp_order_outlet.setAdapter(hermina_jakarta);
+                    } else if(position==2){
+                        Sp_order_outlet.setAdapter(hermina_bandung);
+                    }
+                }else{
+                    layout_outlet.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -173,7 +197,7 @@ public class NewOrderActivity extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 //Toast.makeText(OrderActivity.this, "Selected index : "+String.valueOf(position), Toast.LENGTH_SHORT).show();
                 fixed_index = position-1;
-                if(spinner.getSelectedItem().equals("Pilih")){
+                if(spinner.getSelectedItem().equals("Choose Patient")){
                     lineDataPatient.setVisibility(View.GONE);
                 }else{
                     lineDataPatient.setVisibility(View.VISIBLE);
@@ -194,6 +218,7 @@ public class NewOrderActivity extends AppCompatActivity {
     }
 
     private void generateBooking() {
+        String company_id = null;
         if(ET_order_doctor.getText().toString().equals("")){
             strDoctor = "-";
         } else {
@@ -204,11 +229,20 @@ public class NewOrderActivity extends AppCompatActivity {
         } else {
             strCompany = ET_order_address.getText().toString();
         }
+        if(Sp_order_outlet.getSelectedItem().toString().equals("Jatineara")){
+            company_id = "1";
+        } else if(Sp_order_outlet.getSelectedItem().toString().equals("Daan Mogot")){
+            company_id = "2";
+        } else if(Sp_order_outlet.getSelectedItem().toString().equals("Arcamanik")){
+            company_id = "3";
+        } else if(Sp_order_outlet.getSelectedItem().toString().equals("Pasteur")){
+            company_id = "4";
+        }
         String date = globalVariable.reversedateformat(ET_order_date.getText().toString());
         Map<String, Object> jsonParams = new ArrayMap<>();
 //put something inside the map, could be null
         jsonParams.put("datapatient_id" , patient_id);
-        jsonParams.put("ol_company_id"  , Sp_order_city.getSelectedItemPosition()+1);
+        jsonParams.put("ol_company_id"  , company_id);
         jsonParams.put("service_date"   , date);
         jsonParams.put("dokter"         , strDoctor);
         jsonParams.put("perusahaan"     , strCompany);
@@ -338,7 +372,7 @@ public class NewOrderActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                    createToast("Data not found",Type.DANGER);
                 }
             }
             @Override
@@ -414,13 +448,13 @@ public class NewOrderActivity extends AppCompatActivity {
                                 setspinner();
                             }
                         } else {
-                            Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                            createToast("Data not found",Type.DANGER);
                         }
                     } catch (JSONException | IOException e) {
                         e.printStackTrace();
                     }
                 } else {
-                    Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                    createToast("This data not available",Type.DANGER);
                 }
             }
             @Override
@@ -430,11 +464,19 @@ public class NewOrderActivity extends AppCompatActivity {
         });
     }
 
+    private void createToast(String message, Type type) {
+        Cue.init().with(getApplicationContext())
+            .setMessage(message)
+            .setGravity(Gravity.CENTER_VERTICAL)
+            .setTextSize(20).setType(type)
+            .show();
+    }
+
     private void setspinner() {
         dataAdapter = new Adapter_Data_Patient(getApplicationContext(),R.layout.list_patient, List);
         int length = dataAdapter.getCount();
         java.util.List<String> list2 = new ArrayList<>();
-        list2.add("Pilih");
+        list2.add("Choose Patient");
         for(int i = 0;i<length;i++){
             final adapter_patient state = List.get(i);
             list2.add(state.getNama());

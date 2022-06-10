@@ -79,7 +79,7 @@ public class CartsActivity extends AppCompatActivity {
 
         progressBar     = findViewById(R.id.progress_bar_image);
 
-        listView            = findViewById(R.id.carts_list);
+        listView        = findViewById(R.id.carts_list);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -191,14 +191,17 @@ public class CartsActivity extends AppCompatActivity {
                                 String handphone     = c.getString("handphone");
                                 String city          = c.getString("city");
                                 String invoiceNumber = c.getString("booked");
-                                String status        = c.getString("service_date");
+                                String status        = c.getString("status");
+                                String service_date  = c.getString("service_date");
                                 String total         = c.getString("amount");
                                 String snap          = c.getString("snap_token");
                                 String gender        = c.getString("gender");
+                                String companyName   = c.getString("company_name");
+                                String companyAddress= c.getString("company_address");
                                 if(total.equals("null")){
                                     total="0";
                                 }
-                                    adapter_carts _states = new adapter_carts(id,name, invoiceNumber,handphone,city, status, total,gender, snap);
+                                    adapter_carts _states = new adapter_carts(id,name, invoiceNumber,handphone,city, status, total,gender, snap, service_date,companyName,companyAddress);
                                     list_carts.add(_states);
                                     bindData();
                             }
@@ -220,7 +223,7 @@ public class CartsActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
-                    Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                    Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL).setTextSize(20).setType(Type.PRIMARY).show();
                 }
             }
             @Override
@@ -265,7 +268,7 @@ public class CartsActivity extends AppCompatActivity {
         }
 
         private class ViewHolder {
-            TextView name,Vphone,Vaddress,Vtotal;
+            TextView name,Vphone,Vaddress,Vtotal,Vdate;
             View status_color;
             ImageView delete;
             String H_service_date;
@@ -281,6 +284,7 @@ public class CartsActivity extends AppCompatActivity {
             holder = new ViewHolder();
             holder.name          = (TextView) convertView.findViewById(R.id.carts_name_list);
             holder.Vphone        = (TextView) convertView.findViewById(R.id.carts_phone);
+            holder.Vdate         = (TextView) convertView.findViewById(R.id.carts_date);
             holder.Vaddress      = (TextView) convertView.findViewById(R.id.carts_address);
             holder.Vtotal        = (TextView) convertView.findViewById(R.id.carts_total);
             holder.delete        = (ImageView) convertView.findViewById(R.id.delete_order);
@@ -347,8 +351,9 @@ public class CartsActivity extends AppCompatActivity {
             }
             holder.name         .setText(titles+state.getNames());
             holder.Vphone       .setText(state.getTelephone());
-            holder.H_service_date= globalVariable.dateformat(state.getStatus());
-            holder.Vaddress     .setText(holder.H_service_date);
+            holder.H_service_date= globalVariable.dateformat(state.getService_date());
+            holder.Vdate        .setText(holder.H_service_date);
+            holder.Vaddress     .setText(state.getCompany_name()+" "+state.getCompany_address());
             Locale localeID = new Locale("in", "ID");
             NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
             String c = nf.format(Integer.parseInt(state.getTotal()));
@@ -362,7 +367,7 @@ public class CartsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        //intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         startActivity(intent);
     }
 }

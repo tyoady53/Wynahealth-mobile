@@ -26,6 +26,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -102,7 +103,8 @@ public class HomeFragment extends Fragment {
     SwipeMenuListView listView;
     private BaseApiService mApiService,ApiGetMethod;
     ArrayList<String> names = new ArrayList<String>();
-    LinearLayout linearLayout,linearInfo,linearList,linearCard;
+    LinearLayout linearLayout,linearList,linearCard;
+    RelativeLayout linearInfo;
     CardView cardInfo;
     Button buttonPatient;
     FloatingActionButton fab_home;
@@ -382,6 +384,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void refreshList(String string_nowPage) {
+        globalVariable.setLast_open("home");
         Call<ResponseBody> listCall = ApiGetMethod.getdatapatient(bearer,string_nowPage);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
@@ -547,7 +550,6 @@ public class HomeFragment extends Fragment {
                             if (jsonRESULTS.getString("success").equals("true")){
                                 if(dataAdapter.getCount()>0) {
                                     dataAdapter.clear();
-                                    //listView.setAdapter(null);
                                 }
                                 createToast("Edit data success",Type.SUCCESS);
                                 refreshList("1");
@@ -615,33 +617,35 @@ public class HomeFragment extends Fragment {
             title = getString(R.string.add_patient);
         }
 
-        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
-            @Override
-            public void onDateSet(DatePicker view, int year, int month, int day) {
-                myCalendar.set(Calendar.YEAR, year);
-                myCalendar.set(Calendar.MONTH,month);
-                myCalendar.set(Calendar.DAY_OF_MONTH,day);
-                String myFormat="dd-MMM-yyyy";
-                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
-                age.setText(dateFormat.format(myCalendar.getTime()));
-
-
-            }
-        };
+//        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
+//            @Override
+//            public void onDateSet(DatePicker view, int year, int month, int day) {
+//                myCalendar.set(Calendar.YEAR, year);
+//                myCalendar.set(Calendar.MONTH,month);
+//                myCalendar.set(Calendar.DAY_OF_MONTH,day);
+//                String myFormat="dd-MMM-yyyy";
+//                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
+//                age.setText(dateFormat.format(myCalendar.getTime()));
+//            }
+//        };
 
         age.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String myFormat="dd-MMM-yyyy";
+                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
                 DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                     new DatePickerDialog.OnDateSetListener() {
                         public void onDateSet(DatePicker view, int year, int month, int day) {
                             myCalendar.set(Calendar.YEAR, year);
                             myCalendar.set(Calendar.MONTH,month);
                             myCalendar.set(Calendar.DAY_OF_MONTH,day);
+                            age.setText(dateFormat.format(myCalendar.getTime()));
                         }
                     },myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH));
                 //,myCalendar.get(Calendar.YEAR),myCalendar.get(Calendar.MONTH),myCalendar.get(Calendar.DAY_OF_MONTH)).show();
                 //Set Today date to calendar
+
                 final Calendar calendar2 = Calendar.getInstance();
                 //Set Minimum date of calendar
                 int tahun = Calendar.getInstance().get(Calendar.YEAR);
@@ -658,6 +662,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 sp_title.setSelection(position);
+
             }
 
             @Override
@@ -670,6 +675,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 sp_kelamin.setSelection(position);
+                sp_kelamin.setEnabled(false);
             }
 
             @Override

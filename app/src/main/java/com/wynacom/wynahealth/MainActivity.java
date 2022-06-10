@@ -57,6 +57,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    BottomNavigationView navView;
     protected Cursor cursor,cursor2;
     boolean doubleBackToExitPressedOnce = false;
     Local_Data local_data;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
         }
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        setNavigation(globalVariable.getLast_open());
 
         cekDashboard();
         SQLiteDatabase dbU = order_data.getReadableDatabase();
@@ -105,12 +107,27 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void setNavigation(String last_open) {
+        switch (last_open){
+            case ("home") :
+                navView.setSelectedItemId(R.id.navigation_home);
+                break;
+            case ("transaction") :
+                navView.setSelectedItemId(R.id.navigation_dashboard);
+                break;
+            case ("utilities") :
+                navView.setSelectedItemId(R.id.navigation_notifications);
+                break;
+        }
+        //Toast.makeText(MainActivity.this, last_open, Toast.LENGTH_SHORT).show();
+    }
+
     private void cekDashboard() {
         SQLiteDatabase db1 = local_data.getReadableDatabase();
         cursor = db1.rawQuery("SELECT * FROM TB_User", null);
         cursor.moveToFirst();
         if (cursor.getCount()>0) {
-            String email    = cursor.getString(8);
+            String email        = cursor.getString(8);
             String password     = cursor.getString(4);
             createDashoardData(email,password);
         }
@@ -177,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
         listCall.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                    if (response.isSuccessful()){
+//                    if (response.isSuccessful()){
                         try {
                             JSONObject jsonRESULTS = new JSONObject(response.body().string());
                             if (jsonRESULTS.getString("success").equals("true")){
@@ -192,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                                 //Toast.makeText(MainActivity.this, "Success : "+content, Toast.LENGTH_SHORT).show();
                             } else {
                                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
-                                builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                                builder.setMessage("");
                                 builder.setTitle("Login Gagal");
                                 builder.setCancelable(true);
                                 builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
@@ -206,21 +223,22 @@ public class MainActivity extends AppCompatActivity {
                             }
                         } catch (JSONException | IOException e) {
                             e.printStackTrace();
+                            relogin(email,password);
                         }
-                    } else {
-                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
-                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
-                        builder.setTitle("Login Gagal");
-                        builder.setCancelable(true);
-                        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        android.app.AlertDialog alertDialog = builder.create();
-                        alertDialog.show();
-                    }
+//                    } else {
+//                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
+//                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+//                        builder.setTitle("Login Gagal");
+//                        builder.setCancelable(true);
+//                        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                                dialog.dismiss();
+//                            }
+//                        });
+//                        android.app.AlertDialog alertDialog = builder.create();
+//                        alertDialog.show();
+//                    }
                 }
 
             @Override
@@ -253,6 +271,7 @@ public class MainActivity extends AppCompatActivity {
                                     String hash  = userObj.getString("password");
                                     local_data.UpdateToken(email,token,hash);
                                     globalVariable.setToken(token);
+                                    createDashoardData(email,password);
                                 } else {
                                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
                                     builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
@@ -322,8 +341,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void gotocart() {
-        Intent login = new Intent(getApplicationContext(), CartsActivity.class);
-        //login.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK|Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        Intent login = new Intent(MainActivity.this, CartsActivity.class);
+        login.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(login);
     }
 
@@ -393,7 +412,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.e("debug", "onFailure: ERROR > " + t.toString());
-                    Cue.init().with(getApplicationContext()).setMessage("Tidak dapat terhubung ke server."+t.toString()).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
+                    Cue.init().with(getApplicationContext()).setMessage("Cannot connect to Server.").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
                 }
             });
     }
