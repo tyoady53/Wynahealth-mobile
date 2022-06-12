@@ -393,6 +393,7 @@ public class HomeFragment extends Fragment {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
+                            Toast.makeText(getContext(), "Home : success", Toast.LENGTH_SHORT).show();
                             JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
                             String total            = jsonObject.getString("total");
                             last_page               = jsonObject.getString("last_page");
@@ -424,6 +425,7 @@ public class HomeFragment extends Fragment {
                             }//setPaging(string_nowPage);
                             textView_dataPatientTile.setText(getString(R.string.family_data)+" ("+total+")");
                         } else {
+                            Toast.makeText(getContext(), "Home : success is false", Toast.LENGTH_SHORT).show();
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");
                             builder.setTitle("List Patient");
@@ -438,14 +440,17 @@ public class HomeFragment extends Fragment {
                             alertDialog.show();
                         }
                     } catch (JSONException | IOException e) {
+                        Toast.makeText(getContext(), "Home : catch exception", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
                 } else {
+                    Toast.makeText(getContext(), "Home : if not successfully()", Toast.LENGTH_SHORT).show();
                     createToast("No Data Available",Type.DANGER);
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "Home : on failure", Toast.LENGTH_SHORT).show();
                 Log.e("debug", "onFailure: ERROR > " + t.toString());
             }
         });

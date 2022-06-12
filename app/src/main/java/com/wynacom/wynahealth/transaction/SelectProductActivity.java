@@ -63,6 +63,8 @@ import retrofit2.Response;
 public class SelectProductActivity extends AppCompatActivity {
 
     boolean checked = false;
+    ImageView back_arrow;
+    TextView title;
 
     GlobalVariable globalVariable;
     private BaseApiService ApiGetMethod;
@@ -104,6 +106,18 @@ public class SelectProductActivity extends AppCompatActivity {
         next            = findViewById(R.id.next);
         prev            = findViewById(R.id.prev);
         lpb_buttonlist  = findViewById(R.id.lpb_buttonList);
+
+        back_arrow      = findViewById(R.id.selectProduct_back);
+        title           = findViewById(R.id.selectProduct_title);
+        title.setText(getString(R.string.select_product_title));
+
+        back_arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CartsActivity.class);
+                startActivity(intent);
+            }
+        });
 
         TV_patient_name.setText(Name);
 

@@ -31,7 +31,6 @@ import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.adapter.carts.adapter_carts;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
-import com.wynacom.wynahealth.databinding.ActivityMainBinding;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,11 +50,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class CartsActivity extends AppCompatActivity {
-
-    private ActivityMainBinding binding;
-    ImageView back_arrow;
-    TextView title;
+public class CartsActivityCopy extends AppCompatActivity {
 
     ListView listView;
     GlobalVariable globalVariable;
@@ -74,8 +69,6 @@ public class CartsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_carts);
-//        binding = ActivityMainBinding.inflate(getLayoutInflater());
-//        setContentView(binding.getRoot());
         globalVariable  = (GlobalVariable) getApplicationContext();
         token           = globalVariable.getToken();
 
@@ -87,19 +80,6 @@ public class CartsActivity extends AppCompatActivity {
         progressBar     = findViewById(R.id.progress_bar_image);
 
         listView        = findViewById(R.id.carts_list);
-
-        back_arrow      = findViewById(R.id.carts_back);
-        title           = findViewById(R.id.carts_title);
-        title.setText(getString(R.string.carts_title));
-        //setSupportActionBar(binding.toolbar);
-
-        back_arrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
-        });
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -142,7 +122,7 @@ public class CartsActivity extends AppCompatActivity {
                             intent.putExtra("count",            count);
                             startActivity(intent);
                         } else {
-                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
                             builder.setMessage("Data Patient Kosong.");
                             builder.setTitle("List Patient");
                             builder.setCancelable(true);
@@ -152,7 +132,7 @@ public class CartsActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
                             });
-                            android.app.AlertDialog alertDialog = builder.create();
+                            AlertDialog alertDialog = builder.create();
                             alertDialog.show();
                         }
                     } catch (JSONException | IOException e) {
@@ -183,7 +163,7 @@ public class CartsActivity extends AppCompatActivity {
                         System.exit(0);
                     }
                 });
-                android.app.AlertDialog alertDialog = builder.create();
+                AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
         });
@@ -200,31 +180,33 @@ public class CartsActivity extends AppCompatActivity {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
                             progressBar.setVisibility(View.GONE);
-                            JSONObject jsonObject   = jsonRESULTS.  getJSONObject("data");
-                            JSONArray data          = jsonObject.   getJSONArray("data");
-                            for (int i = 0; i < data.length(); i++) {
-                                JSONObject c            = data.getJSONObject(i);
-                                String total            = c.getString("gross_amount");
-                                String id               = c.getString("id");
-                                String invoiceNumber    = c.getString("booked");
-                                String status           = c.getString("status");
-                                String service_date     = c.getString("service_date");
-                                String snap             = c.getString("snap_token");
-                                String gender           = c.getString("gender");
-                                JSONObject company      = c.getJSONObject("company");
-                                String companyName      = company.getString("company");
-                                String companyAddress   = company.getString("address");
-                                JSONObject datapatient  = c.getJSONObject("datapatient");
-                                String name             = datapatient.getString("name");
-                                String handphone        = datapatient.getString("handphone");
-                                String city             = datapatient.getString("city");
-
+                            //JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
+                            JSONArray jsonArray     = jsonRESULTS.getJSONArray("data");
+//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject c = jsonArray.getJSONObject(i);
+                                //JSONObject subjsonObject   = c.getJSONObject("datapatient");
+                                String id            = c.getString("id");
+                                String name          = c.getString("name");
+                                String handphone     = c.getString("handphone");
+                                String city          = c.getString("city");
+                                String invoiceNumber = c.getString("booked");
+                                String status        = c.getString("status");
+                                String service_date  = c.getString("service_date");
+                                String total         = c.getString("amount");
+                                String snap          = c.getString("snap_token");
+                                String gender        = c.getString("gender");
+                                String companyName   = c.getString("company_name");
+                                String companyAddress= c.getString("company_address");
+                                if(total.equals("null")){
+                                    total="0";
+                                }
                                     adapter_carts _states = new adapter_carts(id,name, invoiceNumber,handphone,city, status, total,gender, snap, service_date,companyName,companyAddress);
                                     list_carts.add(_states);
                                     bindData();
                             }
                         } else {
-                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
                             builder.setMessage("Data Patient Kosong.");
                             builder.setTitle("List Patient");
                             builder.setCancelable(true);
@@ -234,7 +216,7 @@ public class CartsActivity extends AppCompatActivity {
                                     dialog.dismiss();
                                 }
                             });
-                            android.app.AlertDialog alertDialog = builder.create();
+                            AlertDialog alertDialog = builder.create();
                             alertDialog.show();
                         }
                     } catch (JSONException | IOException e) {
@@ -265,7 +247,7 @@ public class CartsActivity extends AppCompatActivity {
                         System.exit(0);
                     }
                 });
-                android.app.AlertDialog alertDialog = builder.create();
+                AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }
         });

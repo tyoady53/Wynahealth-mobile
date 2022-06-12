@@ -17,7 +17,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -40,6 +42,7 @@ import com.wynacom.wynahealth.apihelper.UtilsApi;
 import com.wynacom.wynahealth.databinding.ActivityMainBinding;
 import com.wynacom.wynahealth.transaction.CartsActivity;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,6 +60,8 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    ImageView image_cart;
+    TextView text_cart;
     BottomNavigationView navView;
     protected Cursor cursor,cursor2;
     boolean doubleBackToExitPressedOnce = false;
@@ -69,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         local_data  = new Local_Data(getApplicationContext());
@@ -78,12 +82,17 @@ public class MainActivity extends AppCompatActivity {
         mApiService = UtilsApi.getAPI();
         ApiGetMethod= UtilsApi.getMethod();
 
+        image_cart      = findViewById(R.id.image_cart);
+        text_cart       = findViewById(R.id.text_cart);
+
         token           = globalVariable.getToken();
         bearer          = "Bearer "+token;
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
         }
+
+        setSupportActionBar(binding.toolbar);
 
         navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
@@ -97,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
         setNavigation(globalVariable.getLast_open());
 
         cekDashboard();
+        //setfab();
         SQLiteDatabase dbU = order_data.getReadableDatabase();
         cursor2 = dbU.rawQuery("SELECT * FROM TB_Orders", null);
         cursor2.moveToFirst();
@@ -105,7 +115,27 @@ public class MainActivity extends AppCompatActivity {
         }else{
             order_data.CloseDatabase();
         }
+
+        image_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gotocart();
+            }
+        });
     }
+
+//    private void setfab() {
+//        floatingActionButton.setVisibility(View.VISIBLE);
+//        String nowPage = globalVariable.getLast_open();
+//        switch (nowPage){
+//            case ("home"):
+//                floatingActionButton.setImageResource(R.drawable.vector_icon_plus);
+//                break;
+//            case ("transaction"):
+//                floatingActionButton.setImageResource(R.drawable.vector_list_add);
+//                break;
+//        }
+//    }
 
     private void setNavigation(String last_open) {
         switch (last_open){
@@ -123,17 +153,89 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void cekDashboard() {
-        SQLiteDatabase db1 = local_data.getReadableDatabase();
-        cursor = db1.rawQuery("SELECT * FROM TB_User", null);
-        cursor.moveToFirst();
-        if (cursor.getCount()>0) {
-            String email        = cursor.getString(8);
-            String password     = cursor.getString(4);
-            createDashoardData(email,password);
-        }
-        else {
-            System.exit(0);
-        }
+        Call<ResponseBody> listCall = ApiGetMethod.getcarts(bearer);
+        listCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                        if (jsonRESULTS.getString("success").equals("true")){
+                            Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
+                            JSONObject jsonObject   = jsonRESULTS.  getJSONObject("data");
+                            JSONArray data          = jsonObject.   getJSONArray("data");
+                            if(data.length() > 0){
+                                text_cart.setVisibility(View.VISIBLE);
+                                text_cart.setText(String.valueOf(data.length()));
+                            }else{
+                                text_cart.setVisibility(View.GONE);
+                            }
+                        } else {
+                            Toast.makeText(MainActivity.this, "success is false", Toast.LENGTH_SHORT).show();
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+                            builder.setMessage("Retry Loading Data?");
+                            builder.setTitle("Error Loading Data");
+                            builder.setCancelable(true);
+                            builder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    cekDashboard();
+                                }
+                            });
+                            builder.setNegativeButton("No, Exit", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    System.exit(0);
+                                }
+                            });
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        Toast.makeText(MainActivity.this, "exception catch", Toast.LENGTH_SHORT).show();
+                        e.printStackTrace();
+                    }
+                } else {
+                    Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL).setTextSize(20).setType(Type.PRIMARY).show();
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(MainActivity.this, "on Failure", Toast.LENGTH_SHORT).show();
+                Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+                builder.setMessage("Failed loading data. Do you want to retry?");
+                builder.setTitle("Error Load Data Order");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        cekDashboard();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                });
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+//        SQLiteDatabase db1 = local_data.getReadableDatabase();
+//        cursor = db1.rawQuery("SELECT * FROM TB_User", null);
+//        cursor.moveToFirst();
+//        if (cursor.getCount()>0) {
+//            String email        = cursor.getString(8);
+//            String password     = cursor.getString(4);
+//            createDashoardData(email,password);
+//        }
+//        else {
+//            System.exit(0);
+//        }
     }
 
 //    private void createDashoard(String token) {
@@ -326,9 +428,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.action_cart:
-                gotocart();
-                return true;
+//            case R.id.action_cart:
+//                gotocart();
+//                return true;
             case R.id.action_about:
                 return true;
             case R.id.action_settings:

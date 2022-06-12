@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -201,6 +202,7 @@ public class DashboardFragment extends Fragment {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
+                            Toast.makeText(getContext(), "Dashboard : success", Toast.LENGTH_SHORT).show();
                             JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
 //                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
@@ -251,6 +253,7 @@ public class DashboardFragment extends Fragment {
                                 }
                             }bindData();progress.setVisibility(View.GONE);
                         } else {
+                            Toast.makeText(getContext(), "Dashboard : success is false", Toast.LENGTH_SHORT).show();
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");
                             builder.setTitle("List Patient");
@@ -268,11 +271,13 @@ public class DashboardFragment extends Fragment {
                         e.printStackTrace();
                     }
                 } else {
-                    Cue.init().with(getContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
+                    Toast.makeText(getContext(), "Home : if not successfully()", Toast.LENGTH_SHORT).show();
+                    Cue.init().with(getContext()).setMessage("No data found").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Toast.makeText(getContext(), "Home : on failure", Toast.LENGTH_SHORT).show();
                 Log.e("debug", "onFailure: ERROR > refreshList" + t.toString());
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                 builder.setMessage("Failed loading data. Do you want to retry?");

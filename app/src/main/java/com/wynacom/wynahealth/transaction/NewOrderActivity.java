@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -50,6 +51,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class NewOrderActivity extends AppCompatActivity {
+
+    ImageView back_arrow;
+    TextView title;
 
     private ArrayList<adapter_patient> List;
     String token,bearer,strFixedPosition,patient_id,snap,strTotal,strDoctor,strCompany,id_user,gender,
@@ -109,6 +113,18 @@ public class NewOrderActivity extends AppCompatActivity {
         ET_order_date   = findViewById(R.id.order_date_et);
         ET_order_doctor = findViewById(R.id.order_doctor_et);
         ET_order_address= findViewById(R.id.order_address_et);
+
+        back_arrow      = findViewById(R.id.newOrder_back);
+        title           = findViewById(R.id.newOrder_title);
+        title.setText(getString(R.string.new_order_title));
+
+        back_arrow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(intent);
+            }
+        });
 
         hermina_jakarta = ArrayAdapter.createFromResource(this, R.array.hermina_jakarta, android.R.layout.simple_spinner_item);
         hermina_bandung = ArrayAdapter.createFromResource(this, R.array.hermina_bandung, android.R.layout.simple_spinner_item);

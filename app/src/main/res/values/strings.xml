@@ -148,4 +148,9 @@
     <string name="choose_patient_first">Please Choose Patient</string>
     <string name="choose_date_first">Please Choose Date</string>
     <string name="outlet_city">Outlet City</string>
+    <string name="outlet_address">Outlet Address</string>
+
+    <string name="carts_title">My Carts</string>
+    <string name="new_order_title">Create New Order</string>
+    <string name="select_product_title">Select test to order</string>
 </resources>
