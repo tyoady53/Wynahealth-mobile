@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -117,9 +118,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="20dp"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
 
                     <RelativeLayout
+                        android:layout_marginTop="@dimen/dp10"
                         android:padding="@dimen/dp3"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -127,6 +129,7 @@
                         android:gravity="center">
 
                         <Button
+                            android:onClick="login"
                             android:id="@+id/btn_login"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -142,8 +145,25 @@
                         android:layout_weight="1"
                         android:gravity="center">
 
-
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/not_have_account"/>
+                            <TextView
+                                android:id="@+id/registerHere"
+                                android:layout_marginStart="@dimen/dp5"
+                                android:textColor="@color/purple_700"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/register_here"/>
+                        </LinearLayout>
                         <Button
+                            android:visibility="gone"
                             android:id="@+id/btn_regis"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"

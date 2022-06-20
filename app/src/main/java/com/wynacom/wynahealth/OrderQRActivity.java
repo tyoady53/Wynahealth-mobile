@@ -26,11 +26,15 @@ import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.google.zxing.WriterException;
 import com.midtrans.sdk.corekit.callback.TransactionFinishedCallback;
+import com.midtrans.sdk.corekit.core.MidtransSDK;
 import com.midtrans.sdk.corekit.core.TransactionRequest;
 import com.midtrans.sdk.corekit.core.themes.CustomColorTheme;
+import com.midtrans.sdk.corekit.models.BankType;
 import com.midtrans.sdk.corekit.models.BillingAddress;
 import com.midtrans.sdk.corekit.models.CustomerDetails;
+import com.midtrans.sdk.corekit.models.ItemDetails;
 import com.midtrans.sdk.corekit.models.ShippingAddress;
+import com.midtrans.sdk.corekit.models.snap.CreditCard;
 import com.midtrans.sdk.corekit.models.snap.TransactionResult;
 import com.midtrans.sdk.uikit.SdkUIFlowBuilder;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
@@ -61,7 +65,7 @@ public class OrderQRActivity extends AppCompatActivity implements TransactionFin
     private EditText dataEdt;
     private Button generateQrBtn,Bt_Payment;
     private ListView listView;
-    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total,TV_invNo,TV_status,TV_gross,TV_discount,TV_service_date,TV_phone;
+    TextView TV_inv_date,TV_inv_time,TV_inv_patient,TV_inv_gender,TV_inv_dob,TV_inv_address,TV_inv_total,TV_invNo,TV_status,TV_gross,TV_discount,TV_service_date,TV_phone,TV_outlet;
     Bitmap bitmap;
     QRGEncoder qrgEncoder;
     private BaseApiService mApiService,ApiGetMethod;
@@ -108,6 +112,7 @@ public class OrderQRActivity extends AppCompatActivity implements TransactionFin
         TV_discount     = findViewById(R.id.discount_total);
         TV_service_date = findViewById(R.id.inv_service_date);
         TV_phone        = findViewById(R.id.inv_order_phone);
+        TV_outlet       = findViewById(R.id.inv_outlet);
 
         SdkUIFlowBuilder.init()
             .setClientKey("SB-Mid-client-vfcD9jB0fSaFu5AC") // client_key is mandatory
@@ -130,31 +135,31 @@ public class OrderQRActivity extends AppCompatActivity implements TransactionFin
         Bt_Payment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(OrderQRActivity.this, "On Developing", Toast.LENGTH_SHORT).show();
-//                TransactionRequest transactionRequest = new TransactionRequest("E-Registation Payment",Double.parseDouble(GrandTtl));
-//                ArrayList<ItemDetails> itemDetailsList = new ArrayList<>();
-//                for (int l = 0; l < List.size(); l++) {
-//                    String number = String.valueOf(l);
-//                    String name = String.valueOf(_states.getTitle());
-//                    Double price = Double.parseDouble(_states.getSubtotal());
-//                    ItemDetails itemDetails1 = new ItemDetails(number, price, 1, name);
-//                    itemDetailsList.add(itemDetails1);
-//                }
-//                CreditCard creditCardOptions = new CreditCard();
-//// Set to true if you want to save card to Snap
-//                creditCardOptions.setSaveCard(false);
-//// Set to true to save card token as `one click` token
-//// Set bank name when using MIGS channel
-//                creditCardOptions.setBank(BankType.BRI);
-//// Set MIGS channel (ONLY for BCA, BRI and Maybank Acquiring bank)
-//                creditCardOptions.setChannel(CreditCard.MIGS);
-//// Set Credit Card Options
-//                transactionRequest.setCreditCard(creditCardOptions);
-//
-//                uiKitDetails(transactionRequest);
-//                transactionRequest.setItemDetails(itemDetailsList);
-//                MidtransSDK.getInstance().setTransactionRequest(transactionRequest);
-//                MidtransSDK.getInstance().startPaymentUiFlow(OrderQRActivity.this,snap_token);
+                //Toast.makeText(OrderQRActivity.this, "On Developing", Toast.LENGTH_SHORT).show();
+                TransactionRequest transactionRequest = new TransactionRequest("E-Registation Payment",Double.parseDouble(GrandTtl));
+                ArrayList<ItemDetails> itemDetailsList = new ArrayList<>();
+                for (int l = 0; l < List.size(); l++) {
+                    String number = String.valueOf(l);
+                    String name = String.valueOf(_states.getTitle());
+                    Double price = Double.parseDouble(_states.getSubtotal());
+                    ItemDetails itemDetails1 = new ItemDetails(number, price, 1, name);
+                    itemDetailsList.add(itemDetails1);
+                }
+                CreditCard creditCardOptions = new CreditCard();
+// Set to true if you want to save card to Snap
+                creditCardOptions.setSaveCard(false);
+// Set to true to save card token as `one click` token
+// Set bank name when using MIGS channel
+                creditCardOptions.setBank(BankType.BRI);
+// Set MIGS channel (ONLY for BCA, BRI and Maybank Acquiring bank)
+                creditCardOptions.setChannel(CreditCard.MIGS);
+// Set Credit Card Options
+                transactionRequest.setCreditCard(creditCardOptions);
+
+                uiKitDetails(transactionRequest);
+                transactionRequest.setItemDetails(itemDetailsList);
+                MidtransSDK.getInstance().setTransactionRequest(transactionRequest);
+                MidtransSDK.getInstance().startPaymentUiFlow(OrderQRActivity.this,snap_token);
             }
         });
     }
@@ -193,6 +198,7 @@ public class OrderQRActivity extends AppCompatActivity implements TransactionFin
                             JSONObject jsonObject2          = jsonRESULTS.getJSONObject("data");
                             JSONObject jsonObject           = jsonObject2.getJSONObject("data");
                             JSONObject jsonPatient          = jsonObject.getJSONObject("patient");
+                            JSONObject jsonOutlet           = jsonObject.getJSONObject("outlet");
                             String invoice_response         = jsonObject.getString("invoice_no");
                             String snap_response            = jsonObject.getString("booked");
                             snap_token                      = jsonObject.getString("snap_token");
@@ -239,9 +245,9 @@ public class OrderQRActivity extends AppCompatActivity implements TransactionFin
                                 String paid_from = jsonObject.getString("payment");
                                 strGender = globalVariable.setGenerateGender(sex);
                                 if(paid_from.equals("cod")){
-                                    paid_show = status_order+ "(" +getString(R.string.cod) +")";
+                                    paid_show = status_order+ " (" +getString(R.string.cod) +")";
                                 }else if(paid_from.equals("online")){
-                                    paid_show = status_order+ "(" +getString(R.string.online_pay) +")";
+                                    paid_show = status_order+ " (" +getString(R.string.online_pay) +")";
                                 }else{
                                     paid_show = "Order Canceled";
                                 }
@@ -260,7 +266,8 @@ public class OrderQRActivity extends AppCompatActivity implements TransactionFin
                                 TV_phone        .setText(jsonDataPatient.getString("handphone"));
                                 TV_gross        .setText(globalVariable.toCurrency(jsonObject2.getString("gross_amount")));
                                 TV_discount     .setText("("+globalVariable.toCurrency(jsonObject2.getString("discount_total"))+")");
-                                TV_inv_total.setTextSize(2,20);
+                                TV_inv_total    .setTextSize(2,20);
+                                TV_outlet       .setText(jsonOutlet.getString("name")+" "+jsonOutlet.getString("address"));
                                 TV_inv_total.setTypeface(TV_inv_total.getTypeface(), Typeface.BOLD);
                                 JSONArray jsonArray = jsonObject.getJSONArray("orders");
                                 for (int i = 0; i < jsonArray.length(); i++) {

@@ -11,6 +11,8 @@ import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Display;
@@ -20,6 +22,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -54,6 +57,7 @@ import com.lakue.pagingbutton.OnPageSelectListener;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.R;
+import com.wynacom.wynahealth.adapter.outlets.adapter_provinces;
 import com.wynacom.wynahealth.adapter.patient.Adapter_Data_Patient;
 import com.wynacom.wynahealth.adapter.patient.adapter_patient;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
@@ -92,11 +96,16 @@ public class HomeFragment extends Fragment {
     protected Cursor cursor;
 
     String id_pelanggan, string_nama, string_umur,string_jk, string_hp, string_ktp, string_kota, string_kodepos,token,bearer,string_email,string_hash,
-        editID,edit_name, edit_email,edit_handphone,edit_city,edit_postalcode,edit_sex,edit_dob,edit_nik,index_loop,edit_title;
+        editID,edit_name, edit_email,edit_handphone,edit_city,edit_postalcode,edit_sex,edit_dob,edit_nik,index_loop,edit_title,stringPassword,stringProvince,
+        flashName,flashTitle,flashEmail,flashKTP,flashCity,flashPostal,flashDOB,flashPhone,title,fsgender;
 
     //private HomeFragment.MyCustomAdapter dataAdapter = null;
     private Adapter_Data_Patient dataAdapter = null;
     private ArrayList<adapter_patient> List;
+    private ArrayList<adapter_provinces> Provinces;
+
+    EditText age, name, ktp, postal, phone, email;
+    Spinner sp_title, sp_kelamin, sp_kota;
 
     GlobalVariable globalVariable;
 
@@ -132,6 +141,7 @@ public class HomeFragment extends Fragment {
             || email.contains("yahoo.com")
             || email.contains("yahoo.co.id")
             || email.contains("hotmail.com")
+            || email.contains("outlook.com")
             || email.contains("live.com");
     }
     public static boolean stringphone(String phone) {
@@ -150,13 +160,9 @@ public class HomeFragment extends Fragment {
         ApiGetMethod= UtilsApi.getMethod();
         local_data  = new Local_Data(getContext());
         List = new ArrayList<adapter_patient>();
+        Provinces   = new ArrayList<>();
         ma = this;
         globalVariable = (GlobalVariable) getContext().getApplicationContext();
-
-//        progress = new ProgressBar(getContext());
-////        progress.setCanc(false); // disable dismiss by tapping outside of the dialog
-////        progress.show();
-//        progress.setVisibility(View.VISIBLE);
 
         SQLiteDatabase dbU = local_data.getReadableDatabase();
         cursor = dbU.rawQuery("SELECT * FROM TB_User", null);
@@ -169,6 +175,7 @@ public class HomeFragment extends Fragment {
             string_jk       = cursor.getString(6);
             string_hp       = cursor.getString(2);
             string_ktp      = cursor.getString(9);
+            stringPassword  = cursor.getString(4);
             string_kota     = cursor.getString(5);
             string_kodepos  = cursor.getString(3);
             string_email    = cursor.getString(8);
@@ -265,19 +272,19 @@ public class HomeFragment extends Fragment {
         fab_home.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tambahdata("baru");
+                flashTitle = "Mr.";
+                tambahdata("baru", "name");
             }
         });
 
         tambahpasien.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tambahdata("baru");
+                tambahdata("baru", "name");
             }
         });
 
         SwipeMenuCreator creator = new SwipeMenuCreator() {
-
             @Override
             public void create(SwipeMenu menu) {
                 SwipeMenuItem openItem = new SwipeMenuItem(
@@ -310,14 +317,18 @@ public class HomeFragment extends Fragment {
         listView.setOnMenuItemClickListener(new SwipeMenuListView.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(int position, SwipeMenu menu, int index) {
+                adapter_patient state = List.get(position);
                 switch (index) {
                     case 0:
-                        Intent i = new Intent(getContext(), NewOrderActivity.class);
-                        i.putExtra("index_position", String.valueOf(position+1));
-                        startActivity(i);
+                        Intent intent = new Intent(getContext(), NewOrderActivity.class);
+                        intent.putExtra("booked",           "");
+                        intent.putExtra("gender",           "");
+                        intent.putExtra("count",            "");
+                        intent.putExtra("type",             "new");
+                        intent.putExtra("datapatient_id",   state.getID());
+                        startActivity(intent);
                         break;
                     case 1:
-                        adapter_patient state = List.get(position);
                         editID          = state.getID();
                         edit_title      = state.getTitle();
                         edit_name       = state.getNama();
@@ -328,13 +339,24 @@ public class HomeFragment extends Fragment {
                         edit_sex        = state.getGender();
                         edit_dob        = state.getDOB();
                         edit_nik        = state.getNIK();
-                        tambahdata("edit");
+                        globalVariable.setFlashTitle(edit_title);
+                        globalVariable.setFlashName(edit_name);
+                        globalVariable.setFlashEmail(edit_email);
+                        globalVariable.setFlashKTP(edit_nik);
+                        globalVariable.setFlashCity(edit_city);
+                        globalVariable.setFlashPostal(edit_postalcode);
+                        globalVariable.setFlashPhone(edit_handphone);
+                        globalVariable.setFlashDOB(edit_dob);
+                        flashTitle      = state.getTitle();
+                        tambahdata("edit", "name");
                         break;
                 }
                 // false : close the menu; true : not close the menu
                 return false;
             }
         });
+
+        getProvince();
 
 // set creator
         listView.setMenuCreator(creator);
@@ -393,7 +415,6 @@ public class HomeFragment extends Fragment {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            Toast.makeText(getContext(), "Home : success", Toast.LENGTH_SHORT).show();
                             JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
                             String total            = jsonObject.getString("total");
                             last_page               = jsonObject.getString("last_page");
@@ -412,10 +433,11 @@ public class HomeFragment extends Fragment {
                                 String sex           = c.getString("sex");
                                 String dob           = c.getString("dob");
                                 String nik           = c.getString("nik");
-                                String city          = c.getString("city");
                                 String email         = c.getString("email");
                                 String postal_code   = c.getString("postal_code");
                                 String tampiltanggal = globalVariable.dateformat(dob);
+                                JSONObject cities    = c.getJSONObject("province");
+                                String city          = cities.getString("name");
                                 index_loop           = String.valueOf(i);
 //                                JSONObject jsonObjectPatient = c.getJSONObject("patient");
 //                                String patientMain  = jsonObjectPatient.getString("email");
@@ -425,9 +447,8 @@ public class HomeFragment extends Fragment {
                             }//setPaging(string_nowPage);
                             textView_dataPatientTile.setText(getString(R.string.family_data)+" ("+total+")");
                         } else {
-                            Toast.makeText(getContext(), "Home : success is false", Toast.LENGTH_SHORT).show();
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-                            builder.setMessage("Data Patient Kosong.");
+                            builder.setMessage("No Data available.");
                             builder.setTitle("List Patient");
                             builder.setCancelable(true);
                             builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
@@ -440,17 +461,30 @@ public class HomeFragment extends Fragment {
                             alertDialog.show();
                         }
                     } catch (JSONException | IOException e) {
+                        SQLiteDatabase dbU = local_data.getReadableDatabase();
+                        cursor = dbU.rawQuery("SELECT * FROM TB_User", null);
+                        cursor.moveToFirst();
+                        if (cursor.getCount()>0) {
+                            cursor.moveToPosition(0);
+                            stringPassword  = cursor.getString(4);
+                            string_email    = cursor.getString(8);
+
+                        }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                reLogin();
+                            }
+                        }, 2000);
                         Toast.makeText(getContext(), "Home : catch exception", Toast.LENGTH_SHORT).show();
                         e.printStackTrace();
                     }
                 } else {
-                    Toast.makeText(getContext(), "Home : if not successfully()", Toast.LENGTH_SHORT).show();
                     createToast("No Data Available",Type.DANGER);
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(getContext(), "Home : on failure", Toast.LENGTH_SHORT).show();
                 Log.e("debug", "onFailure: ERROR > " + t.toString());
             }
         });
@@ -505,13 +539,9 @@ public class HomeFragment extends Fragment {
                                     //listView.setAdapter(null);
                                 }
                                 createToast("Add data success",Type.SUCCESS);
-                                //Cue.init().with(getContext()).setMessage("Add data success").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.SUCCESS).show();
-                                //Toast.makeText(getContext(),"Add data success.", Toast.LENGTH_SHORT).show();
                                 refreshList("1");
                             } else {
                                 createToast("Can not add data",Type.DANGER);
-                                //Cue.init().with(getContext()).setMessage("Can not add data").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.DANGER).show();
-                                //Toast.makeText(getContext(),"Can not add data.", Toast.LENGTH_SHORT).show();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -519,13 +549,14 @@ public class HomeFragment extends Fragment {
                             e.printStackTrace();
                         }
                     } else {
-                        createToast("Add data FAILED!",Type.DANGER);
+                        createToast("Data already exist!",Type.DANGER);
                         //Toast.makeText(getContext(), "Add data FAILED!", Toast.LENGTH_LONG).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    createToast("Connection Error\nCheck your internet connection",Type.DANGER);
                     Log.e("debug", "onFailure: ERROR > " + t.toString());
                 }
             });
@@ -573,66 +604,95 @@ public class HomeFragment extends Fragment {
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    createToast("Connection Error\nCheck your internet connection",Type.DANGER);
                     Log.e("debug", "onFailure: ERROR > " + t.toString());
                 }
             });
     }
 
-    private void tambahdata(String data_type) {
-        String title = null;
+    private void tambahdata(String data_type, String focus) {
         LayoutInflater li = LayoutInflater.from(getContext());
         View promptsView = li.inflate(R.layout.prompt_addpatient,null);
         final Calendar myCalendar= Calendar.getInstance();
         final AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
 
-        //Toast.makeText(getContext(),editID,Toast.LENGTH_SHORT).show();
-
         // set prompts.xml to alertdialog builder
         alertDialogBuilder.setView(promptsView);
-        final EditText age         = promptsView.findViewById(R.id.prompt_umur);
-        final EditText name        = promptsView.findViewById(R.id.prompt_nama);
-        final EditText ktp         = promptsView.findViewById(R.id.prompt_noktp);
-        final EditText postal      = promptsView.findViewById(R.id.prompt_postal);
-        final EditText phone       = promptsView.findViewById(R.id.prompt_nohp);
-        final EditText email       = promptsView.findViewById(R.id.prompt_email);
+        age         = promptsView.findViewById(R.id.prompt_umur);
+        name        = promptsView.findViewById(R.id.prompt_nama);
+        ktp         = promptsView.findViewById(R.id.prompt_noktp);
+        postal      = promptsView.findViewById(R.id.prompt_postal);
+        phone       = promptsView.findViewById(R.id.prompt_nohp);
+        email       = promptsView.findViewById(R.id.prompt_email);
 
-        final Spinner sp_title    = promptsView.findViewById(R.id.prompt_title);
-        final Spinner sp_kelamin  = promptsView.findViewById(R.id.prompt_jeniskelamin);
-        final EditText sp_kota    = promptsView.findViewById(R.id.prompt_kota);
+        sp_title    = promptsView.findViewById(R.id.prompt_title);
+        sp_kelamin  = promptsView.findViewById(R.id.prompt_jeniskelamin);
+        sp_kota     = promptsView.findViewById(R.id.prompt_kota);
+
+        name    .setText(globalVariable.getFlashName());
+        ktp     .setText(globalVariable.getFlashKTP());
+        phone   .setText(globalVariable.getFlashPhone());
+        email   .setText(globalVariable.getFlashEmail());
+        postal  .setText(globalVariable.getFlashPostal());
+        age     .setText(globalVariable.getFlashDOB());
 
         if(data_type.equals("edit")){
-            int begin;
-            if(edit_sex.equals("M")){
-                begin = 0;
-            }else{
-                begin = 1;
-            }
-            //Toast.makeText(getContext(), "Gender : "+gender+" index : "+begin, Toast.LENGTH_SHORT).show();
-            sp_title.setSelection(begin);
-            sp_kelamin.setSelection(begin);
-            sp_kota.setText(edit_city);
-            name.setText(edit_name);
-            ktp.setText(edit_nik);
-            phone.setText(edit_handphone);
-            email.setText(edit_email);
-            postal.setText(edit_postalcode);
-            age.setText(edit_dob);
+//            int begin;
+//            if(edit_sex.equals("M")){
+//                begin = 0;
+//            }else{
+//                begin = 1;
+//            }
+//            sp_title.setSelection(begin);
+//            sp_kelamin.setSelection(begin);
             title = getString(R.string.edit_patient);
+            sp_title.setEnabled(false);
+            this.name.setEnabled(false);
+            ktp.setEnabled(false);
+            age.setEnabled(false);
         }else{
             title = getString(R.string.add_patient);
         }
+        if(flashTitle.equals("Mr.")){
+            sp_title.setSelection(0);
+            sp_kelamin.setSelection(0);
+        }else if (flashTitle.equals("Mrs.")){
+            sp_title.setSelection(2);
+        }
 
-//        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
-//            @Override
-//            public void onDateSet(DatePicker view, int year, int month, int day) {
-//                myCalendar.set(Calendar.YEAR, year);
-//                myCalendar.set(Calendar.MONTH,month);
-//                myCalendar.set(Calendar.DAY_OF_MONTH,day);
-//                String myFormat="dd-MMM-yyyy";
-//                SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
-//                age.setText(dateFormat.format(myCalendar.getTime()));
-//            }
-//        };
+        java.util.List<String> list2 = new ArrayList<>();
+        list2.add("Select City");
+        for(int i = 0;i<Provinces.size();i++){
+            final adapter_provinces state = Provinces.get(i);
+            list2.add(state.getName());
+        }
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(getContext(), R.layout.spinner_item,list2);
+        dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
+        sp_kota.setAdapter(dataAdapter2);
+
+        sp_kota.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position>0){
+                    adapter_provinces state = Provinces.get(position-1);
+                    stringProvince = state.getId();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+        if(data_type.equals("edit")){
+            for(int i = 0;i<Provinces.size();i++){
+                final adapter_provinces state = Provinces.get(i);
+                if (edit_city.equals(state.getName())){
+                    sp_kota.setSelection(i+1);
+                }
+            }
+        }
 
         age.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -667,12 +727,10 @@ public class HomeFragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 sp_title.setSelection(position);
-
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
             }
         });
 
@@ -689,6 +747,27 @@ public class HomeFragment extends Fragment {
             }
         });
 
+        final int gender   = sp_kelamin.getSelectedItemPosition();
+        if(gender==0){
+            fsgender = "M";
+        } else if (gender==1){
+            fsgender = "F";
+        }
+
+        if(focus.equals("name")) {
+            name.requestFocus();
+        } else if(focus.equals("ktp")) {
+            ktp.requestFocus();
+        } else if(focus.equals("phone")) {
+            phone.requestFocus();
+        } else if(focus.equals("email")) {
+            email.requestFocus();
+        } else if(focus.equals("postal")) {
+            postal.requestFocus();
+        } else if(focus.equals("age")) {
+            age.requestFocus();
+        }
+
         alertDialogBuilder
             .setTitle(title)
             .setCancelable(false)
@@ -696,77 +775,55 @@ public class HomeFragment extends Fragment {
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog,
                                         int id) {
-                        String fsgender = null;
-                        final String fstitle    = sp_title.getSelectedItem().toString();
-                        final String fsnama     = /*sp_title.getSelectedItem().toString()+*/name.getText().toString();
-                        final String fsemail    = email.getText().toString();
-                        final int gender   = sp_kelamin.getSelectedItemPosition();
-                        final String fsktp      = ktp.getText().toString();
-                        final String fskota     = sp_kota.getText().toString();
-                        final String fspostal   = postal.getText().toString();
-                        final String fsphone    = phone.getText().toString();
-                        final String fsdob      = age.getText().toString();
-                        if(gender==0){
-                            fsgender = "M";
-                        } else if (gender==1){
-                            fsgender = "F";
-                        }
+                        flashTitle  = sp_title.getSelectedItem().toString();
+                        flashName   = name.getText().toString();
+                        flashEmail  = email.getText().toString();
+                        flashKTP    = ktp.getText().toString();
+                        flashCity   = String.valueOf(sp_kota.getSelectedItemPosition());
+                        flashPostal = postal.getText().toString();
+                        flashPhone  = phone.getText().toString();
+                        flashDOB    = age.getText().toString();
+
+                        globalVariable.setFlashTitle(flashTitle);
+                        globalVariable.setFlashName(flashName);
+                        globalVariable.setFlashEmail(flashEmail);
+                        globalVariable.setFlashKTP(flashKTP);
+                        globalVariable.setFlashCity(flashCity);
+                        globalVariable.setFlashPostal(flashPostal);
+                        globalVariable.setFlashPhone(flashPhone);
+                        globalVariable.setFlashDOB(flashDOB);
+
                         if(data_type.equals("edit")){
-                            if (!stringname(fsnama)) {
-                                name.setText(edit_name);
-                                name.requestFocus();
-                                Toast.makeText(getContext(), "Nama Tidak Valid", Toast.LENGTH_SHORT).show();
-                            } else if (!stringnik(ktp.getText().toString())) {
-                                ktp.setText(edit_nik);
-                                ktp.requestFocus();
-                                Toast.makeText(getContext(), "NIP Tidak Sesuai", Toast.LENGTH_SHORT).show();
-                            }else if (!stringphone(phone.getText().toString())) {
-                                phone.setText(edit_handphone);
-                                phone.requestFocus();
-                                Toast.makeText(getContext(), "Nomor Telepon Tidak Valid", Toast.LENGTH_SHORT).show();
-                            }else if (!isemail(email.getText().toString())){
-                                email.setText(edit_email);
-                                email.requestFocus();
-                                Toast.makeText(getContext(), "Email TIdak Valid", Toast.LENGTH_SHORT).show();
-                            }else if (!stringpostal(postal.getText().toString())) {
-                                postal.setText(edit_postalcode);
-                                postal.requestFocus();
-                                Toast.makeText(getContext(), "Kode Pos Tidak Valid", Toast.LENGTH_SHORT).show();
-                            }else if (!stringage(age.getText().toString())) {
-                                age.setText(edit_dob);
-                                age.requestFocus();
-                                Toast.makeText(getContext(), "Harap Masukkan Tanggal Lahir", Toast.LENGTH_SHORT).show();
+                            if (!stringname(flashName)) {
+                                PromptAlert(getString(R.string.fill_name),Type.DANGER,data_type,"name");
+                            }else if (!stringnik(flashKTP)) {
+                                PromptAlert(getString(R.string.fill_ktp),Type.DANGER, data_type, "ktp");
+                            }else if (!isemail(flashEmail)){
+                                PromptAlert(getString(R.string.fill_email),Type.DANGER, data_type, "email");
+                            }else if (!stringphone(flashPhone)) {
+                                PromptAlert(getString(R.string.fill_phone),Type.DANGER, data_type, "phone");
+                            }else if (!stringpostal(flashPostal)) {
+                                PromptAlert(getString(R.string.fill_postal),Type.DANGER, data_type, "postal");
+                            }else if (!stringage(flashDOB)) {
+                                PromptAlert(getString(R.string.fill_dob),Type.DANGER, data_type, "age");
                             }else{
-                                editPatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,age.getText().toString(),fstitle);
+                                editPatient(flashName,flashEmail,fsgender,flashKTP,stringProvince,flashPostal,flashPhone,globalVariable.reversedateformat(flashDOB),flashTitle);
                             }
                         }else {
-                            if (!stringname(fsnama)) {
-                                name.setText("");
-                                name.requestFocus();
-                                Toast.makeText(getContext(), "Nama Tidak Valid", Toast.LENGTH_SHORT).show();
-                            } else if (!stringnik(ktp.getText().toString())) {
-                                ktp.setText("");
-                                ktp.requestFocus();
-                                Toast.makeText(getContext(), "NIP Tidak Sesuai", Toast.LENGTH_SHORT).show();
-                            }else if (!stringphone(phone.getText().toString())) {
-                                phone.setText("");
-                                phone.requestFocus();
-                                Toast.makeText(getContext(), "Nomor Telepon Tidak Valid", Toast.LENGTH_SHORT).show();
-                            }else if (!isemail(email.getText().toString())){
-                                email.setText("");
-                                email.requestFocus();
-                                Toast.makeText(getContext(), "Email TIdak Valid", Toast.LENGTH_SHORT).show();
-                            }else if (!stringpostal(postal.getText().toString())) {
-                                postal.setText("");
-                                postal.requestFocus();
-                                Toast.makeText(getContext(), "Kode Pos Tidak Valid", Toast.LENGTH_SHORT).show();
-                            }else if (!stringage(age.getText().toString())) {
-                                age.setText("");
-                                age.requestFocus();
-                                Toast.makeText(getContext(), "Harap Masukkan Tanggal Lahir", Toast.LENGTH_SHORT).show();
+                            if (!stringname(flashName)) {
+                                PromptAlert(getString(R.string.fill_name),Type.DANGER,data_type,"name");
+                            }else if (!stringnik(flashKTP)) {
+                                PromptAlert(getString(R.string.fill_ktp),Type.DANGER, data_type, "ktp");
+                            }else if (!isemail(flashEmail)){
+                                PromptAlert(getString(R.string.fill_email),Type.DANGER, data_type, "email");
+                            }else if (!stringphone(flashPhone)) {
+                                PromptAlert(getString(R.string.fill_phone),Type.DANGER, data_type, "phone");
+                            }else if (!stringpostal(flashPostal)) {
+                                PromptAlert(getString(R.string.fill_postal),Type.DANGER, data_type, "postal");
+                            }else if (!stringage(flashDOB)) {
+                                PromptAlert(getString(R.string.fill_dob),Type.DANGER, data_type, "age");
                             }else{
-                                datapatient(fsnama,fsemail,fsgender,fsktp,fskota,fspostal,fsphone,fsdob,fstitle);
-                                Toast.makeText(getContext(), fstitle, Toast.LENGTH_SHORT).show();
+                                datapatient(flashName,flashEmail,fsgender,flashKTP,stringProvince,flashPostal,flashPhone,globalVariable.reversedateformat(flashDOB),flashTitle);
                             }
                         }
                     }
@@ -778,6 +835,143 @@ public class HomeFragment extends Fragment {
         //Cue.init().with(getContext()).setMessage("Button Tambah Pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
     }
 
+    private void reLogin() {
+        if (!TextUtils.isEmpty(string_email) || !TextUtils.isEmpty(stringPassword) ){
+            Map<String, Object> jsonParams = new ArrayMap<>();
+//put something inside the map, could be null
+            jsonParams.put("email", string_email);
+            jsonParams.put("password", stringPassword);
+            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+            //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+            Call<ResponseBody> listCall = mApiService.login(body);
+            listCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        try {
+                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                            if (jsonRESULTS.getString("success").equals("true")){
+                                String Stoken = jsonRESULTS.getString("token");
+                                JSONObject userObj = jsonRESULTS.getJSONObject("user");
+                                String hash  = userObj.getString("password");
+                                local_data.UpdateToken(string_email,Stoken,hash);
+                                globalVariable.setToken(Stoken);
+                                token = Stoken;
+                                bearer = "Bearer "+token;
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshList("1");
+                                    }
+                                }, 2000);
+                            } else {
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                                builder.setMessage("Can't Login");
+                                builder.setTitle("Failed");
+                                builder.setCancelable(true);
+                                builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                        builder.setTitle("Login Gagal");
+                        builder.setCancelable(true);
+                        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        android.app.AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+                }
+            });}
+        else{
+
+        }
+    }
+
+    private void getProvince() {
+        Call<ResponseBody> listCall = ApiGetMethod.getProvince();
+        listCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                        if (jsonRESULTS.getString("success").equals("true")){
+                            JSONArray jsonArray   = jsonRESULTS.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject c = jsonArray.getJSONObject(i);
+                                String id            = c.getString("id");
+                                String nama          = c.getString("name");
+
+                                adapter_provinces _states = new adapter_provinces(id,nama);
+                                Provinces.add(_states);
+                            }
+                        } else {
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                            builder.setMessage("Data Patient Kosong.");
+                            builder.setTitle("List Patient");
+                            builder.setCancelable(true);
+                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    createToast("Data not found",Type.DANGER);
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
+                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                builder.setMessage("Failed loading data. Do you want to retry?");
+                builder.setTitle("Error Load Data Order");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                });
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+    }
+
     private void createToast(String message, Type type) {
         Cue.init().with(getContext())
             .setMessage(message)
@@ -785,6 +979,21 @@ public class HomeFragment extends Fragment {
             .setTextSize(20)
             .setType(type)
             .show();
+    }
+
+    private void PromptAlert(String message, Type type, String data_type, String focus) {
+        Cue.init().with(getContext())
+            .setMessage(message)
+            .setGravity(Gravity.CENTER_VERTICAL)
+            .setTextSize(20)
+            .setType(type)
+            .show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tambahdata(data_type,focus);
+            }
+        }, 500);
     }
 
     @Override

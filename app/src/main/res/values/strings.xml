@@ -24,7 +24,7 @@
     <string name="signature_title">Your signature</string>
     <string name="reply_title">Default reply action</string>
 
-    <string name="outlet_choosen">Outlet</string>
+    <string name="outlet_choosen">Outlet Name</string>
 
     <!-- Sync Preferences -->
     <string name="sync_title">Sync email periodically</string>
@@ -100,8 +100,6 @@
     <string name="online_pay">e-Wallet</string>
     <string name="email_address">Email Address</string>
     <string name="password">Password</string>
-    <string name="login">Login</string>
-    <string name="registration">Registration</string>
     <string name="password_confirmation">Password Confirmation</string>
     <string name="full_name">Full Name</string>
     <string name="gender">Gender</string>
@@ -112,8 +110,13 @@
     <string name="privacy_policy">I am accept the Privacy and Policy</string>
     <string name="back">back</string>
     <string name="register">register</string>
-    <string name="identity_number">Identity Number</string>
+    <string name="identity_number">KTP/Identity Number</string>
     <string name="family_data">Family Data</string>
+
+    <string name="login">Login</string>
+    <string name="not_have_account">Not have an account?</string>
+    <string name="register_here">Register</string>
+    <string name="registration">Registration</string>
 
     <string name="add_patient">Add New Family Data</string>
     <string name="edit_patient">Edit Data Family</string>
@@ -148,9 +151,28 @@
     <string name="choose_patient_first">Please Choose Patient</string>
     <string name="choose_date_first">Please Choose Date</string>
     <string name="outlet_city">Outlet City</string>
-    <string name="outlet_address">Outlet Address</string>
+    <string name="outlet_address">Outlet Name</string>
+
+    <string name="spinner_status">Search by status payment</string>
 
     <string name="carts_title">My Carts</string>
     <string name="new_order_title">Create New Order</string>
     <string name="select_product_title">Select test to order</string>
+    <string name="no_test">No test selected</string>
+
+    <string name="connection_failed">Connection Failed!</string>
+    <string name="connection_try_again">Please check your internet connection.</string>
+
+    <string name="server_failed">Can\'t connect to the server</string>
+    <string name="server_try_again">please try again later.</string>
+    <string name="user_card">User Card</string>
+    <string name="powered_by">Powered By</string>
+
+    <string name="fill_name">Please fill Name</string>
+    <string name="fill_email">Please fill Email</string>
+    <string name="fill_ktp">Please fill Identity Number/KTP</string>
+    <string name="fill_postal">Please fill Postal Code</string>
+    <string name="fill_phone">Please fill Phone Number</string>
+    <string name="fill_dob">Please fil Day of Birth</string>
+    <string name="swipe_me">Swipe Me</string>
 </resources>

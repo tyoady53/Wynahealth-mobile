@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.text.style.StrikethroughSpan;
@@ -20,6 +21,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -60,7 +62,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SelectProductActivity extends AppCompatActivity {
+public class SelectProductActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     boolean checked = false;
     ImageView back_arrow;
@@ -72,10 +74,12 @@ public class SelectProductActivity extends AppCompatActivity {
     private ArrayList<adapter_product> list_product;
     ListView listViewProduct;
     TextView TV_patient_name,TV_service_date,TV_address;
-    String Name,booked,orderType,gender,token,bearer,last_page,string_now_page,nowPage,description;
+    String Name,booked,orderType,gender,token,bearer,last_page,string_now_page,nowPage,description,stringSearch="",datapatient_id,count,string_outlet,service_date,doctor,company;
     Button next,prev;
     int int_last_page,max_page,NowPage;
     LakuePagingButton lpb_buttonlist;
+
+    SearchView searchView;
 
     private Adapter_Data_Order dataOrder = null;
     private ArrayList<adapter_order> listOrder;
@@ -86,11 +90,12 @@ public class SelectProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_product);
-        globalVariable  = (GlobalVariable) getApplicationContext();
-        Name            = getIntent().getStringExtra("name");
-        booked          = globalVariable.getBooked();
+        booked          = getIntent().getStringExtra("booked");
         orderType       = getIntent().getStringExtra("type");
         gender          = getIntent().getStringExtra("gender");
+        count           = getIntent().getStringExtra("count");
+        datapatient_id  = getIntent().getStringExtra("datapatient_id");
+        globalVariable  = (GlobalVariable) getApplicationContext();
         max_page        = Integer.parseInt(getIntent().getStringExtra("count"));
         ApiGetMethod    = UtilsApi.getMethod();
         list_product    = new ArrayList<adapter_product>();
@@ -103,6 +108,8 @@ public class SelectProductActivity extends AppCompatActivity {
         TV_service_date = findViewById(R.id.select_show_date);
         TV_address      = findViewById(R.id.select_show_address);
 
+        searchView      = findViewById(R.id.search);
+
         next            = findViewById(R.id.next);
         prev            = findViewById(R.id.prev);
         lpb_buttonlist  = findViewById(R.id.lpb_buttonList);
@@ -111,10 +118,17 @@ public class SelectProductActivity extends AppCompatActivity {
         title           = findViewById(R.id.selectProduct_title);
         title.setText(getString(R.string.select_product_title));
 
+        searchView.setOnQueryTextListener(this);
+
         back_arrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), CartsActivity.class);
+                Intent intent = new Intent(getApplicationContext(), NewOrderActivity.class);
+                intent.putExtra("datapatient_id",   datapatient_id);
+                intent.putExtra("type",             "edit");
+                intent.putExtra("booked",           booked);
+                intent.putExtra("gender",           gender);
+                intent.putExtra("count",            String.valueOf(max_page));
                 startActivity(intent);
             }
         });
@@ -122,7 +136,7 @@ public class SelectProductActivity extends AppCompatActivity {
         TV_patient_name.setText(Name);
 
 
-        getCarts("1");
+        getCarts("1","8");
 
         lpb_buttonlist.setPageItemCount(4);
         lpb_buttonlist.addBottomPageButton(max_page,1);
@@ -134,11 +148,11 @@ public class SelectProductActivity extends AppCompatActivity {
 
             @Override
             public void onPageCenter(int now_page) {
-                String nowPageStr = String.valueOf(now_page);
+                string_now_page = String.valueOf(now_page);
                 if(dataProduct.getCount()>0){
                     dataProduct.clear();
                 }
-                getCarts(nowPageStr);
+                getCarts(string_now_page,"8");
             }
 
             @Override
@@ -152,10 +166,11 @@ public class SelectProductActivity extends AppCompatActivity {
             public void onClick(View v) {
                 globalVariable.setList_view("confirmation");
                 Intent intent = new Intent(SelectProductActivity.this, OrderConfirmationActivity.class);
-                intent.putExtra("name",     Name);
-                intent.putExtra("booked",   booked);
-                intent.putExtra("gender",   gender);
-                intent.putExtra("count",    String.valueOf(max_page));
+                intent.putExtra("datapatient_id",   datapatient_id);
+                intent.putExtra("type",             "edit");
+                intent.putExtra("booked",           booked);
+                intent.putExtra("gender",           gender);
+                intent.putExtra("count",            String.valueOf(max_page));
                 startActivity(intent);
             }
         });
@@ -167,10 +182,13 @@ public class SelectProductActivity extends AppCompatActivity {
         }
     }
 
-    private void getCarts(String page) {
+    private void getCarts(String page, String per_page) {
+        if (list_product.size() > 0){
+            list_product.clear();
+        }
         token   = globalVariable.getToken();
         bearer  = "Bearer "+token;
-        Call<ResponseBody> listCall = ApiGetMethod.getCartsDetail(bearer,globalVariable.getBooked(),page);
+        Call<ResponseBody> listCall = ApiGetMethod.getCartsDetail(bearer,globalVariable.getBooked(),stringSearch,page,per_page);
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -182,9 +200,11 @@ public class SelectProductActivity extends AppCompatActivity {
                             JSONObject pass   = jsonRESULTS.getJSONObject("data");
                             JSONObject jsonObject   = pass.getJSONObject("data");
                             JSONArray carts =  jsonObject.getJSONArray("carts");
-                            JSONObject company  = jsonObject.getJSONObject("company");
+                            JSONObject company  = jsonObject.getJSONObject("outlet");
+                            JSONObject datapatient  = jsonObject.getJSONObject("datapatient");
+                            TV_patient_name .setText(datapatient.getString("title")+ " " +datapatient.getString("name"));
                             TV_service_date .setText(globalVariable.dateformat(jsonObject.getString("service_date")));
-                            TV_address      .setText(company.getString("company")+" "+company.getString("address"));
+                            TV_address      .setText(company.getString("name")+" "+company.getString("address"));
                             for (int i = 0; i < carts.length(); i++) {
                                 if(carts.length()>0){
                                     JSONObject dataCarts = carts.getJSONObject(i);
@@ -315,6 +335,44 @@ public class SelectProductActivity extends AppCompatActivity {
     private void bindDataProduct() {
         dataProduct = new MyCustomAdapter(getApplicationContext(),R.layout.list_product, list_product);
         listViewProduct.setAdapter(dataProduct);
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        stringSearch = query;
+        getCarts("1","");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(stringSearch.length()>0){
+                    lpb_buttonlist.setVisibility(View.GONE);
+                    getCarts("1","");
+                }else{
+                    lpb_buttonlist.setVisibility(View.VISIBLE);
+                    getCarts("1","8");
+                }
+            }
+        }, 2000);
+//        Toast.makeText(SelectProductActivity.this, query, Toast.LENGTH_SHORT).show();
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        stringSearch = newText;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if(stringSearch.length()>0){
+                    lpb_buttonlist.setVisibility(View.GONE);
+                }else{
+                    getCarts("1","8");
+                    lpb_buttonlist.setVisibility(View.VISIBLE);
+                }
+            }
+        }, 2000);
+//        Toast.makeText(SelectProductActivity.this, newText, Toast.LENGTH_SHORT).show();
+        return false;
     }
 
     public class MyCustomAdapter extends ArrayAdapter<adapter_product> {

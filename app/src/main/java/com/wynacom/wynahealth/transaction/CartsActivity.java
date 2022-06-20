@@ -4,7 +4,11 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
 import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
@@ -26,6 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
+import com.wynacom.wynahealth.DB_Local.Local_Data;
 import com.wynacom.wynahealth.MainActivity;
 import com.wynacom.wynahealth.R;
 import com.wynacom.wynahealth.adapter.carts.adapter_carts;
@@ -57,10 +62,13 @@ public class CartsActivity extends AppCompatActivity {
     ImageView back_arrow;
     TextView title;
 
+    protected Cursor cursor;
+    Local_Data local_data;
+
     ListView listView;
     GlobalVariable globalVariable;
 
-    String token,bearer,booked,name,gender;
+    String token,bearer,booked,name,gender,string_email,stringPassword,dataPatient_id,outlet_id,service_date,doctor,company;
 
     private BaseApiService mApiService,ApiGetMethod;
 
@@ -79,6 +87,7 @@ public class CartsActivity extends AppCompatActivity {
         globalVariable  = (GlobalVariable) getApplicationContext();
         token           = globalVariable.getToken();
 
+        local_data      = new Local_Data(getApplicationContext());
         list_carts      = new ArrayList<adapter_carts>();
         bearer          = "Bearer "+token;
         mApiService     = UtilsApi.getAPI();
@@ -93,6 +102,15 @@ public class CartsActivity extends AppCompatActivity {
         title.setText(getString(R.string.carts_title));
         //setSupportActionBar(binding.toolbar);
 
+        SQLiteDatabase dbU = local_data.getReadableDatabase();
+        cursor = dbU.rawQuery("SELECT * FROM TB_User", null);
+        cursor.moveToFirst();
+        if (cursor.getCount()>0) {
+            cursor.moveToPosition(0);
+            stringPassword  = cursor.getString(4);
+            string_email    = cursor.getString(8);
+        }
+
         back_arrow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,9 +123,14 @@ public class CartsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 adapter_carts state = list_carts.get(position);
-                booked   = state.getInvoice();
-                name     = state.getNames();
-                gender   = state.getGender();
+                booked          = state.getInvoice();
+                name            = state.getNames();
+                gender          = state.getGender();
+                outlet_id       = state.getCompany_id();
+                dataPatient_id  = state.getData_patient_id();
+                service_date    = state.getService_date();
+                doctor          = state.getDoctor();
+                company         = state.getCompanies();
                 globalVariable.setGenerateGender(state.getGender());
                 globalVariable.setOl_invoice_id(state.getID());
                 globalVariable.setBooked(booked);
@@ -131,15 +154,13 @@ public class CartsActivity extends AppCompatActivity {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
                             JSONObject jsonObject   = jsonRESULTS.getJSONObject("data");
-                            //JSONArray jsonArray     = jsonObject.getJSONArray("data");
-//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             String count = jsonObject.getString("last_page"); //String.valueOf(jsonArray.length());
-                            Intent intent = new Intent(getApplicationContext(), OrderConfirmationActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), NewOrderActivity.class);
                             intent.putExtra("type", "edit");
-                            intent.putExtra("name",             name);
                             intent.putExtra("booked",           booked);
                             intent.putExtra("gender",           gender);
                             intent.putExtra("count",            count);
+                            intent.putExtra("datapatient_id",   dataPatient_id);
                             startActivity(intent);
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
@@ -211,18 +232,23 @@ public class CartsActivity extends AppCompatActivity {
                                 String service_date     = c.getString("service_date");
                                 String snap             = c.getString("snap_token");
                                 String gender           = c.getString("gender");
-                                JSONObject company      = c.getJSONObject("company");
-                                String companyName      = company.getString("company");
+                                String dokter           = c.getString("dokter");
+                                String perusahaan       = c.getString("perusahaan");
+                                JSONObject company      = c.getJSONObject("outlet");
+                                String company_id       = company.getString("id");
+                                String companyName      = company.getString("name");
                                 String companyAddress   = company.getString("address");
                                 JSONObject datapatient  = c.getJSONObject("datapatient");
+                                String data_id          = datapatient.getString("id");
                                 String name             = datapatient.getString("name");
                                 String handphone        = datapatient.getString("handphone");
                                 String city             = datapatient.getString("city");
 
-                                    adapter_carts _states = new adapter_carts(id,name, invoiceNumber,handphone,city, status, total,gender, snap, service_date,companyName,companyAddress);
+                                    adapter_carts _states = new adapter_carts(id,name, invoiceNumber,handphone,city, status, total,gender, snap, service_date,companyName,companyAddress,data_id,company_id,dokter,perusahaan);
                                     list_carts.add(_states);
                                     bindData();
                             }
+
                         } else {
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
                             builder.setMessage("Data Patient Kosong.");
@@ -238,6 +264,7 @@ public class CartsActivity extends AppCompatActivity {
                             alertDialog.show();
                         }
                     } catch (JSONException | IOException e) {
+                        reLogin();
                         e.printStackTrace();
                     }
                 } else {
@@ -247,7 +274,7 @@ public class CartsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
-                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                AlertDialog.Builder builder = new AlertDialog.Builder(CartsActivity.this);
                 builder.setMessage("Failed loading data. Do you want to retry?");
                 builder.setTitle("Error Load Data Order");
                 builder.setCancelable(true);
@@ -335,7 +362,6 @@ public class CartsActivity extends AppCompatActivity {
                                                 dataCarts.clear();
                                                 refreshList();
                                             }
-                                            //Toast.makeText(OrderConfirmationActivity.this,"booked : "+booked,Toast.LENGTH_SHORT).show();
                                         } catch (JSONException e) {
                                             e.printStackTrace();
                                         } catch (IOException e) {
@@ -378,6 +404,78 @@ public class CartsActivity extends AppCompatActivity {
             holder.Vtotal       .setText(c);
 
             return convertView;
+        }
+    }
+
+    private void reLogin() {
+        if (!TextUtils.isEmpty(string_email) || !TextUtils.isEmpty(stringPassword) ){
+            Map<String, Object> jsonParams = new ArrayMap<>();
+//put something inside the map, could be null
+            jsonParams.put("email", string_email);
+            jsonParams.put("password", stringPassword);
+            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+            //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+            Call<ResponseBody> listCall = mApiService.login(body);
+            listCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        try {
+                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                            if (jsonRESULTS.getString("success").equals("true")){
+                                String Stoken = jsonRESULTS.getString("token");
+                                JSONObject userObj = jsonRESULTS.getJSONObject("user");
+                                String hash  = userObj.getString("password");
+                                local_data.UpdateToken(string_email,Stoken,hash);
+                                globalVariable.setToken(Stoken);
+                                token = Stoken;
+                                bearer = "Bearer "+token;
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshList();
+                                    }
+                                }, 2000);
+                            } else {
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CartsActivity.this);
+                                builder.setMessage(getString(R.string.server_try_again));
+                                builder.setTitle(getString(R.string.server_failed));
+                                builder.setCancelable(true);
+                                builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        reLogin();
+                                    }
+                                });
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(CartsActivity.this);
+                        builder.setMessage(getString(R.string.connection_try_again));
+                        builder.setTitle(getString(R.string.connection_failed));
+                        builder.setCancelable(true);
+                        builder.setNeutralButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                reLogin();
+                            }
+                        });
+                        android.app.AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+                }
+            });}
+        else{
+
         }
     }
 

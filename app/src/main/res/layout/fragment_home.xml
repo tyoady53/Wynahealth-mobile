@@ -121,7 +121,7 @@
                         android:background="@color/black" />
 
                     <LinearLayout
-                        android:layout_weight="1"
+                        android:layout_weight="5"
                         android:gravity="center"
                         android:layout_width="match_parent"
                         android:layout_height="fill_parent"
@@ -228,6 +228,7 @@
                         </LinearLayout>
 
                         <LinearLayout
+                            android:layout_weight="1"
                             android:gravity="center"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
@@ -240,14 +241,20 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:gravity="bottom|center"
-                                android:text="Signature"
-                                android:textSize="8sp"
-                                android:visibility="gone" />
+                                android:text="@string/user_card"
+                                android:textSize="8sp" />
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="bottom|center"
+                                android:text="@string/powered_by"
+                                android:textSize="8sp" />
 
                             <ImageView
                                 android:id="@+id/home_signature"
-                                android:layout_width="50dp"
-                                android:layout_height="50dp"
+                                android:layout_width="30dp"
+                                android:layout_height="30dp"
                                 android:layout_gravity="center_horizontal"
                                 android:layout_marginTop="@dimen/dp3"
                                 android:layout_marginBottom="@dimen/dp10"

@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -47,6 +48,7 @@ public class Login_Activity extends AppCompatActivity {
     String email_verify;
     private BaseApiService mApiService;
     private Handler mHandler = new Handler();
+    TextView register;
 
     public static boolean Passw(String Name) {
         return Name.length() > 0;
@@ -58,6 +60,7 @@ public class Login_Activity extends AppCompatActivity {
             || email.contains("yahoo.com")
             || email.contains("yahoo.co.id")
             || email.contains("hotmail.com")
+            || email.contains("outlook.com")
             || email.contains("live.com");
     }
 
@@ -70,6 +73,7 @@ public class Login_Activity extends AppCompatActivity {
         bt_register = findViewById(R.id.btn_regis);
         input       = findViewById(R.id.username);
         password    = findViewById(R.id.password);
+        register    = findViewById(R.id.registerHere);
 
         nDialog = new ProgressDialog( Login_Activity.this);
 
@@ -77,20 +81,28 @@ public class Login_Activity extends AppCompatActivity {
 
         local_data  = new Local_Data(getApplicationContext());
 
-        bt_login.setOnClickListener(new View.OnClickListener() {
+//        bt_login.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!isemail(input.getText().toString())){
+//                    input.setText("");
+//                    input.requestFocus();
+//                    Toast.makeText(getApplicationContext(), "Email not valid", Toast.LENGTH_SHORT).show();
+//                }else if (!Passw(password.getText().toString())) {
+//                    password.setText("");
+//                    password.requestFocus();
+//                    Toast.makeText(getApplicationContext(), "Password at least 8 character", Toast.LENGTH_SHORT).show();
+//                }else{
+//                    mtdLogin();
+//                }
+//            }
+//        });
+
+        register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!isemail(input.getText().toString())){
-                    input.setText("");
-                    input.requestFocus();
-                    Toast.makeText(getApplicationContext(), "Email TIdak Valid", Toast.LENGTH_SHORT).show();
-                }else if (!Passw(password.getText().toString())) {
-                    password.setText("");
-                    password.requestFocus();
-                    Toast.makeText(getApplicationContext(), "Password harus lebih dari 8 karakter", Toast.LENGTH_SHORT).show();
-                }else{
-                    mtdLogin();
-                }
+                Intent intent = new Intent(Login_Activity.this, RegisterActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -308,9 +320,13 @@ public class Login_Activity extends AppCompatActivity {
     }
 
     private void Loading(){
-        nDialog.setMessage("Loading..");
-        nDialog.setTitle("Harap Tunggu");
+        nDialog.setMessage("Loading");
+        nDialog.setTitle("Please Wait");
         nDialog.setCancelable(false);
         nDialog.show();
+    }
+
+    public void login(View view) {
+        mtdLogin();
     }
 }

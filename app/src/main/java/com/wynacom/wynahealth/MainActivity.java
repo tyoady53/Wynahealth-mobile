@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
     Local_Data local_data;
     Order_Data order_data;
     private BaseApiService mApiService,ApiGetMethod;
-    String token,bearer;
+    String token,bearer,email,password;
     GlobalVariable globalVariable;
 
     @Override
@@ -116,6 +116,14 @@ public class MainActivity extends AppCompatActivity {
             order_data.CloseDatabase();
         }
 
+        SQLiteDatabase db1 = local_data.getReadableDatabase();
+        cursor = db1.rawQuery("SELECT * FROM TB_User", null);
+        cursor.moveToFirst();
+        if (cursor.getCount()>0) {
+            email        = cursor.getString(8);
+            password     = cursor.getString(4);
+        }
+
         image_cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -161,7 +169,6 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            Toast.makeText(MainActivity.this, "success", Toast.LENGTH_SHORT).show();
                             JSONObject jsonObject   = jsonRESULTS.  getJSONObject("data");
                             JSONArray data          = jsonObject.   getJSONArray("data");
                             if(data.length() > 0){
@@ -171,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
                                 text_cart.setVisibility(View.GONE);
                             }
                         } else {
-                            Toast.makeText(MainActivity.this, "success is false", Toast.LENGTH_SHORT).show();
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
                             builder.setMessage("Retry Loading Data?");
                             builder.setTitle("Error Loading Data");
@@ -192,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                             alertDialog.show();
                         }
                     } catch (JSONException | IOException e) {
-                        Toast.makeText(MainActivity.this, "exception catch", Toast.LENGTH_SHORT).show();
+                        relogin();
                         e.printStackTrace();
                     }
                 } else {
@@ -201,7 +207,6 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(MainActivity.this, "on Failure", Toast.LENGTH_SHORT).show();
                 Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
                 builder.setMessage("Failed loading data. Do you want to retry?");
@@ -325,7 +330,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         } catch (JSONException | IOException e) {
                             e.printStackTrace();
-                            relogin(email,password);
+                            relogin();
                         }
 //                    } else {
 //                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(MainActivity.this);
@@ -346,13 +351,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     Log.e("debug", "onFailure: ERROR > " + t.toString());
-                    relogin(email,password);
+                    relogin();
                     //Cue.init().with(getApplicationContext()).setMessage("Tidak dapat terhubung ke server."+t.toString()).setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setType(Type.PRIMARY).show();
                 }
             });
     }
 
-    private void relogin(String email,String password) {
+    private void relogin() {
         if (!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password) ){
             Map<String, Object> jsonParams = new ArrayMap<>();
 //put something inside the map, could be null

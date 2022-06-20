@@ -17,7 +17,8 @@ import java.util.Locale;
 
 public class GlobalVariable extends Application {
     private String token,patient_id,UserID,orderId,discountTotal,priceTotal,order_size,list_view;
-    String gender=null,booked=null,ol_patient_id=null,datapatient_id=null,ol_company_id=null,dokter=null,perusahaan=null,service_date=null,ol_invoice_id=null,last_open = null;
+    String gender=null,booked=null,ol_patient_id=null,datapatient_id=null,ol_company_id=null,dokter=null,perusahaan=null,service_date=null,ol_invoice_id=null,last_open = null,
+        flashName = "",flashTitle = "",flashEmail = "",flashKTP = "",flashCity = "",flashPostal = "",flashDOB = "",flashPhone = "";
     Date d;
     private List<String> globalArrayList;
     ArrayList<String> selected = new ArrayList<>();
@@ -133,6 +134,62 @@ public class GlobalVariable extends Application {
     }
     public void setOl_invoice_id(String ol_invoice_id) {
         this.ol_invoice_id = ol_invoice_id;
+    }
+
+    public String getFlashTitle() {
+        return flashTitle;
+    }
+    public void setFlashTitle(String flashTitle) {
+        this.flashTitle = flashTitle;
+    }
+
+    public String getFlashName() {
+        return flashName;
+    }
+    public void setFlashName(String flashName) {
+        this.flashName = flashName;
+    }
+
+    public String getFlashEmail() {
+        return flashEmail;
+    }
+    public void setFlashEmail(String flashEmail) {
+        this.flashEmail = flashEmail;
+    }
+
+    public String getFlashKTP() {
+        return flashKTP;
+    }
+    public void setFlashKTP(String flashKTP) {
+        this.flashKTP = flashKTP;
+    }
+
+    public String getFlashCity() {
+        return flashCity;
+    }
+    public void setFlashCity(String flashCity) {
+        this.flashCity = flashCity;
+    }
+
+    public String getFlashPostal() {
+        return flashPostal;
+    }
+    public void setFlashPostal(String flashPostal) {
+        this.flashPostal = flashPostal;
+    }
+
+    public String getFlashPhone() {
+        return flashPhone;
+    }
+    public void setFlashPhone(String flashPhone) {
+        this.flashPhone = flashPhone;
+    }
+
+    public String getFlashDOB() {
+        return flashDOB;
+    }
+    public void setFlashDOB(String flashDOB) {
+        this.flashDOB = flashDOB;
     }
 
     public String getUserID(){

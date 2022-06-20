@@ -288,7 +288,8 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Filter"/>
+            android:textColor="@color/white"
+            android:text="@string/spinner_status"/>
         <Spinner
             android:id="@+id/spinner_Filter"
             android:minHeight="@dimen/dp20"

@@ -1,7 +1,9 @@
 package com.wynacom.wynahealth;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +12,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -30,14 +33,17 @@ import com.fxn.cue.Cue;
 import com.fxn.cue.enums.Type;
 import com.wynacom.wynahealth.DB_Local.GlobalVariable;
 import com.wynacom.wynahealth.DB_Local.Local_Data;
+import com.wynacom.wynahealth.adapter.outlets.adapter_provinces;
 import com.wynacom.wynahealth.apihelper.BaseApiService;
 import com.wynacom.wynahealth.apihelper.UtilsApi;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
@@ -58,12 +64,15 @@ public class RegisterActivity extends AppCompatActivity {
     Button btn_captcha;
     String SITE_KEY = "6LeqBcoeAAAAAL32z64UzIjN94LUAl2G1abTIX9f";
     String SECRET_KEY = "6LeqBcoeAAAAAN84pUQn7M3lO7zBCdyFSzqMjfan";
+    String stringProvince;
     EditText email,name,ktp,passwords,passwordsrep,postal,phone,age;
 
     private ProgressDialog nDialog;
-    private BaseApiService mApiService;
+    private BaseApiService mApiService,ApiGetMethod;
     private Handler mHandler = new Handler();
     final Calendar myCalendar= Calendar.getInstance();
+
+    private ArrayList<adapter_provinces> Provinces;
 
     GlobalVariable globalVariable;
 
@@ -92,6 +101,7 @@ public class RegisterActivity extends AppCompatActivity {
             || email.contains("yahoo.com")
             || email.contains("yahoo.co.id")
             || email.contains("hotmail.com")
+            || email.contains("outlook.com")
             || email.contains("live.com");
     }
     public static boolean phone(String phone) {
@@ -110,6 +120,8 @@ public class RegisterActivity extends AppCompatActivity {
         nDialog = new ProgressDialog( RegisterActivity.this);
         globalVariable  = (GlobalVariable) getApplicationContext();
         mApiService = UtilsApi.getAPI();
+        ApiGetMethod= UtilsApi.getMethod();
+        Provinces   = new ArrayList<adapter_provinces>();
 
         checkBox    = findViewById(R.id.chckbox);
         cardcheck   = findViewById(R.id.card_chck);
@@ -134,6 +146,7 @@ public class RegisterActivity extends AppCompatActivity {
         btn_regis   = findViewById(R.id.register_request);
         checkBoxsk  = findViewById(R.id.regis_sk_chckbox);
 
+        getProvince();
 
 //        DatePickerDialog.OnDateSetListener date =new DatePickerDialog.OnDateSetListener() {
 //            @Override
@@ -144,6 +157,22 @@ public class RegisterActivity extends AppCompatActivity {
 //                updateLabel();
 //            }
 //        };
+
+        sp_kota.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if(position>0){
+                    adapter_provinces state = Provinces.get(position-1);
+                    stringProvince = state.getId();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         age.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -253,6 +282,84 @@ public class RegisterActivity extends AppCompatActivity {
         });
     }
 
+    private void getProvince() {
+        Call<ResponseBody> listCall = ApiGetMethod.getProvince();
+        listCall.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, retrofit2.Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                        if (jsonRESULTS.getString("success").equals("true")){
+                            JSONArray jsonArray   = jsonRESULTS.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONObject c = jsonArray.getJSONObject(i);
+                                String id            = c.getString("id");
+                                String nama          = c.getString("name");
+
+                                adapter_provinces _states = new adapter_provinces(id,nama);
+                                Provinces.add(_states);
+                                setProvinces();
+                            }
+                        } else {
+                            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getApplicationContext());
+                            builder.setMessage("Data Patient Kosong.");
+                            builder.setTitle("List Patient");
+                            builder.setCancelable(true);
+                            builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.dismiss();
+                                }
+                            });
+                            android.app.AlertDialog alertDialog = builder.create();
+                            alertDialog.show();
+                        }
+                    } catch (JSONException | IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    createToast("Data not found",Type.DANGER);
+                }
+            }
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.e("debug", "onFailure: ERROR > getDataPatient" + t.toString());
+                AlertDialog.Builder builder = new AlertDialog.Builder(getApplicationContext());
+                builder.setMessage("Failed loading data. Do you want to retry?");
+                builder.setTitle("Error Load Data Order");
+                builder.setCancelable(true);
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        System.exit(0);
+                    }
+                });
+                android.app.AlertDialog alertDialog = builder.create();
+                alertDialog.show();
+            }
+        });
+    }
+
+    private void setProvinces() {
+        java.util.List<String> list2 = new ArrayList<>();
+        list2.add("Select City");
+        for(int i = 0;i<Provinces.size();i++){
+            final adapter_provinces state = Provinces.get(i);
+            list2.add(state.getName());
+        }
+        ArrayAdapter<String> dataAdapter2 = new ArrayAdapter<String>(this, R.layout.spinner_item,list2);
+        dataAdapter2.setDropDownViewResource(R.layout.spinner_item);
+        sp_kota.setAdapter(dataAdapter2);
+    }
+
     private void updateLabel(){
         String myFormat="dd-MMM-yyyy";
         SimpleDateFormat dateFormat=new SimpleDateFormat(myFormat, Locale.ENGLISH);
@@ -260,6 +367,7 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void RegisterRequest() {
+        Loading();
         String namalengkap,stringemail,stringjk,stringktp,stringkota,stringkodepos,stringhp,stringumur,passwd,passwdr,stringTitle;
         if(sp_kelamin.getSelectedItemPosition()==0){
             stringjk = "M";
@@ -272,7 +380,6 @@ public class RegisterActivity extends AppCompatActivity {
         stringemail = email.getText().toString();
         //stringjk    = sp_kelamin.getSelectedItem().toString();
         stringktp   = ktp.getText().toString();
-        stringkota  = sp_kota.getSelectedItem().toString();
         stringkodepos = postal.getText().toString();
         stringhp    = phone.getText().toString();
         stringumur  = globalVariable.reversedateformat(age.getText().toString());
@@ -285,7 +392,7 @@ public class RegisterActivity extends AppCompatActivity {
         jsonParams.put("email",             stringemail);
         jsonParams.put("password",          passwd);
         jsonParams.put("handphone",         stringhp);
-        jsonParams.put("city",              stringkota);
+        jsonParams.put("city",              stringProvince);
         jsonParams.put("postal_code",       stringkodepos);
         jsonParams.put("sex",               stringjk);
         jsonParams.put("age",               stringumur);
@@ -308,17 +415,22 @@ public class RegisterActivity extends AppCompatActivity {
                                 createToast("Can not Create an Account! Error Connection.",Type.DANGER);
                             }
                         } catch (JSONException e) {
+                            nDialog.dismiss();
                             e.printStackTrace();
                         } catch (IOException e) {
+                            nDialog.dismiss();
                             e.printStackTrace();
                         }
                     } else {
+                        nDialog.dismiss();
                         createToast("Can not Create an Account!",Type.DANGER);
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    createToast("Can not Create an Account! Please Check your internet.",Type.DANGER);
+                    nDialog.dismiss();
                     Log.e("debug", "onFailure: ERROR > " + t.toString());
                 }
             });
@@ -373,6 +485,13 @@ public class RegisterActivity extends AppCompatActivity {
             DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
             DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(request);
+    }
+
+    private void Loading(){
+        nDialog.setMessage("Loading");
+        nDialog.setTitle("Please Wait");
+        nDialog.setCancelable(false);
+        nDialog.show();
     }
 
     public void syaratketentuan(View view) {

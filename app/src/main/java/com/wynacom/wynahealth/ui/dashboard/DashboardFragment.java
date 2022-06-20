@@ -3,7 +3,11 @@ package com.wynacom.wynahealth.ui.dashboard;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.os.Handler;
+import android.text.TextUtils;
+import android.util.ArrayMap;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -16,7 +20,6 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -48,7 +51,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
 
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,7 +65,7 @@ public class DashboardFragment extends Fragment {
     private FragmentDashboardBinding binding;
     Local_Data local_data;
     protected Cursor cursor;
-    String string_pending, string_success,string_failed, string_expired, string_ktp, string_kota, string_kodepos,token,bearer,filter,page;
+    String string_pending, string_success,string_failed, string_expired, string_ktp, string_kota, string_kodepos,token,bearer,filter,page,string_email,stringPassword;
     String nama_pasien,handphone,sex,dob,nik,city,postal_code,tampiltanggal,patient_id;
     TextView TV_success,TV_pending,TV_failed,TV_expired;
 
@@ -127,6 +132,18 @@ public class DashboardFragment extends Fragment {
 
         progress        = binding.progressCircular;
         listView.setVisibility(View.GONE);
+
+        SQLiteDatabase dbU = local_data.getReadableDatabase();
+        cursor = dbU.rawQuery("SELECT * FROM TB_User", null);
+        cursor.moveToFirst();
+        if (cursor.getCount()>0) {
+            cursor.moveToPosition(0);
+            string_ktp      = cursor.getString(9);
+            stringPassword  = cursor.getString(4);
+            string_kota     = cursor.getString(5);
+            string_kodepos  = cursor.getString(3);
+            string_email    = cursor.getString(8);
+        }
 
         page = "1"; filter = "";
 
@@ -202,16 +219,14 @@ public class DashboardFragment extends Fragment {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            Toast.makeText(getContext(), "Dashboard : success", Toast.LENGTH_SHORT).show();
                             JSONObject jsonObject = jsonRESULTS.getJSONObject("data");
                             JSONArray jsonArray = jsonObject.getJSONArray("data");
-//                            JSONArray jsonArray = jsonRESULTS.getJSONArray("data");
                             arrayCount = jsonArray.length();
-                            //Toast.makeText(getContext(), String.valueOf(arrayCount), Toast.LENGTH_SHORT).show();
                             if(arrayCount>0){
                                 for (int i = 0; i < jsonArray.length(); i++) {
                                     JSONObject c = jsonArray.getJSONObject(i);
-                                    JSONObject patient = c.getJSONObject("datapatient");
+                                    JSONObject patient   = c.getJSONObject("datapatient");
+                                    JSONObject outlets   = c.getJSONObject("outlet");
                                     String id            = c.getString("id");
                                     String invoice       = c.getString("invoice_no");
                                     String booked        = c.getString("booked");
@@ -236,24 +251,25 @@ public class DashboardFragment extends Fragment {
                                             }
                                         }
                                     }
-                                    String title  = patient.getString("title");
-                                    String name   = patient.getString("name");
-                                    handphone     = patient.getString("handphone");
-                                    sex           = patient.getString("sex");
-                                    dob           = patient.getString("dob");
-                                    nik           = patient.getString("nik");
-                                    city          = patient.getString("city");
-                                    postal_code   = patient.getString("postal_code");
+                                    String title        = patient.getString("title");
+                                    String name         = patient.getString("name");
+                                    handphone           = patient.getString("handphone");
+                                    sex                 = patient.getString("sex");
+                                    dob                 = patient.getString("dob");
+                                    nik                 = patient.getString("nik");
+                                    city                = patient.getString("city");
+                                    postal_code         = patient.getString("postal_code");
+                                    String outlet_name  = outlets.getString("name");
+                                    String outlet_addr  = outlets.getString("address");
                                     String date   = c.getString("service_date");
                                     tampiltanggal = globalVariable.dateformat(dob);
                                     nama_pasien = title +" "+name;
-                                        adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status_order,grand_total,snap,payment,date,booked);
+                                        adapter_invoice _states = new adapter_invoice(id,nama_pasien,invoice,handphone, city,status_order,grand_total,snap,payment,date,booked,outlet_name,outlet_addr);
                                         orderList.add(_states);
                                     //getDataPatient(id,invoice,status_order,grand_total,snap,patient_id);
                                 }
                             }bindData();progress.setVisibility(View.GONE);
                         } else {
-                            Toast.makeText(getContext(), "Dashboard : success is false", Toast.LENGTH_SHORT).show();
                             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                             builder.setMessage("Data Patient Kosong.");
                             builder.setTitle("List Patient");
@@ -268,16 +284,29 @@ public class DashboardFragment extends Fragment {
                             alertDialog.show();
                         }
                     } catch (JSONException | IOException e) {
+                        SQLiteDatabase dbU = local_data.getReadableDatabase();
+                        cursor = dbU.rawQuery("SELECT * FROM TB_User", null);
+                        cursor.moveToFirst();
+                        if (cursor.getCount()>0) {
+                            cursor.moveToPosition(0);
+                            stringPassword  = cursor.getString(4);
+                            string_email    = cursor.getString(8);
+
+                        }
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                reLogin();
+                            }
+                        }, 2000);
                         e.printStackTrace();
                     }
                 } else {
-                    Toast.makeText(getContext(), "Home : if not successfully()", Toast.LENGTH_SHORT).show();
                     Cue.init().with(getContext()).setMessage("No data found").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
                 }
             }
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                Toast.makeText(getContext(), "Home : on failure", Toast.LENGTH_SHORT).show();
                 Log.e("debug", "onFailure: ERROR > refreshList" + t.toString());
                 android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
                 builder.setMessage("Failed loading data. Do you want to retry?");
@@ -301,6 +330,78 @@ public class DashboardFragment extends Fragment {
                 alertDialog.show();
             }
         });
+    }
+
+    private void reLogin() {
+        if (!TextUtils.isEmpty(string_email) || !TextUtils.isEmpty(stringPassword) ){
+            Map<String, Object> jsonParams = new ArrayMap<>();
+//put something inside the map, could be null
+            jsonParams.put("email", string_email);
+            jsonParams.put("password", stringPassword);
+            RequestBody body = RequestBody.create(okhttp3.MediaType.parse("application/json; charset=utf-8"),(new JSONObject(jsonParams)).toString());
+            //ResponseBody formLogin = new ResponseBody(input.getText().toString(), password.getText().toString());
+            Call<ResponseBody> listCall = mApiService.login(body);
+            listCall.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()){
+                        try {
+                            JSONObject jsonRESULTS = new JSONObject(response.body().string());
+                            if (jsonRESULTS.getString("success").equals("true")){
+                                String Stoken = jsonRESULTS.getString("token");
+                                JSONObject userObj = jsonRESULTS.getJSONObject("user");
+                                String hash  = userObj.getString("password");
+                                local_data.UpdateToken(string_email,Stoken,hash);
+                                globalVariable.setToken(Stoken);
+                                token = Stoken;
+                                bearer = "Bearer "+token;
+                                new Handler().postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        refreshList();
+                                    }
+                                }, 2000);
+                            } else {
+                                android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                                builder.setMessage("Can't Login");
+                                builder.setTitle("Failed");
+                                builder.setCancelable(true);
+                                builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.dismiss();
+                                    }
+                                });
+                                android.app.AlertDialog alertDialog = builder.create();
+                                alertDialog.show();
+                            }
+                        } catch (JSONException | IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+                        builder.setMessage("Tidak dapat login\nPeriksa email dan password anda.");
+                        builder.setTitle("Login Gagal");
+                        builder.setCancelable(true);
+                        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                        android.app.AlertDialog alertDialog = builder.create();
+                        alertDialog.show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    Log.e("debug", "onFailure: ERROR > " + t.toString());
+                }
+            });}
+        else{
+
+        }
     }
 
     private void bindData() {
@@ -340,9 +441,13 @@ public class DashboardFragment extends Fragment {
     }
 
     private void neworder() {
-        Intent i = new Intent(getContext(), NewOrderActivity.class);
-        i.putExtra("index_position", "");
-        startActivity(i);
+        Intent intent = new Intent(getContext(), NewOrderActivity.class);
+        intent.putExtra("booked",           "");
+        intent.putExtra("gender",           "");
+        intent.putExtra("count",            "");
+        intent.putExtra("type",             "new");
+        intent.putExtra("datapatient_id",   "");
+        startActivity(intent);
     }
 
     private void getDashboard() {
