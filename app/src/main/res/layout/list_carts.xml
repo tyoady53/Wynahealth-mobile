@@ -119,6 +119,7 @@
                         android:layout_gravity="right" />
                 </LinearLayout>
                 <TextView
+                    android:visibility="gone"
                     android:layout_gravity="end"
                     android:textSize="@dimen/dp20"
                     android:layout_weight="1"

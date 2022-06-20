@@ -1,8 +1,11 @@
 package com.wynacom.wynahealth.adapter.order;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.text.style.StrikethroughSpan;
 import android.util.ArrayMap;
 import android.view.LayoutInflater;
@@ -133,15 +136,17 @@ public class Adapter_Data_Order extends ArrayAdapter<adapter_order> {
             double harga = Double.parseDouble(state.getProduct_price());
             double diskon= Double.parseDouble(state.getNomDiscount());
             double total = harga - diskon;
+            final ForegroundColorSpan fcs = new ForegroundColorSpan(Color.rgb(255,0,0));
             ssb.append(globalVariable.toCurrency(state.getProduct_price()));
             ssb.setSpan(
-                strikethroughSpan,
+                fcs,
                 0,
                 ssb.length(),
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
             );
-            holder.ViewName    .setText(ssb,TextView.BufferType.EDITABLE);
-            holder.ViewName    .setTextColor(convertView.getResources().getColor(R.color.red,null));
+            holder.ViewName    .setText(ssb);
+            holder.ViewName    .setPaintFlags(holder.ViewName.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            //holder.ViewName    .setTextColor(convertView.getResources().getColor(R.color.red,null));
             holder.discounts   .setVisibility(View.VISIBLE);
             holder.discounts   .setText(globalVariable.toCurrency(String.valueOf(total)));
         }else{

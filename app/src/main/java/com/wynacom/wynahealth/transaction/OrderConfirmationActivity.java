@@ -58,10 +58,11 @@ public class OrderConfirmationActivity extends AppCompatActivity {
 
     GlobalVariable globalVariable;
     private BaseApiService ApiGetMethod,mApiService;
-    int CartsLength;
+    int CartsLength,max_page;
+    LinearLayout layoutNoProduct;
 
     TextView TV_patient_name,TV_total,TV_discount,TV_grand,TV_service_date,TV_address;
-    String Name,token,bearer,booked,orderType,gender;
+    String Name,token,bearer,booked,orderType,gender,datapatient_id,string_outlet,service_date,doctor,company;
     Button next,prev;
     String total_price,total_disc,grand,count;
     //private Adapter_Data_Order dataOrder = null;
@@ -78,16 +79,18 @@ public class OrderConfirmationActivity extends AppCompatActivity {
         token           = globalVariable.getToken();
         bearer          = "Bearer "+token;
         //Toast.makeText(this, globalVariable.getOrderId(), Toast.LENGTH_SHORT).show();
-        Name            = getIntent().getStringExtra("name");
         booked          = getIntent().getStringExtra("booked");
         orderType       = getIntent().getStringExtra("type");
         gender          = getIntent().getStringExtra("gender");
         count           = getIntent().getStringExtra("count");
+        datapatient_id  = getIntent().getStringExtra("datapatient_id");
+        max_page        = Integer.parseInt(getIntent().getStringExtra("count"));
         ApiGetMethod    = UtilsApi.getMethod();
         mApiService     = UtilsApi.getAPI();
         list_order      = new ArrayList<adapter_order>();
 
         listView        = findViewById(R.id.list_order_confirmation);
+        layoutNoProduct = findViewById(R.id.no_test);
 
         TV_patient_name = findViewById(R.id.spinner_patient_order);
         TV_total        = findViewById(R.id.total);
@@ -114,11 +117,11 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                         @Override
                         public void onClick(View view) {
                             Intent intent = new Intent(OrderConfirmationActivity.this, SelectProductActivity.class);
-                            intent.putExtra("name",     Name);
-                            intent.putExtra("booked",   booked);
-                            intent.putExtra("gender",   gender);
-                            intent.putExtra("count",    count);
-                            intent.putExtra("type",     "new");
+                            intent.putExtra("datapatient_id",   datapatient_id);
+                            intent.putExtra("type",             "edit");
+                            intent.putExtra("booked",           booked);
+                            intent.putExtra("gender",           gender);
+                            intent.putExtra("count",            count);
                             startActivity(intent);
                         }
                     })
@@ -228,7 +231,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
     }
 
     public void getProduct() {
-        Call<ResponseBody> listCall = ApiGetMethod.getCartsDetail(bearer,booked,"1");
+        Call<ResponseBody> listCall = ApiGetMethod.getCartsDetail(bearer,booked,"","1","8");
         listCall.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -236,11 +239,13 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                     try {
                         JSONObject jsonRESULTS = new JSONObject(response.body().string());
                         if (jsonRESULTS.getString("success").equals("true")){
-                            JSONObject pass     = jsonRESULTS.getJSONObject("data");
-                            JSONObject data     = pass.getJSONObject("data");
-                            JSONObject company  = data.getJSONObject("company");
+                            JSONObject pass         = jsonRESULTS.getJSONObject("data");
+                            JSONObject data         = pass.getJSONObject("data");
+                            JSONObject company      = data.getJSONObject("outlet");
+                            JSONObject datapatient  = data.getJSONObject("datapatient");
+                            TV_patient_name .setText(datapatient.getString("title")+ " " +datapatient.getString("name"));
                             TV_service_date.    setText(globalVariable.dateformat(data.getString("service_date")));
-                            TV_address .        setText(company.getString("company")+" "+company.getString("address"));
+                            TV_address .        setText(company.getString("name")+" "+company.getString("address"));
                             //Toast.makeText(OrderConfirmationActivity.this, data.getString("service_date"), Toast.LENGTH_SHORT).show();
                                 String invoice_id    = data.getString("id");
                                 JSONArray ArrayCarts = data.getJSONArray("carts");
@@ -279,8 +284,7 @@ public class OrderConfirmationActivity extends AppCompatActivity {
                                     adapter_order _states = new adapter_order(carts_id, invoice_id, qty, subtotal, image, title, slug, description, product_price, view_discount, nom_discount,product_id);
                                     list_order.add(_states);
                                     // Toast.makeText(OrderConfirmationActivity.this, String.valueOf(total_disc), Toast.LENGTH_SHORT).show();
-                                    bindDataProduct();
-                            }
+                                }bindDataProduct();
                         } else {
                             Cue.init().with(getApplicationContext()).setMessage("Tidak ada data pasien").setGravity(Gravity.CENTER_VERTICAL | Gravity.BOTTOM).setTextSize(20).setType(Type.PRIMARY).show();
                         }
@@ -299,12 +303,20 @@ public class OrderConfirmationActivity extends AppCompatActivity {
     }
 
     private void bindDataProduct() {
+        if(list_order.size() > 0){
+            layoutNoProduct.setVisibility(View.GONE);
+            listView.setVisibility(View.VISIBLE);
+            TV_total.setText(globalVariable.toCurrency(total_price));
+            TV_discount.setText("(" + globalVariable.toCurrency(total_disc) + ")");
+            TV_grand.setText(globalVariable.toCurrency(grand));
+            dataOrder = new MyCustomAdapter(this,R.layout.list_product, list_order);
+            listView.setAdapter(dataOrder);
+        } else {
+            //Toast.makeText(OrderConfirmationActivity.this, "No order", Toast.LENGTH_SHORT).show();
+            layoutNoProduct.setVisibility(View.VISIBLE);
+            listView.setVisibility(View.GONE);
+        }
         //Toast.makeText(OrderConfirmationActivity.this, total, Toast.LENGTH_SHORT).show();
-        TV_total.setText(globalVariable.toCurrency(total_price));
-        TV_discount.setText("(" + globalVariable.toCurrency(total_disc) + ")");
-        TV_grand.setText(globalVariable.toCurrency(grand));
-        dataOrder = new MyCustomAdapter(this,R.layout.list_product, list_order);
-        listView.setAdapter(dataOrder);
     }
 
     private class MyCustomAdapter extends ArrayAdapter<adapter_order> {

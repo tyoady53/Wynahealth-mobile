@@ -13,8 +13,12 @@ public class adapter_carts {
     String snap             = null;
     String company_name     = null;
     String company_address  = null;
+    String data_patient_id  = null;
+    String company_id       = null;
+    String doctor           = null;
+    String companies        = null;
 
-    public adapter_carts(String id, String name, String invoiceNumber, String telephone, String address, String status, String total,String gender, String snap,String service_date, String company_name, String company_city) {
+    public adapter_carts(String id, String name, String invoiceNumber, String telephone, String address, String status, String total,String gender, String snap,String service_date, String company_name, String company_city, String data_patient_id,String company_id,String doctor,String companies) {
         super();
         this.id             = id;
         this.name           = name;
@@ -28,6 +32,10 @@ public class adapter_carts {
         this.service_date   = service_date;
         this.company_name   = company_name;
         this.company_address= company_city;
+        this.data_patient_id= data_patient_id;
+        this.company_id     = company_id;
+        this.doctor         = doctor;
+        this.companies      = companies;
     }
 
     public String getID() {
@@ -112,5 +120,33 @@ public class adapter_carts {
     }
     public void setCompany_address(String company_address) {
         this.company_address = company_address;
+    }
+
+    public String getData_patient_id() {
+        return data_patient_id;
+    }
+    public void setData_patient_id(String data_patient_id) {
+        this.data_patient_id = data_patient_id;
+    }
+
+    public String getCompany_id() {
+        return company_id;
+    }
+    public void setCompany_id(String company_id) {
+        this.company_id = company_id;
+    }
+
+    public String getDoctor() {
+        return doctor;
+    }
+    public void setDoctor(String doctor) {
+        this.doctor = doctor;
+    }
+
+    public String getCompanies() {
+        return companies;
+    }
+    public void setCompanies(String companies) {
+        this.companies = companies;
     }
 }//String id, String qty, String subtotal, String image, String title, String slug, String description, String product_price, String discount

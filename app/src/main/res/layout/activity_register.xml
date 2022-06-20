@@ -180,7 +180,8 @@
                                 android:layout_height="wrap_content"
                                 android:hint="@string/identity_number"
                                 android:inputType="number"
-                                android:maxLines="1"/>
+                                android:maxLength="16"
+                                android:maxLines="10"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -212,7 +213,8 @@
                                 android:layout_height="wrap_content"
                                 android:hint="@string/postal_code"
                                 android:inputType="number"
-                                android:maxLines="1"/>
+                                android:maxLength="5"
+                                android:maxLines="5"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
@@ -225,8 +227,8 @@
                                 android:layout_height="wrap_content"
                                 android:hint="@string/handphone_number"
                                 android:inputType="phone"
-                                android:maxLines="1"
-                                android:minEms="10"/>
+                                android:maxLength="15"
+                                android:maxLines="10"/>
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout

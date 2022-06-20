@@ -53,10 +53,10 @@
                                 android:layout_height="wrap_content"
                                 android:text="No. Invoice"/>
                             <TextView
-                                android:id="@+id/order_date_list"
+                                android:id="@+id/order_name_list"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Tanggal Kedatangan"/>
+                                android:text="Name"/>
                         </LinearLayout>
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -78,17 +78,25 @@
                     </LinearLayout>
                 </LinearLayout>
                 <TextView
-                    android:id="@+id/order_name_list"
+                    android:id="@+id/order_date_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Name"/>
+                    android:text="Tanggal Kedatangan"/>
                 <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/order_outlet"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Outlet"/>
+                <TextView
+                    android:visibility="gone"
                     android:layout_weight="1"
                     android:id="@+id/order_phone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phone"/>
                 <TextView
+                    android:visibility="gone"
                     android:layout_weight="1"
                     android:id="@+id/order_address"
                     android:layout_width="wrap_content"
@@ -101,7 +109,7 @@
                     android:id="@+id/order_total"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="No. Invoice"/>
+                    android:text="Jumlah"/>
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

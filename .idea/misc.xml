@@ -49,6 +49,7 @@
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/teb_failed.xml" value="0.2305" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/top_round.xml" value="0.2515" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_add_box.xml" value="0.2515" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_arrow_grey.xml" value="0.2335" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_cart.xml" value="0.326" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_drop_arrow.xml" value="0.2305" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_edit.xml" value="0.3265" />
@@ -59,10 +60,10 @@
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_register_icon.xml" value="0.3425" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_right_chevron.xml" value="0.326" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_wynacom_logo.xml" value="0.2515" />
-        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_wynahealth.xml" value="0.5" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_wynahealth.xml" value="0.67" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vector_wynahealth_logo.xml" value="0.3425" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/vertor_icon_delete.xml" value="0.326" />
-        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/white_round.xml" value="0.229" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/drawable/white_round.xml" value="0.67" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout-v26/fragment_home.xml" value="0.25416666666666665" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/a.xml" value="0.18541666666666667" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_carts.xml" value="0.5" />
@@ -71,12 +72,13 @@
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_landing_page.xml" value="0.25" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_login.xml" value="0.28711256117455136" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_main.xml" value="0.33" />
-        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_new_order.xml" value="0.5" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_new_order.xml" value="0.4074844074844075" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_order.xml" value="0.35185185185185186" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_order_confirmation.xml" value="0.341747572815534" />
-        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_order_qr.xml" value="0.49527806925498424" />
-        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_register.xml" value="0.4219712525667351" />
-        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_select_product.xml" value="0.44128553770086526" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_order_qr.xml" value="0.5011737089201878" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_register.xml" value="3.0" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_register_copy.xml" value="0.22239583333333332" />
+        <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_select_product.xml" value="0.4117647058823529" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/activity_splash_screen.xml" value="0.33" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/content_create_order.xml" value="0.19322916666666667" />
         <entry key="..\:/Users/Ady/AndroidStudioProjects/Wynahealth/app/src/main/res/layout/fragment_dashboard.xml" value="0.39855818743563337" />

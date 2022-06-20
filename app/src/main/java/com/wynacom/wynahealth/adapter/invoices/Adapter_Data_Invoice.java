@@ -30,7 +30,7 @@ public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
 
     private static class ViewHolder
     {
-        TextView Vstatus,name,Vinvno,Vphone,Vaddress,Vtotal,Vpayment,Vservice_date;
+        TextView Vstatus,name,Vinvno,Vphone,Vaddress,Vtotal,Vpayment,Vservice_date,Voutlet;
         View status_color;
     }
 
@@ -50,6 +50,7 @@ public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
         holder.Vphone        = (TextView) convertView.findViewById(R.id.order_phone);
         holder.Vaddress      = (TextView) convertView.findViewById(R.id.order_address);
         holder.Vtotal        = (TextView) convertView.findViewById(R.id.order_total);
+        holder.Voutlet       = (TextView) convertView.findViewById(R.id.order_outlet);
         holder.status_color  = (View) convertView.findViewById(R.id.status_color);
 
         final adapter_invoice state = stateList.get(position);
@@ -67,6 +68,7 @@ public class Adapter_Data_Invoice extends ArrayAdapter<adapter_invoice> {
         holder.Vinvno       .setText(state.getInvoice());
         holder.Vphone       .setText(state.getTelephone());
         holder.Vaddress     .setText(state.getAddress());
+        holder.Voutlet      .setText(state.getOutlet_name()+" "+state.getOutlet_address());
         Locale localeID = new Locale("in", "ID");
         NumberFormat nf = NumberFormat.getCurrencyInstance(localeID);
         String c = nf.format(Integer.parseInt(state.getTotal()));

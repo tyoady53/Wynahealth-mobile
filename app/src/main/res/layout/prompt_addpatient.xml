@@ -48,6 +48,43 @@
                     <requestFocus/>
                 </EditText>
             </com.google.android.material.textfield.TextInputLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dp10"
+                android:background="@drawable/edittextround"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/gender" />
+
+                <Spinner
+                    android:id="@+id/prompt_jeniskelamin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp10"
+                    android:layout_marginRight="@dimen/dp10"
+                    android:background="@drawable/spinner_noborder"
+                    android:entries="@array/gender"
+                    android:maxLines="1"/>
+            </LinearLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_marginBottom="@dimen/dp10"
+                android:background="@drawable/edittextround"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+                <EditText
+                    android:id="@+id/prompt_noktp"
+                    android:inputType="number"
+                    android:maxLength="16"
+                    android:maxLines="10"
+                    android:hint="@string/identity_number"
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent">
+                </EditText>
+            </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="@dimen/dp10"
                 android:background="@drawable/edittextround"
@@ -71,17 +108,15 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/gender"/>
+                    android:text="@string/city"/>
                 <Spinner
                     android:background="@drawable/spinner_noborder"
                     android:layout_marginLeft="@dimen/dp10"
                     android:layout_marginRight="@dimen/dp10"
-                    android:id="@+id/prompt_jeniskelamin"
-                    android:maxLines="1"
-                    android:entries="@array/gender"
+                    android:id="@+id/prompt_kota"
+                    android:entries="@array/array_city"
                     android:layout_height="wrap_content"
-                    android:layout_width="match_parent">
-                </Spinner>
+                    android:layout_width="match_parent"/>
             </LinearLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="@dimen/dp10"
@@ -89,25 +124,14 @@
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent">
                 <EditText
-                    android:id="@+id/prompt_noktp"
-                    android:inputType="number"
-                    android:ems="16"
-                    android:maxLines="1"
-                    android:hint="@string/identity_number"
+                    android:id="@+id/prompt_nohp"
+                    android:inputType="phone"
+                    android:maxLength="15"
+                    android:maxLines="10"
+                    android:hint="@string/handphone_number"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent">
                 </EditText>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_marginBottom="@dimen/dp10"
-                android:background="@drawable/edittextround"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent">
-                <EditText
-                    android:id="@+id/prompt_kota"
-                    android:hint="@string/city"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"/>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="@dimen/dp10"
@@ -117,25 +141,11 @@
                 <EditText
                     android:id="@+id/prompt_postal"
                     android:inputType="number"
-                    android:maxLines="1"
+                    android:maxLength="5"
+                    android:maxLines="5"
                     android:hint="@string/postal_code"
                     android:layout_height="wrap_content"
                     android:layout_width="match_parent"/>
-            </com.google.android.material.textfield.TextInputLayout>
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_marginBottom="@dimen/dp10"
-                android:background="@drawable/edittextround"
-                android:layout_height="wrap_content"
-                android:layout_width="match_parent">
-                <EditText
-                    android:id="@+id/prompt_nohp"
-                    android:inputType="phone"
-                    android:maxLines="1"
-                    android:minEms="10"
-                    android:hint="@string/handphone_number"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent">
-                </EditText>
             </com.google.android.material.textfield.TextInputLayout>
             <com.google.android.material.textfield.TextInputLayout
                 android:layout_marginBottom="@dimen/dp10"
